@@ -1,0 +1,2 @@
+-- LABORATORY WORK 1
+-- BY Mironchenko_Valerii

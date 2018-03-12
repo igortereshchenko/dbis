@@ -1,0 +1,2 @@
+-- LABORATORY WORK 1
+-- BY Mitrokhin_Oleksii

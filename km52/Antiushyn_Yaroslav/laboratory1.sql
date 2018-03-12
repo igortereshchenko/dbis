@@ -1,0 +1,2 @@
+-- LABORATORY WORK 1
+-- BY Antiushyn_Yaroslav

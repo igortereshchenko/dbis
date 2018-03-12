@@ -1,0 +1,2 @@
+-- LABORATORY WORK 2
+-- BY Kulish_Oleh

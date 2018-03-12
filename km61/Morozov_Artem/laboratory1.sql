@@ -1,0 +1,2 @@
+-- LABORATORY WORK 1
+-- BY Morozov_Artem

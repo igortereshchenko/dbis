@@ -1,0 +1,2 @@
+-- LABORATORY WORK 2
+-- BY Ilnytskyi_Vladyslav
