@@ -87,9 +87,9 @@ ALTER TABLE  BOOK_PAGE
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-+GRANT CREATE ANY TABLE TO kuzina;
-+GRANT INSERT ANY TABLE TO kuzina;
-+GRANT ALTER ANY TABLE TO kuzina;
+GRANT CREATE ANY TABLE TO kuzina;
+GRANT INSERT ANY TABLE TO kuzina;
+GRANT ALTER ANY TABLE TO kuzina;
 
 
 
