@@ -59,11 +59,11 @@ ALTER TABLE  BOOK_PAGE
   ADD CONSTRAINT book_page_pk PRIMARY KEY (book_name_fk,page_name_fk);  
   
 ALTER TABLE  BOOK_PAGE
-  ADD CONSTRAINT book_fk FOREIGN KEY (book_name_fk ) REFERENCES PIZZA (book_name);
+  ADD CONSTRAINT book_fk FOREIGN KEY (book_name_fk ) REFERENCES BOOK (book_name);
   
 ALTER TABLE  BOOK_PAGE
-  ADD CONSTRAINT page_fk FOREIGN KEY (page_name_fk) REFERENCES INGREDIENT (page_name);
-RENCES PAGE (book_page);
+  ADD CONSTRAINT page_fk FOREIGN KEY (page_name_fk) REFERENCES PAGE (page_name);
+
 
 
 
