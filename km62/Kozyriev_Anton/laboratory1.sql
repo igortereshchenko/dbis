@@ -92,7 +92,15 @@ GRANT SELECT ANY TABLE TO kozyrev;
 
 
 
-
+SELECT CUST_NAME AS "Customer_name"
+FROM 
+(
+  SELECT CUST_NAME
+  FROM Customers, OrderItems, Orders
+  WHERE Orderitems.ITEM_PRICE = MAX(ITEM_PRICE)
+  AND Customers.CUST_ID = Oreders.CUST_ID
+  AND Oreders.ORDER_NUM = Oreders.ORDER_NUM
+);
 
 
 
