@@ -18,7 +18,7 @@ ALTER USER tereshchenko QUOTA 100M ON USERS;
 GRANT "CONNECT" TO tereshchenko ;
 
 -- SYSTEM PRIVILEGES
-GRANT CREATE TABLE TO tereshchenko ;
+GRANT CREATE ANY TABLE TO tereshchenko ;
 GRANT ALTER ANY TABLE TO tereshchenko ;
 GRANT SELECT ANY TABLE TO tereshchenko ;
 
