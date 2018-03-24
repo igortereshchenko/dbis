@@ -156,3 +156,4 @@ FROM (
             ORDERITEMS.PROD_ID = PRODUCTS.PROD_ID
       );
   
+Зкщзщіув срфтпуі
