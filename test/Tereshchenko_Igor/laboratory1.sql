@@ -128,7 +128,7 @@ SELECT                      -- final projection, we don't need CUST_ID
   TRIM(PROD_NAME),
   TRIM(CUST_NAME)
 FROM (
-        SELECT              -- select all combination of customer and product
+        SELECT DISTINCT             -- select all combination of customer and product
           CUSTOMERS.CUST_ID,
           CUSTOMERS.CUST_NAME,
           PRODUCTS.PROD_NAME
