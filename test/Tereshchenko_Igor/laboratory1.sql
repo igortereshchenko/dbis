@@ -1,5 +1,4 @@
--- LABORATORY WORK 1
--- BY Tereshchenko_Igor
+
 /*--------------------------------------------------------------------------
 1.Створити схему даних з назвою – прізвище студента, у якій користувач може: 
 виконувати вибірку даних та створювати і змінювати таблиці. 4 бали
@@ -77,9 +76,9 @@ Join використовувати заборонено. Виконати за�
 --Код відповідь:
 
 SELECT                        -- select customers with orders
-  CUST_NAME as "client_name", -- save register using " "
-  CUST_ZIP as "client_code",
-  ORDER_NUM
+  CUSTOMERS.CUST_NAME as "client_name", -- save register using " "
+  CUSTOMERS.CUST_ZIP as "client_code",
+  ORDERS.ORDER_NUM
 FROM CUSTOMERS, ORDERS
   WHERE
     CUST_COUNTRY = 'USA'
@@ -132,16 +131,16 @@ SELECT                      -- final projection, we don't need CUST_ID
 FROM (
         SELECT              -- select all combination of customer and product
           CUSTOMERS.CUST_ID,
-          CUST_NAME,
-          PROD_NAME
+          CUSTOMERS.CUST_NAME,
+          PRODUCTS.PROD_NAME
         FROM CUSTOMERS, PRODUCTS 
         
         MINUS               -- minus combination customer with his product
         
         SELECT DISTINCT     -- use DISTINCT because customer may order the same product few times in different orders
            CUSTOMERS.CUST_ID,-- select CUST_ID (primary key) because we can lose customer by distinct, the same names but different cust_id
-             CUST_NAME,
-             PROD_NAME
+           CUSTOMERS.CUST_NAME,
+           PRODUCTS.PROD_NAME
         FROM CUSTOMERS, ORDERS, ORDERITEMS, PRODUCTS
           WHERE
             CUSTOMERS.CUST_ID = ORDERS.CUST_ID
