@@ -74,6 +74,10 @@ SELECT
           WHERE OrderItems.item_price = 
               (SELECT MAX(OrderItems.item_price ) FROM OrderItems);
 
+PROJECT  (OrderItems.order_num)
+  WHERE OrderItems.item_price = MAX(OrderItems.ITEM_PRICE)
+ 
+
 /*---------------------------------------------------------------------------
 3.b. 
 Визначити скільки унікальних імен продавців - назвавши це поле name.
