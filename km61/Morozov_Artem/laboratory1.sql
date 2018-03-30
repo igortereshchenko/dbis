@@ -5,8 +5,10 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 CREATE user student
-IDENTIFIED by Artem;
-GRANT create table to  Artem;
+IDENTIFIED by Artem
+Default Tablespace "Users"
+Temporary Tablespace "TEMP";
+Alter User student QUOTA 100M on Users;
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
 створювати окремо від таблиць використовуючи команди ALTER TABLE. 
@@ -14,10 +16,15 @@ GRANT create table to  Artem;
 4 бали
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE  student_name (
-  s_name VARCHAR (30), not null;
-  telephon_number integer (10), not null;
-);
+CREATE TABlE student(
+  student_name varchar(10) not null
+ );
+ 
+ CREATE TABLE telephon_number (
+   number varchar (10) not null
+ );
+ AlTER TABLE student
+ add constraint 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
