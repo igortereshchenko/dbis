@@ -76,12 +76,10 @@ GRANT SELECT ANY TABLE TO korin;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-PROJECT prod_name
-TIMES Products
-WHERE prod_id NOT IN
-( PROJECT OrderItems.prod_id 
- TIMES OrderItems )
-
+PROJECT(Products WHERE prod_id NOT IN
+(PROJECT(OrderItems))
+{OrderItems.prod_id })
+{prod_name}
 /*---------------------------------------------------------------------------
 3.b. 
 Яка найдовша назва купленого товару?
