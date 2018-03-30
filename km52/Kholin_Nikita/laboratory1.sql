@@ -8,9 +8,12 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-create user kholin identified by kholin_password;
-grant connect to kholin;
-grant delete on kholin.people to kholin;
+create user kholin identified by kholin_password
+default tablespace "users"
+temporary tablespace "temp";
+alter user kholin quota 100M on users;
+grant "connect" to kholin;
+grant drop any table to kholin;
 
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
@@ -23,20 +26,26 @@ grant delete on kholin.people to kholin;
 
 create table people
 (
-  person_id char(10) not null,
-  name char(30) not null
+  person_id varchar2(10) not null,
+  name varchar2(30) not null,
+  birthdate varchar(10) not null,
+  phone_number number(10) not null
 );
 
 create table cards
 (
-  card_id char(10) not null,
-  person_id char(10) not null
+  card_id varchar2(10) not null,
+  person_id varchar2(10) not null,
+  person_name varchar2(15) not null,
+  adress varchar2(30) not null
 );
 
 create table card_records
 (
-  card_record_id char(10) not null,
-  card_id char(10) not null
+  card_record_id varchar2(10) not null,
+  card_id varchar2(10) not null,
+  person_id varchar2(10) not null,
+  adress varchar2(30) not null
 );
 
 ALTER TABLE people ADD CONSTRAINT PK_People PRIMARY KEY (person_id);
@@ -56,7 +65,9 @@ ADD CONSTRAINT FK_Card_Records_Cards FOREIGN KEY (card_id) REFERENCES cards(card
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-grant resource to kholin
+grant select any table to kholin;
+grant create any table to kholin;
+grant insert any table to kholin;
 
 /*---------------------------------------------------------------------------
 3.a. 
