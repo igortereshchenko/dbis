@@ -32,31 +32,30 @@ GRANT SELECT ANY TABLE TO Servatmand;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 CREATE table Citizen(
-	citizen_name VARCHAR(30)
-	phone_number VARCHAR(13)
-	person_id NUMBER(12)
+	citizen_name VARCHAR(30),
+	phone_number VARCHAR(13),
+	person_id NUMBER(12),
 	age NUMBER(3)
 );
 
 CREATE table house (
- 	street VARCHAR(15)
- 	floor_number NUMBER(3)
- 	resident_number NUMBER(4)
- 	building_year NUMBER(4)
-);
+ 	street VARCHAR(15),
+ 	floor_number NUMBER(3),
+ 	resident_number NUMBER(4),
+ 	building_year NUMBER(4))
 
 CREATE table car(
- 	car_id VARCHAR(20)
- 	car_model VARCHAR(15)
- 	car_type VARCHAR(15)
- 	release_year NUMBER(4).
+ 	car_id VARCHAR(20),
+ 	car_model VARCHAR(15),
+ 	car_type VARCHAR(15),
+ 	release_year NUMBER(4)
 );
 
 
 create table Citizen_house_car(
- 	person_id NUMBER(12)
- 	citizen_name VARCHAR(30)
- 	street VARCHAR(15)
+ 	person_id NUMBER(12),
+ 	citizen_name VARCHAR(30),
+ 	street VARCHAR(15),
  	car_id VARCHAR(20)
 );
 
@@ -79,7 +78,7 @@ add CONSTRAINT car_fk   FOREIGN KEY(person_id) REFERENCES car (car_id);
 ALTER TABLE Citizen_house_car
 add CONSTRAINT  person_fk  FOREIGN KEY(citizen_name) REFERENCES citizen(person_id);
 ALTER TABLE Citizen_house_car
-add CONSTRAINT street_fk   FOREIGN KEY(street)  REFERENCES house(street)
+add CONSTRAINT street_fk   FOREIGN KEY(street)  REFERENCES house(street);
 
 
 
