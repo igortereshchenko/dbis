@@ -126,7 +126,6 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-
 SELECT distinct LOWER( vend_name) AS "vendor_name"
 FROM Vendors,ORDERITEMS,PRODUCTS
 WHERE VENDORS.vend_id=PRODUCTS.vend_id
