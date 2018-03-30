@@ -28,6 +28,9 @@ GRANT INSERT ANY TABLE TO dmytrenko;
 --Код відповідь:
 
 CREATE TABLE HUMAN(
+    human_age NUMBER(3) NOT NULL,
+    human_sex CHAR(1) NOT NULL,
+    human_country VARCHAR(20) NOT NULL,
     human_name VARCHAR(20) NOT NULL
 );
 
@@ -35,7 +38,10 @@ ALTER TABLE HUMAN
     ADD CONSTRAINT human_pk PRIMARY KEY (human_name);
     
 CREATE TABLE PHONE_TYPE(
-    phone_type_name VARCHAR(20) NOT NULL
+    phone_type_name VARCHAR(20) NOT NULL,
+    year_of_creation number(4) NOT NULL,
+    creator_name VARCHAR(20) NOT NULL,
+    country VARCHAR(20) NOT NULL
 );
 
 ALTER TABLE PHONE_TYPE
@@ -45,6 +51,7 @@ CREATE TABLE HUMAN_PHONE(
     human_name_fk VARCHAR(20) NOT NULL,
     phone_type_name_fk VARCHAR(20) NOT NULL,
     human_own_phone VARCHAR(20) NOT NULL
+    phone_type VARCHAR(20) NOT NULL
 );
 
 ALTER TABLE HUMAN_PHONE
@@ -75,7 +82,7 @@ GRANT SELECT ANY TABLE TO dmytrenko;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-PROJECT PRODUCTS WHERE PROD_ID IN(PROJECT PRODUCTS{PROD_ID} MINUS PROFECT ORDERITEMS{PROD_ID}) {MAX(PROD_PRICE)}}
+SELECT max(prod_price) FROM Products WHERE prod_id in (SELECT prod_id FROM Products MINUS SELECT prod_id FROM Orderitems )
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -87,11 +94,14 @@ PROJECT PRODUCTS WHERE PROD_ID IN(PROJECT PRODUCTS{PROD_ID} MINUS PROFECT ORDERI
 
 --Код відповідь:
 
-SELECT CUST_NAME AS Customer_name
-FROM CUSTOMERS, ORDERITEMS, ORDERS
-    WHERE ORDERS.CUST_ID = CUSTOMERS.CUST_ID
-    AND ORDERITEMS.ORDER_NUM = ORDERS.ORDER_NUM
-    AND ORDERITEMS.ITEM_PRICE in (Select max(ITEM_PRICE) From ORDERITEMS);
+RENAME(
+PROJECT
+CUSTOMERS TIMES ORDERITEMS TIMES ORDERS
+WHERE ORDERS.CUST_ID = CUSTOMERS.CUST_ID
+AND ORDERITEMS.ORDER_NUM = ORDERS.ORDER_NUM
+AND ORDERITEMS.item_price in(PROJECT ORDERITEMS{MAX(ORDERITEMS.item_price)})
+{CUST_NAME}
+)cust_name->Customer_name
 
 /*---------------------------------------------------------------------------
 c. 
@@ -101,4 +111,7 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-SELECT vend_name || ' ' || vend_country as vendor_name FROM Vendors WHERE vend_id in (SELECT vend_id FROM Vendors MINUS SELECT vend_id FROM Products )
+
+
+RENAME( PROJECT Vendors WHERE vend_id in (PROJECT Vendors{vend_id} MINUS PROJECT Products{vend_id} ) {vend_name || '_' || vend_country} )vend_name || '_' || vend_country->vendor_name
+
