@@ -11,6 +11,8 @@ CREATE USER galeta IDENTIFIED BY galeta
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
 
+ALTER USER galeta QUOTA 100M ON USERS;
+
 GRANT "CONNECT" TO galeta;
 GRANT SELECT ANY TABLE TO galeta;
 
@@ -26,6 +28,9 @@ GRANT SELECT ANY TABLE TO galeta;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+CREATE TABLE Hardware (
+  part VARCHAR2(20) NOT NULL;
+  
 ALTER TABLE Hardware
 ADD (
 part_name  VARCHAR2(30),
@@ -35,10 +40,23 @@ type VARCHAR2(30)
 
 CREATE TABLE Software (
   programs VARCHAR2(30) NOT NULL);
+  
+ ALTER TABLE Software
+ADD (
+img  VARCHAR2(30),
+size  NUMBER(10,2),
+name1 VARCHAR2(30)
+);
+  
 CREATE TABLE Computer (
   part_fk VARCHAR2(20) NOT NULL,
   programs_fk VARCHAR2(30) NOT NULL,
   name VARCHAR2(30));
+  
+ ALTER TABLE Computer
+ADD (
+color VARCHAR2(10)
+);
 
 ALTER TABLE Hardware ADD CONSTRAINT part_pk PRIMARY KEY (part);
 ALTER TABLE Software ADD CONSTRAINT programs_pk PRIMARY KEY (programs);
