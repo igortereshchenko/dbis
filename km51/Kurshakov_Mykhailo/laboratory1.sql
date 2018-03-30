@@ -15,7 +15,7 @@ ALTER USER Kurshakov QUOTA 100M ON USERS;
 
 GRANT "CONNECT" TO Kurshakov;
 
-GRANT INSERT ANY TABLES TO Kurshakov;
+GRANT INSERT ANY TABLE TO Kurshakov;
 
 
 
@@ -65,9 +65,9 @@ REFERENCE dance(dance_type);
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-GRANT CREATE ANY TABLES TO Kurshakov;
-GRANT SELECT ANY TABLES TO Kurshakov;
-GRANT UPDATE ANY TABLES TO Kurshakov;
+GRANT CREATE ANY TABLE TO Kurshakov;
+GRANT SELECT ANY TABLE TO Kurshakov;
+GRANT UPDATE ANY TABLE TO Kurshakov;
 
 
 /*---------------------------------------------------------------------------
@@ -79,9 +79,9 @@ GRANT UPDATE ANY TABLES TO Kurshakov;
 
 --Код відповідь:
 
-PROJECT
-(FROM ORDERITEMS)
-MAX(ITEM_PRICE);
+PROJECT (ORDERITEMS TIMES PRODUCTS 
+    WHERE ORDERITEMS.ITEM_PRICE = (PROJECT (ORDERITEMS) MAX(ITEM_PRICE)) 
+        AND PRODUCTS.PROD_ID = ORDERITEMS.PROD_ID); 
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -92,8 +92,8 @@ MAX(ITEM_PRICE);
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT MIN(TRIM(CUST_CONTACT)) as long_name
-FROM CUSTOMERS;
+SELECT CUST_CONTACT as "long_name" FROM CUSTOMERS
+    WHERE LENGTH(TRIM(CUST_CONTACT)) = (SELECT MIN(LENGTH(TRIM(CUST_CONTACT))) FROM CUSTOMERS);
 
 
 
@@ -108,8 +108,12 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-SELECT CUST_CONTACT||CUST_EMAIL as client_name
-FROM CUSTOMERS,ORDERS
+SELECT CUSTOMERS.CUST_CONTACT||CUSTOMERS.CUST_EMAIL AS "client_name"
+FROM CUSTOMERS
+WHERE 
+    (SELECT CUST_ID FROM CUSTOMERS
+    MINUS
+    SELECT DISTINCT CUST_ID FROM ORDERS) = CUSTOMERS.CUST_ID;
 
 ;
 
