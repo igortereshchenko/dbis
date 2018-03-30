@@ -26,8 +26,13 @@ GRANT SELECT ANY TABLE TO galeta;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE Hardware (
-  part VARCHAR2(20) NOT NULL);
+ALTER TABLE Hardware
+ADD (
+part_name  VARCHAR2(30),
+model  VARCHAR2(30),
+type VARCHAR2(30)
+);
+
 CREATE TABLE Software (
   programs VARCHAR2(30) NOT NULL);
 CREATE TABLE Computer (
