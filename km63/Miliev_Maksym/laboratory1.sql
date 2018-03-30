@@ -8,13 +8,14 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 create user milev
-IDENTIFIED 123,
-default tablespase "users",
-temporary tablespace "temp",
-qouta 100mb on "temp",
-grant connect,
-grant alter any table,
-grant delete any table;
+IDENTIFIED BY 123
+default tablespase "users"
+temporary tablespace "temp"
+qouta 100mb on "temp";
+
+Grant Connect TO milev;
+grant alter any table to milev;
+grant delete any table to milev;
 
 
 
@@ -57,9 +58,11 @@ CREATE TABLE fb_news_users
         
     );
     alter table fb_news_users
-        add constraint fb_n_u_pk primary key (new_id, user_id),
-        add constraint new_id_fk foreign key (new_id) referens fb_news,
-        add constraint user_id_fk foreign key (user_id) referens fb_users;
+  add constraint fb_n_u_pk primary key (new_id, user_id);
+alter table fb_news_users
+  add constraint new_id_fk foreign key (new_id) references  fb_news (new_id);
+alter table fb_news_users
+  add constraint user_id_fk foreign key (user_id) references  fb_users (user_id);
         
 
 
@@ -82,11 +85,9 @@ CREATE TABLE fb_news_users
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-alter user milev
-    grant create any table,
-    grant insert any table,
-    grant select any table;
-
+grant create any table to milev;
+grant insert any table to milev;
+grant select any table to milev;
 
 
 
