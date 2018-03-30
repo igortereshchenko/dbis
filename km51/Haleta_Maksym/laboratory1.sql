@@ -8,7 +8,7 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 CREATE USER galeta IDENTIFIED BY galeta
-DEFAULT TABLESPACE ""
+DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
 
 GRANT "CONNECT" TO galeta;
