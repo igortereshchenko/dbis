@@ -7,12 +7,13 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 CREATE USER Servatmand INDENTIFIED BY Servatmand
-DEFAULT TABLESPACE USERS
-TEMPORARY TABLESPACE TEMP
+DEFAULT TABLESPACE "USERS" TEMPORARY TABLESPACE "TEMP";
 
-ALTER Servatmand QUOTA 100 MB ON USERS
- GRANT "CONNECT" TO Servatmand
-GRANT SELECT ANY TABLE TO USER
+ALTER USER Servatmand QUOTA 100M ON USERS;
+GRANT "CONNECT" TO Servatmand; 
+GRANT SELECT ANY TABLE TO Servatmand;
+
+
 
 
 
@@ -34,7 +35,7 @@ CREATE table Citizen(
 	citizen_name VARCHAR(30)
 	phone_number VARCHAR(13)
 	person_id NUMBER(12)
-	age NUMBER(3).
+	age NUMBER(3)
 );
 
 CREATE table house (
@@ -60,26 +61,23 @@ create table Citizen_house_car(
 );
 
 ALTER TABLE Citizen
-    add CONSTRAINT citizen_pk primary key (person_id, citizen_name)
+    add CONSTRAINT citizen_pk primary key (person_id, citizen_name);
 
 ALTER TABLE House
-    add CONSTRAINT house_pk primary key (street)
+    add CONSTRAINT house_pk primary key (street);
 
 ALTER TABLE Car
-    add CONSTRAINT car_pk primary key (car_id)
+    add CONSTRAINT car_pk primary key (car_id);
 
 
 ALTER TABLE Citizen_house_car
-    add CONSTRAINT Citizen_house_car_pk primary key (person_id, citizen_name, street)
-ALTER TABLE person_auto
-    add CONSTRAINT number_pk primary key (number_auto);
-ALTER TABLE person_house_auto
-+    add CONSTRAINT person_house_auto_pk primary key (adress_fk, number_auto_fk);
+    add CONSTRAINT Citizen_house_car_pk primary key (person_id, citizen_name, street);
+
 
 ALTER TABLE Citizen_house_car
-add CONSTRAINT car_fk   FOREIGN KEY(person_id) REFERENCES car (car_id)
+add CONSTRAINT car_fk   FOREIGN KEY(person_id) REFERENCES car (car_id);
 ALTER TABLE Citizen_house_car
-add CONSTRAINT  person_fk  FOREIGN KEY(citizen_name) REFERENCES citizen(person_id)
+add CONSTRAINT  person_fk  FOREIGN KEY(citizen_name) REFERENCES citizen(person_id);
 ALTER TABLE Citizen_house_car
 add CONSTRAINT street_fk   FOREIGN KEY(street)  REFERENCES house(street)
 
