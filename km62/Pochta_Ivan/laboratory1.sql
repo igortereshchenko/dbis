@@ -11,7 +11,7 @@
 CREATE USER pochta IDENTIFIED BY johnp
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
-
+Alter user pochta QUota 100M on "USERS"; --додано в якості власного code review
 GRANT "CONNECT" TO pochta;
 GRANT ALTER ANY TABLE TO pochta;
 GRANT INSERT ANY TABLE TO pochta;
