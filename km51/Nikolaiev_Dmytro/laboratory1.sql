@@ -9,7 +9,7 @@
 --Код відповідь:
 
 Create User Nikolaev identified by nikolaev;
-Grant CREATE ANY TABLE to Nikoalev;
+Grant CREATE ANY TABLE to Nikolaev;
 Create Role "Connect";
 Grant "Connect" to Nikolaev;
 
@@ -30,11 +30,11 @@ Grant "Connect" to Nikolaev;
 --Код відповідь:
 
 CREATE table humans (
-human_name varchar2 NOT NULL
+human_name char NOT NULL,  timbre varchar2(15) NOT NULL, age int NOT NULL
 );
 
 CREATE table songs (
-song_name varchar2 NOT NULL
+song_name char NOT NULL, song_performer varchar2(30) NOT NULL
 );
 
 ALTER TABLE humans 
@@ -43,6 +43,17 @@ ADD Constraint human_pk Primary key (human_name);
 Alter table songs 
 ADD Constraint song_pk Primary Key (song_name);
 
+CREATE TABLE SONG_HUMAN
+(human_name_fk CHAR(30) NOT NULL,
+song_fk CHAR(30) NOT NULL,
+lines_amount NUMBER(2) NOT NULL);
+ALTER TABLE SONG_HUMAN
+ADD CONSTRAINT human_song_pk PRIMARY KEY (human_name_fk, song_fk);
+
+ALTER TABLE SONG_HUMAN
+ADD CONSTRAINT human_fk FOREIGN KEY (human_name_fk) REFERENCES humans (human_name);
+ALTER TABLE SONG_HUMAN 
+ADD CONSTRAINT songname_fk FOREIGN KEY (song_fk) REFERENCES songs (song_name);
 
 
 
@@ -67,7 +78,9 @@ ADD Constraint song_pk Primary Key (song_name);
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-GRANT Create Any table, select any table, insert any table to Nikoalev;
+GRANT CREATE Any table to  Nikolaev
+GRANT SELECT any table to Nikolaev
+GRANT INSERT any table to Nikoalev;
 
 
 
@@ -82,9 +95,12 @@ GRANT Create Any table, select any table, insert any table to Nikoalev;
 
 --Код відповідь:
 
-SELECT Count(prod_price)
-FROM products 
-where prod.price=Max(prod.price);
+Select sum(quantity) FROM ORDERITEMS
+WHERE ITEM_PRICE = 
+(Select Max(ITEM_PRICE) FROM ORDERITEMS);
+
+
+
 
 
 
@@ -107,9 +123,11 @@ where prod.price=Max(prod.price);
 
 --Код відповідь:
 
-Select DISTINCT (prod_id)
-From products
-where prod_id=Min(prod_id);
+Select prod_id, length(TRIM(prod_name)) as "name_length"
+FROM PRODUCTS
+WHERE length(trim(prod_name)) =
+(Select min(length(trim(prod_name))) FROM PRODUCTS)
+;
 
 
 
@@ -131,9 +149,7 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-Select UPPER(vend_name, vend_id) as vendor_name From vendors
-where Exists (
-Select Distinct ( prod_id)
-From  products
-where vend_id=prod_id
-and vend_id=vend_name);
+PROJECT (vendors) {upper(vendors.vend_name)}
+where vendors.vend_name not in (
+    PROJECT (vendors TIMES products) {vendors.vend_name}
+    where vendors.vend_id=products.vend_id)
