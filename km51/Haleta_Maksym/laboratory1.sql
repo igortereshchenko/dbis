@@ -127,3 +127,12 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
+SELECT distinct LOWER( vend_name) AS "vendor_name"
+FROM Vendors,ORDERITEMS,PRODUCTS
+WHERE VENDORS.vend_id=PRODUCTS.vend_id
+minus
+SELECT distinct LOWER( vend_name) AS "vendor_name"
+FROM Vendors,ORDERITEMS,PRODUCTS
+WHERE ORDERITEMS.prod_id=PRODUCTS.prod_id
+and
+VENDORS.vend_id=PRODUCTS.vend_id;
