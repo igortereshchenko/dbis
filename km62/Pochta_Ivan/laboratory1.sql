@@ -100,8 +100,22 @@ GRANT INSERT ANY TABLE to pochta;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-
-
+--it's impossible without GROUP_BY
+--It's my code for this task with group by:
+SELECT prod_name 
+FROM Products
+where Products.prod_id in (
+    SELECT prod_id 
+    FROM(
+        SELECT SUM(OrderItems.quantity) as quantity, Products.prod_id as prod_id
+        FROM Products, Orders, OrderItems
+        WHERE Products.prod_id = OrderItems.prod_id
+        AND Orders.order_num = OrderItems.order_num
+        GROUP BY Products.prod_id
+        ORDER BY quantity
+    )
+    WHERE ROWNUM=1
+);
 
 
 
@@ -124,13 +138,12 @@ GRANT INSERT ANY TABLE to pochta;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT COUNT(*)
-FROM (
-  Select DISTINCt OrderItems.prod_id
-  FROM OrderItems, Orders, Customers
+SELECT SUM(quantity) FROM ( 
+  Select OrderItems.quantity 
+  FROM OrderItems, Orders, Customers 
   WHERE( OrderItems.order_num = Orders.order_num)
-  AND ( Orders.cust_id = Customers.cust_id)
-  AND ( Customers.cust_country = 'USA')
+  AND ( Orders.cust_id = Customers.cust_id) 
+  AND ( Customers.cust_country = 'USA') 
 );
 
 
@@ -173,10 +186,11 @@ FROM (
 
 --CODDA:
 PROJECT (
-( PROJECT(Vendors){vend_name, vend_id}) 
+  PROJECT(Vendors){vend_name, vend_id}
   MINUS 
-  Project( (Vendors TIMES OrderItems) TIMES (Orders TIMES Products) ){vend_name, Vendors.vend_id} WHERE (OrderItems.order_num = Orders.order_num
+  Project( ((Vendors TIMES OrderItems) TIMES (Orders TIMES Products)) 
+  WHERE (OrderItems.order_num = Orders.order_num
   AND OrderItems.prod_id = Products.prod_id
-  AND Products.vend_id = Vendors.vend_id) 
-) {vend_name };
+  AND Products.vend_id = Vendors.vend_id) ){vend_name, Vendors.vend_id}
+){vend_name };
 
