@@ -10,7 +10,7 @@ CREATE USER Beshta IDENTIFIED BY beshta
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
 
-ALTER USER Beshta QUOTA 100M ON USER;
+ALTER USER Beshta QUOTA 100M ON USERS;
 
 GRANT "CONNECT" TO BESHTA;
 
@@ -25,28 +25,83 @@ GRANT ALTER ANY TABLE TO Beshta
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE TABLE BOOK(
-book_name VARCHAR(30) NOT NULL
+CREATE TABLE BOOKS(
+book_name VARCHAR(20),
+book_id NUMBER(6) NOT NULL
 );
-
-ALTER TABLE BOOK ADD CONSTRAINT pk_book_name PRIMARY KEY(book_name);
 
 CREATE TABLE BOOK_PAGE(
-book_page NUMBER (3) NOT NULL
+page_number NUMBER(6) NOT NULL,
+fk_book_id NUMBER(6) NOT NULL,
+page_id NUMBER(6) NOT NULL
 );
 
-ALTER TABLE BOOK_PAGE ADD CONSTRAINT pk_book_page PRYMARY KEY (book_page);
-
-CREATE TABLE PAGE_ROW(
-book_name_fk VARCHAR(30) NOT NULL,
-book_page_fk NUMBER (3) NOT NULL,
-page_row VARCHAR2(500) NOT NULL
+CREATE TABLE BOOK_ROW(
+page_row VARCHAR2(200),
+fk_page_id NUMBER(6) NOT NULL
 );
 
-ALTER TABLE PAGE_ROW ADD CONSTRAINT book_name_fk FOREIGN KEY (book_name) REFERENCES BOOK (book_name);
+ALTER TABLE  BOOKS
+  ADD CONSTRAINT book_id_pk PRIMARY KEY (book_id); 
+  
+ALTER TABLE  BOOK_PAGE
+  ADD CONSTRAINT page_id_pk PRIMARY KEY (page_id);
+  
+ALTER TABLE BOOK_PAGE
+  ADD CONSTRAINT book_id_fk FOREIGN KEY (fk_book_id)
+  REFERENCES BOOKS (book_id);
+  
+ALTER TABLE BOOK_ROW
+  ADD CONSTRAINT fk_page_id FOREIGN KEY (fk_page_id)
+  REFERENCES BOOK_PAGE (page_id);
+  
+/* ---------------------------------------------------------------------------
+3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць,
+внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT.
+Згенерувати базу даних використовуючи код з теки OracleScript та виконати запити:
 
-ALTER TABLE PAGE_ROW ADD CONSTRAINT book_page_fk FOREIGN KEY (book_name) REFERENCES BOOK (book_page);
+---------------------------------------------------------------------------*/
+--Код відповідь:
 
-ALTER TABLE PAGE_ROW ADD CONSTRAINT page_row_pk PRIMARY KEY (row_page);
+/---------------------------------------------------------------------------
+3.a.
+Як звуть покупця, що купив найдорожчий товар.
+Виконати завдання в Алгебрі Кодда.
+4 бали
+---------------------------------------------------------------------------/
+
+--Код відповідь:
+SELECT CUST_NAME FROM CUSTOMERS
+  WHERE CUST_ID IN (SELECT CUST_ID FROM ORDERS
+    WHERE ORDER_NUM IN (SELECT ORDER_NUM FROM ORDERITEMS
+      WHERE PROD_ID IN (SELECT PROD_ID FROM PRODUCTS
+        WHERE PROD_PRICE IN (SELECT MAX(PROD_PRICE)FROM PRODUCTS))));
+
+/*---------------------------------------------------------------------------
+3.b.
+Яка країна, у якій живуть покупці має найкоротшу назву?
+Виконати завдання в SQL.
+4 бали
+
+---------------------------------------------------------------------------*/
+
+--Код відповідь:
+
+PROJECT CUST_COUNTRY {Customers}
+WHERE LEN(CUST_COUNTRY) = MIN(
+PROJECT LEN(CUST_COUNTRY) {Customers});
+
+/*---------------------------------------------------------------------------
+c.
+Вивести країну та пошту покупця, як єдине поле client_name, для тих покупців, що мають замовлення, але воно порожнє (нема orderitems).
+Виконати завдання в SQL.
+4 бали
+
+---------------------------------------------------------------------------*/
+--Код відповідь:
+ PROJECT CUST_COUNTRY,CUST_EMAIL {Customers}
+WHERE CUST_ID IN(
+(PROJECT CUST_ID {Orders TIMES Orderitems}
+WHERE Orders.ORDER_NUM = Orderitems.ORDER_NUM AND QUANITY=0); 
   
 -- BY Beshta_Vladyslav
