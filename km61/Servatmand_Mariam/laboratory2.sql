@@ -33,7 +33,7 @@ customers.cust_id,
 
 JOIN ORDERS 
 IN orders.cust_id=customers_cust_id 
-JOIN OrderItems 
+ORDERS JOIN OrderItems 
 orders.order_num=orderItems.order_num 
 JOIN CUSTOMERS
 where customers.cust_id=orders.cust_id
