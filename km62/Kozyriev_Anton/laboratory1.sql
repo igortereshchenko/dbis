@@ -41,28 +41,31 @@ GRANT INSERT ANY TABLE TO kozyrev;
 
 CREATE TABLE Customer
 (
-  customer_name VARCHAR(30) NOT NULL
+    cust_id VARCHAR(30) NOT NULL,
+    customer_name VARCHAR(30) NOT NULL
 );
 
-ALTER TABLE Customer ADD CONSTRAINT customer_name PRIMARY KEY;
+ALTER TABLE Customer ADD CONSTRAINT CustomerPK PRIMARY KEY(cust_id);
+ALTER TABLE PhoneBrand ADD CONSTRAINT PhoneBrandFK FOREIGN KEY(phone_id) REFERENCES Phone(phone_id);
 
 CREATE TABLE Phone
 (
-  phone_model VARCHAR(30) NOT NULL
+    phone_id VARCHAR(30) NOT NULL, 
+    phone_model VARCHAR(30) NULL,
+    cust_id VARCHAR(30) NOT NULL
 );
 
-ALTER TABLE Phone ADD CONSTRAINT phone_model PRIMARY KEY;
+ALTER TABLE Phone ADD CONSTRAINT PhonePK PRIMARY KEY(phone_id);
+ALTER TABLE Phone ADD CONSTRAINT PhoneFK FOREIGN KEY(cust_id) REFERENCES Customer(cust_id);
 
-CREATE TABLE Phone_brand
+CREATE TABLE PhoneBrand
 (
-  customer_name VARCHAR(30) NOT NULL,
-  phone_model VARCHAR(30) NOT NULL,
-  phone_brand VARCHAR(30) NOT NULL
+    phone_brand VARCHAR(30) NOT NULL,
+    phone_id VARCHAR(30) NOT NULL
 );
 
-ALTER TABLE Phone ADD CONSTRAINT phone_model PRIMARY KEY;
-ALTER TABLE Phone ADD CONSTRAINT customer_name_fk FOREIGN KEY (Customer) references customer_name;
-ALTER TABLE Phone ADD CONSTRAINT phone_model_fk FOREIGN KEY (Phone) references phone_model;
+ALTER TABLE PhoneBrand ADD CONSTRAINT PhoneBrandPK PRIMARY KEY(phone_brand);
+ALTER TABLE PhoneBrand ADD CONSTRAINT PhoneBrandFK FOREIGN KEY(phone_id) REFERENCES Phone(phone_id)
 
 
 
@@ -89,21 +92,8 @@ GRANT SELECT ANY TABLE TO kozyrev;
 
 --Код відповідь:
 
-
-
-
-SELECT CUST_NAME AS "Customer_name"
-FROM 
-(
-  SELECT CUST_NAME
-  FROM Customers, OrderItems, Orders
-  WHERE Orderitems.ITEM_PRICE = MAX(ITEM_PRICE)
-  AND Customers.CUST_ID = Oreders.CUST_ID
-  AND Oreders.ORDER_NUM = Oreders.ORDER_NUM
-);
-
-
-
+SELECT max(Products.prod_price) FROM Products
+WHERE NOT exists(SELECT * FROM OrderItems WHERE Products.prod_id = OrderItems.prod_id);
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -115,15 +105,15 @@ FROM
 
 --Код відповідь:
 
-SELECT CUST_NAME AS "Customer_name"
-FROM 
+SELECT "Customer_name"
+FROM
 (
-  SELECT CUST_NAME
-  FROM Customers, OrderItems, Orders
-  WHERE Orderitems.ITEM_PRICE = MAX(ITEM_PRICE)
-  AND Customers.CUST_ID = Oreders.CUST_ID
-  AND Oreders.ORDER_NUM = Oreders.ORDER_NUM
-);
+SELECT Customers.cust_name as "Customer_name", ORDERITEMS.ITEM_PRICE as "Price"
+FROM CUSTOMERS, ORDERS, ORDERITEMS
+WHERE CUSTOMERS.CUST_ID = ORDERS.CUST_ID
+AND ORDERITEMS.ORDER_NUM = ORDERS.ORDER_NUM
+)
+WHERE "Price" = (SELECT MAX(OrderItems.ITEM_PRICE) FROM ORDERITEMS);
 
 
 /*---------------------------------------------------------------------------
@@ -136,6 +126,7 @@ c.
 --Код відповідь:
 
 
-
+SELECT trim(VENDORS.vend_name) || ';  ' || trim(VENDORS.VEND_COUNTRY) as vendor_name
+FROM VENDORS WHERE NOT EXISTS(SELECT * FROM PRODUCTS WHERE Products.vend_id = Vendors.vend_id);
 
 
