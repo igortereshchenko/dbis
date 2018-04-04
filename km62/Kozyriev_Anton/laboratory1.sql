@@ -25,7 +25,7 @@ GRANT "CONNECT" TO kozyrev;
 
 --Grants
 
-GRANT DROP ANY TABLE TO kozyrev
+GRANT DELETE ANY TABLE TO kozyrev
 GRANT INSERT ANY TABLE TO kozyrev;
 
 
