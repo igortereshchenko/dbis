@@ -13,7 +13,7 @@ GROUP BY products.prod_id, vendors.vend_id
 HAVING some_name IN
 (
   SELECT order_num, (DISTINCT prod_id) FROM orderitems
-  WHERE order_num > 3
+  WHERE order_num > 3));
 
 
 
