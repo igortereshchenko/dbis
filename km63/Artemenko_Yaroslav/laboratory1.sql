@@ -84,7 +84,7 @@ ALTER TABLE people_acc
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 GRANT SELECT ANY TABLE to artemenko;
-GRANT UPDATE ANY TABLE to artemenko;
+GRANT INSERT ANY TABLE to artemenko;
 
 
 
@@ -100,10 +100,13 @@ GRANT UPDATE ANY TABLE to artemenko;
 
 --Код відповідь:
 
-
-SELECT cust_name
-FROM customers,products
-WHERE 
+Project CUSTOMERS {cust_name}
+WHERE cust_id in (
+Project ORDERS {cust_id}
+WHERE order_num in(
+Project ORDERITEMS {order_num}
+WHERE item_price in (
+Project ORDERITEMS {MIN(item_price)})));
 
 
 
@@ -124,9 +127,10 @@ WHERE
 --Код відповідь:
 
 
-SELECT cust_name, cust_email as "email"
-FROM customers
-WHERE email = MIN(cust_email);
+Project CUSTOMERS {cust_name}
+WHERE length(trim(cust_email)) in (
+Project CUSTOMERS {min(length(trim(cust_email)))}
+WHERE cust_email is not NULL);
 
 
 
@@ -147,4 +151,11 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-
+SELECT vendors.vend_name
+FROM
+products, vendors
+MINUS
+SELECT vendors.vend_name
+FROM
+products, vendors
+WHERE vendors.vend_id = products.vend_id ;
