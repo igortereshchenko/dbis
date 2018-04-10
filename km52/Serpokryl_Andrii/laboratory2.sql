@@ -7,6 +7,7 @@
 --Код відповідь:
 
 
+
 select orderitems.order_num,vendors.vend_id
 from orderitems,products,vendors
 minus
