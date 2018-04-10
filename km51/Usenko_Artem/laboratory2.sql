@@ -1,6 +1,7 @@
 -- LABORATORY WORK 2
 -- BY Usenko_Artem
 /*---------------------------------------------------------------------------
+/*---------------------------------------------------------------------------
 1. Вивести ключ покупця, кількість його замовлень та загальну вартість куплених ним товарів.
 
 ---------------------------------------------------------------------------*/
@@ -23,9 +24,13 @@ FROM
 
 --Код відповідь:
 
-Select ORDERITEMS.prod_id ,  SUM(ORDERITEMS.item_price*ORDERITEMS.quantity) 
+Select ORDERITEMS.prod_id
 FROM 
       ORDERITEMS  JOIN ORDERS ON ORDERITEMS.ORDER_NUM = ORDERS.ORDER_NUM
                   JOIN CUSTOMERS ON CUSTOMERS.CUST_ID = ORDERS.CUST_ID AND CUSTOMERS.CUST_COUNTRY = 'USA'
-GROUP BY ORDERITEMS.prod_id;
-    
+GROUP BY ORDERITEMS.prod_id 
+HAVING  SUM(ORDERITEMS.item_price*ORDERITEMS.quantity) in 
+(Select MIN(SUM(ORDERITEMS.item_price*ORDERITEMS.quantity))
+    FROM ORDERITEMS 
+    GROUP BY ORDERITEMS.ORDER_NUM);
+
