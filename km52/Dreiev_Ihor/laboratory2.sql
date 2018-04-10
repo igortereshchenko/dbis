@@ -7,6 +7,8 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
+
+
 select ORDER_NUM, VEND_ID from
 OrderItems full outer join Products
 on  OrderItems.PROD_ID = Products.PROD_ID 
