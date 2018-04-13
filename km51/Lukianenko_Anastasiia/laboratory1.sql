@@ -21,39 +21,55 @@ GRANT INSERT ANY TABLE TO alukyanenko;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE HUMAN(
-HUMAN_NAME VARCHAR(30) NOT NULL
+
+CREATE TABLE USERS(
+EMAIL VARCHAR(30) NOT NULL,
+USER_NAME VARCHAR(30) NULL,
+USER_LASTNAME VARCHAR(30) NULL,
+SEX VARCHAR(30) NULL
 );
-ALTER TABLE HUMAN
-    ADD CONSTRAINT HUMAN_PK PRIMARY KEY (HUMAN_NAME);
-    
+
+ALTER TABLE USERS
+    ADD CONSTRAINT USER_PK PRIMARY KEY (EMAIL);
+
 CREATE TABLE MUSIC(
-MUSIC_NAME VARCHAR(30) NOT NULL
+MUSIC_NAME VARCHAR(30) NOT NULL,
+GENRE VARCHAR(30) NULL,
+AUTHOR VARCHAR(30) NOT NULL,
+DANCE_LEVEL NUMBER(1,0) NULL
 );
+
 ALTER TABLE MUSIC
-    ADD CONSTRAINT MUSIC_PK PRIMARY KEY (MUSIC_NAME);
+    ADD CONSTRAINT MUSIC_PK PRIMARY KEY (MUSIC_NAME, AUTHOR);
 
 CREATE TABLE PLAYLIST(
+EMAIL_FK VARCHAR(30) NOT NULL,
 MUSIC_NAME_FK VARCHAR(30) NOT NULL,
-HUMAN_NAME_FK VARCHAR(30) NOT NULL
+AUTHOR_FK VARCHAR(30) NOT NULL,
+PLAYLIST_NAME VARCHAR(30) NULL
 );
-ALTER TABLE PLAYLIST
-    ADD CONSTRAINT PLAYLIST_PK PRIMARY KEY (MUSIC_NAME_FK, HUMAN_NAME_FK);
 
 ALTER TABLE PLAYLIST
-    ADD CONSTRAINT PLAYLIST_FK FOREIGN KEY MUSIC_NAME_FK REFERENCES MUSIC(MUSIC_NAME);
+    ADD CONSTRAINT PLAYLIST_PK PRIMARY KEY (EMAIL_FK, MUSIC_NAME_FK, AUTHOR_FK);
 
+CREATE TABLE USER_CONTACTS(
+EMAIL_FK VARCHAR(30) NOT NULL,
+CONTACT_EMAIL VARCHAR(30) NOT NULL,
+CONTACT_NAME VARCHAR(30) NULL,
+DATE_ADDED DATE NULL
+);
 
+ALTER TABLE USER_CONTACTS
+    ADD CONSTRAINT USER_CONTACTS_PK PRIMARY KEY (EMAIL_FK, CONTACT_EMAIL);
 
+ALTER TABLE PLAYLIST
+    ADD CONSTRAINT PLAYLIST_FK FOREIGN KEY (MUSIC_NAME_FK, AUTHOR_FK) REFERENCES MUSIC(MUSIC_NAME, AUTHOR);
+ALTER TABLE PLAYLIST
+    ADD CONSTRAINT PLAYLIST_USER_FK FOREIGN KEY (EMAIL_FK) REFERENCES USERS(EMAIL);
 
+ALTER TABLE USER_CONTACTS
+    ADD CONSTRAINT USER_CONTACTS_FK FOREIGN KEY (EMAIL_FK) REFERENCES USERS(EMAIL);
 
-
-
-
-
-
-
-  
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
@@ -63,10 +79,8 @@ ALTER TABLE PLAYLIST
 --Код відповідь:
 
 GRANT CREATE ANY TABLE TO alukyanenko;
-
-
-
-
+GRANT INSERT ANY TABLE TO alukyanenko;
+GRANT SELECT ANY TABLE TO alukyanenko;
 
 /*---------------------------------------------------------------------------
 3.a. 
@@ -77,14 +91,14 @@ GRANT CREATE ANY TABLE TO alukyanenko;
 
 --Код відповідь:
 
-PROJECT DISCTINCT(ORDERITEMS, PRODUCTS)
-WHERE ORDERITEMS.ITEM_PRICE = MAX(ITEM_PRICE)
-    AND ORDERITEMS.PROD_ID = PRODUCTS.PROD_ID
-{PRODUCTS.PROD_NAME}
-
-
-
-
+PROJECT(orderitems TIMES products)
+WHERE
+    orderitems.item_price = (
+        PROJECT(orderitems)
+        {MAX(item_price)}
+    )
+    AND   orderitems.prod_id = products.prod_id
+{products.prod_name}
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -96,20 +110,17 @@ WHERE ORDERITEMS.ITEM_PRICE = MAX(ITEM_PRICE)
 
 --Код відповідь:
 
-SELECT DISTINCT 
-    MIN(LENGTH(CUST_NAME)) AS "long_name"
-FROM CUSTOMERS;
-
-
-
-
-
-
-
-
-
-
-
+SELECT DISTINCT
+    cust_name AS "long_name"
+FROM
+    customers
+WHERE
+    length(TRIM(customers.cust_name) ) IN (
+        SELECT
+            MIN(length(TRIM(customers.cust_name) ) )
+        FROM
+            customers
+    );
 
 /*---------------------------------------------------------------------------
 c. 
@@ -120,8 +131,16 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-SELECT DISTINCT
-    TRIM(CUST_NAME) || ' ' ||
-    TRIM(CUST_EMAIL) AS "client_name"
-FROM CUSTOMERS, ORDERS
-WHERE ORDERS.CUST_ID != CUSTOMERS.CUST_ID;
+SELECT
+    TRIM(cust_name)
+    || ' '
+    || TRIM(cust_email) AS "client_name"
+FROM
+    customers
+WHERE
+    customers.cust_id NOT IN (
+        SELECT
+            cust_id
+        FROM
+            orders
+    );
