@@ -69,6 +69,34 @@ ALTER TABLE PLAYLIST
 
 ALTER TABLE USER_CONTACTS
     ADD CONSTRAINT USER_CONTACTS_FK FOREIGN KEY (EMAIL_FK) REFERENCES USERS(EMAIL);
+    
+INSERT INTO USERS(EMAIL, USER_NAME, USER_LASTNAME, SEX)
+VALUES('sales@villagetoys.com', 'John', 'Smith', 'male');
+INSERT INTO USERS(EMAIL, USER_NAME, USER_LASTNAME, SEX)
+VALUES('jjones@fun4all.com', 'Jim', 'Jones', 'male');
+INSERT INTO USERS(EMAIL, USER_NAME, USER_LASTNAME, SEX)
+VALUES('dstephens@fun4all.com', 'Denise', 'Stephens', 'male');
+
+INSERT INTO USER_CONTACTS(EMAIL_FK, CONTACT_EMAIL, CONTACT_NAME, DATE_ADDED)
+VALUES('sales@villagetoys.com', 'jjones@fun4all.com', 'Jim', TO_DATE('2017-02-08', 'yyyy-mm-dd'));
+INSERT INTO USER_CONTACTS(EMAIL_FK, CONTACT_EMAIL, CONTACT_NAME, DATE_ADDED)
+VALUES('jjones@fun4all.com', 'sales@villagetoys.com', 'John', TO_DATE('2017-02-08', 'yyyy-mm-dd'));
+INSERT INTO USER_CONTACTS(EMAIL_FK, CONTACT_EMAIL, CONTACT_NAME, DATE_ADDED)
+VALUES('dstephens@fun4all.com', 'vanessa_paradi@gmail.com', 'Vanessa', TO_DATE('2000-05-30', 'yyyy-mm-dd'));
+
+INSERT INTO MUSIC(MUSIC_NAME, GENRE, AUTHOR, DANCE_LEVEL)
+VALUES('Its my life', 'rock', 'Bon Jovi', 5);
+INSERT INTO MUSIC(MUSIC_NAME, GENRE, AUTHOR, DANCE_LEVEL)
+VALUES('Summertime sadness', 'pop', 'Lana Del Rey', 3);
+INSERT INTO MUSIC(MUSIC_NAME, GENRE, AUTHOR, DANCE_LEVEL)
+VALUES('Desposito', 'pop', 'Louis Fonsie', 9);
+
+INSERT INTO PLAYLIST(EMAIL_FK, MUSIC_NAME_FK, AUTHOR_FK, PLAYLIST_NAME)
+VALUES('jjones@fun4all.com', 'Its my life', 'Bon Jovi', 'ROCK YOUR BODY');
+INSERT INTO PLAYLIST(EMAIL_FK, MUSIC_NAME_FK, AUTHOR_FK, PLAYLIST_NAME)
+VALUES('sales@villagetoys.com', 'Desposito', 'Louis Fonsie', 'Lets dance!');
+INSERT INTO PLAYLIST(EMAIL_FK, MUSIC_NAME_FK, AUTHOR_FK, PLAYLIST_NAME)
+VALUES('dstephens@fun4all.com', 'Desposito', 'Louis Fonsie', 'Spanish songs');
 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
