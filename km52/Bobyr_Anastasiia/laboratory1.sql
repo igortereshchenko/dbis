@@ -16,7 +16,7 @@ Quota unlimited on Users;
 
 grant CONNECT to Bobyr;
 
-grant drop any table to Bobyr;
+grant delete any table to Bobyr;
 
 
 /*---------------------------------------------------------------------------
@@ -87,7 +87,7 @@ alter table human_card add constraint card_fk foreign key (card_id_fk) reference
 
 
 grant create any table to Bobyr;
-grant alter any table to Bobyr;
+grant insert any table to Bobyr;
 grant select any table to Bobyr;
 
 
@@ -104,17 +104,14 @@ grant select any table to Bobyr;
 
 
 
-project
-(project
-
-(vendors times products orderitems 
-where vendors.VEND_ID = products.VEND_ID and PRODUCTS.PROD_ID = ORDERITEMS.PROD_ID)
- 
-vend_name, max(ITEM_PRICE) 
-)
-max(ITEM_PRICE) 
-
-rename max(ITEM_PRICE) max_item_price
+PROJECT (vendors WHERE vendors.vend_id IN (
+PROJECT (products WHERE products.prod_id IN (
+PROJECT (orderitems WHERE orderitems.item_price IN (
+PROJECT (orderitems) 
+{max(orderitems.item_price)})
+) {orderitems.prod_id})
+) {products.vend_id})
+) {vendors.vend_name}
 
 
 
@@ -136,9 +133,11 @@ rename max(ITEM_PRICE) max_item_price
 
 
 
-
-
-
+select customers.cust_name as "long_name"
+from customers 
+where len(trim(customers.cust_name)) in
+(select max(len(trim(customers.cust_name)))
+from customers);
 
 
 
@@ -156,7 +155,7 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-select lower(vend_name) as "vendor_name"
+select distinct lower(vend_name) as "vendor_name"
     from VENDORS, PRODUCTS, ORDERITEMS
     where vendors.VEND_ID = products.VEND_ID and PRODUCTS.PROD_ID = ORDERITEMS.PROD_ID ;
     
