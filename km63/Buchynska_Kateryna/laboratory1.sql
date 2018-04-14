@@ -8,16 +8,16 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE USER buchynska IDENTIFIED BY buchynska;
-DEFAULT TABLESPACE USER;
+CREATE USER buchynska IDENTIFIED BY buchynska
+DEFAULT TABLESPACE "USERS" ;
 
 
 GRANT SELECT ANY TABLE to buchynska;
 GRANT UPDATE ANY TABLE to buchynska;
 GRANT CREATE TABLE to buchynska;
 
-GRANT CONNECT to buchynska;
-QUOTA 100M to buchynska; 
+GRANT 'CONNECT' to buchynska;
+ALTER USER buchynska QUOTA 100M ON USERS;
 
 
 
@@ -40,37 +40,83 @@ QUOTA 100M to buchynska;
 
 
 
-CREATE CREATE TABLE House
+
+drop table Street cascade constraints;
+
+/*==============================================================*/
+/* Table: Street                                                */
+/*==============================================================*/
+create table Street 
 (
-    house_address VARCHAR2(15)
+   street_name          VARCHAR2(30)         not null,
+   street_area          VARCHAR2(30)         not null,
+   street_length_in_km        INTEGER, 
+   quantity_of_houses   INTEGER              not null
+ ,
+   constraint PK_STREET primary key (street_name, street_area)
 );
 
-CREATE TABLE Room 
+ALTER TABLE Street ADD constraint quantity_house_check CHECK ( quantity_of_houses BETWEEN 10 ANd 999) ;
+
+INSERT INTO Street VALUES ('Lobanovskogo','Solomianskui', '13', '125')  ;
+INSERT INTO Street VALUES ('Asatanskogo','Obolon', '78', '423')  ;
+INSERT INTO Street VALUES ('Naykova','Solomianskui', '63', '155')  ;
+
+drop table House cascade constraints;
+
+/*==============================================================*/
+/* Table: House                                                 */
+/*==============================================================*/
+create table House 
 (
-    room_number INT (10);
+   house_street         VARCHAR2(30)         not null,
+   house_number         INTEGER              not null,
+   number_of_floors     INTEGER              not null,
+   number_of_entrances  INTEGER              not null,
+   constraint PK_HOUSE primary key (house_street, house_number)
+);
+  ALTER TABLE House ADD constraint house_number_check CHECK ( house_number BETWEEN 1 ANd 999) ;
+  
+  INSERT INTO House VALUES ('Lobanovskogo',123 , 5, 2)  ;
+  INSERT INTO House VALUES ('Asatanskogo',17, 5,1)  ;
+  INSERT INTO House  VALUES ('Mukylina ',169 , 9, 2)  ;
+  
+drop table Room cascade constraints;
+
+/*==============================================================*/
+/* Table: Room                                                  */
+/*==============================================================*/
+create table Room 
+(
+   room_number          INTEGER              not null,
+   owner_name           VARCHAR2  (20)               not null,
+   number_of_inhabit    INTEGER,
+   number_of_sqr_meters INTEGER              not null,
+   constraint PK_ROOM primary key (room_number, owner_name)
+);
+ALTER TABLE Room REGEXP_LIKE (room_number, '^[1-9][0-9]{0,3}');
+
+  INSERT INTO Room  VALUES (169 , 'Iruna Buchynska', 2, 70)  ;
+   INSERT INTO Room  VALUES (9 , 'Olga Nukityk', 4, 160)  ;
+    INSERT INTO Room  VALUES (23 , 'Vadim Olexandrovskui', 3, 50)  ;
+  
+drop table Room_in_house cascade constraints;
+
+/*==============================================================*/
+/* Table: Room_in_house                                         */
+/*==============================================================*/
+create table Room_in_house 
+(
+   street_name          VARCHAR2(30)         not null,
+   street_area          VARCHAR2(30)         not null,
+   house_street         VARCHAR2(30)         not null,
+   house_number         INTEGER              not null,
+   constraint PK_ROOM_IN_HOUSE primary key (street_name, street_area, house_street, house_number)
 );
 
-
-
-CREATE TABLE Room_in_house 
-(
- room_number INT(10),
- house_number INT(10),
-);
-
-ALTER TABLE House ADD CONSTRAINT PRIMARY KEY  house_pk  (house_address);
-ALTER TABLE Room ADD CONSTRAINT PRIMARY KEY  room_pk  (room_number);
-ALTER TABLE Room_in_house ADD CONSTRAINT FOREIGN KEY  room_in_house_fk  (room_number, house_number);
-
-
-
-
-
-
-
-
-
-
+alter table Room_in_house
+   add constraint FK_HOUSE_HAS_ROOM foreign key (house_street, house_number)
+      references House (house_street, house_number);
 
 
 
@@ -100,7 +146,11 @@ GRANT SELECT TABLE to buchynska ;
 
 --Код відповідь:
 
-PROJECT(TIMES (order_price=max(order_price)) order_num, cust_name);
+
+SELECT OrderItems.order_num ,Customers.cust_name
+FROM OrderItems join Orders ON OrderItems.order_num = Orders.order_num
+JOIN Customers ON Orders.cust_id= Customers.cust_id 
+WHERE item_price = (SELECT Max(item_price) FROM OrderItems) ;
 
 
 
@@ -122,9 +172,7 @@ PROJECT(TIMES (order_price=max(order_price)) order_num, cust_name);
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-
-SELECT DISTINCT COUNT (e-mail)  AS  "count_email" ;
-
+SELECT DISTINCT COUNT (cust_email)  AS  "count_email" FROM Customers ;
 
 
 
@@ -145,4 +193,14 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-SELECT LOWER(vend_name) AS "vendor_name" FROM Vendors  ; 
+
+SELECT vend_name
+FROM
+(
+SELECT  Vendors.vend_id, Vendors.vend_name, COUNT(OrderItems.prod_id)
+FROM 
+Vendors JOIN Products ON Vendors.vend_id=Products.vend_id
+JOIN OrderItems ON OrderItems.prod_id=Products.prod_id 
+GROUP BY Vendors.vend_id, Vendors.vend_name 
+HAVING COUNT(OrderItems.prod_id)=0 );
+
