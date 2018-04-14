@@ -1,73 +1,220 @@
 /*---------------------------------------------------------------------------
-1.Створити схему даних з назвою – прізвище студента, у якій користувач може: 
-робити вибірки з таблиць та видалення даних
-4 бали
+1.РЎС‚РІРѕСЂРёС‚Рё СЃС…РµРјСѓ РґР°РЅРёС… Р· РЅР°Р·РІРѕСЋ вЂ“ РїСЂС–Р·РІРёС‰Рµ СЃС‚СѓРґРµРЅС‚Р°, Сѓ СЏРєС–Р№ РєРѕСЂРёСЃС‚СѓРІР°С‡ РјРѕР¶Рµ:
+СЂРѕР±РёС‚Рё РІРёР±С–СЂРєРё Р· С‚Р°Р±Р»РёС†СЊ С‚Р° РІРёРґР°Р»РµРЅРЅСЏ РґР°РЅРёС…
+4 Р±Р°Р»Рё
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
-Create user artem IDENTIFIED by usenko
+Create user usenko IDENTIFIED by usenko
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
+ALTER USER usenko QUOTA 100M on "USERS";
 
-GRANT CONNECT to artem;
-GRANT SELECT any TABLE to artem;
-GRANT DROP any TABLE to artem;
+
+GRANT "CONNECT" to usenko;
+GRANT SELECT any TABLE to usenko;
+GRANT DROP any TABLE to usenko;
 
 /*---------------------------------------------------------------------------
-2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
-створювати окремо від таблиць використовуючи команди ALTER TABLE. 
-Програмісти програмують на мові C++
-4 бали
+2. РЎС‚РІРѕСЂРёС‚Рё С‚Р°Р±Р»РёС†С–, Сѓ СЏРєРёС… РІРёР·РЅР°С‡РёС‚Рё РїРѕР»СЏ С‚Р° С‚РёРїРё. Р“РѕР»РѕРІРЅС– С‚Р° Р·РѕРІРЅС–С€РЅС– РєР»СЋС‡С–
+СЃС‚РІРѕСЂСЋРІР°С‚Рё РѕРєСЂРµРјРѕ РІС–Рґ С‚Р°Р±Р»РёС†СЊ РІРёРєРѕСЂРёСЃС‚РѕРІСѓСЋС‡Рё РєРѕРјР°РЅРґРё ALTER TABLE.
+РџСЂРѕРіСЂР°РјС–СЃС‚Рё РїСЂРѕРіСЂР°РјСѓСЋС‚СЊ РЅР° РјРѕРІС– C++
+4 Р±Р°Р»Рё
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
+
+DROP TABLE PROGRAMIST;
+DROP TABLE Language;
+DROP TABLE Programist_Language;
+DROP TABLE Programist_Job;
 
 CREATE TABLE Programist
 (
-  programist_id VARCHAR(5) not null,
-  programist_name VARCHAR(40) not null
+  programist_id NUMBER not null,
+  programist_first_name VARCHAR(40) not null,
+  programist_last_name VARCHAR(40) not null,
+  programist_level VARCHAR(15) not null
 );
+
+
+CREATE SEQUENCE programist_seq
+  START WITH 1
+  INCREMENT BY 1;
+  
+
+Alter TABLE Programist ADD CONSTRAINT programist_pk PRIMARY KEY (programist_id);
+Alter Table Programist ADD CONSTRAINT programist_level_check CHECK (REGEXP_LIKE(programist_level, '^(junior|middle|senior|traniee)$'));
+Alter Table Programist ADD CONSTRAINT programist_first_name_check CHECK (REGEXP_LIKE(programist_first_name, '^[A-Z]{1,1}[a-z]{0,39}$'));
+Alter Table Programist ADD CONSTRAINT programist_last_check CHECK (REGEXP_LIKE(programist_last_name, '^[A-Z]{1,1}[a-z]{0,39}$'));
+Alter Table Programist ADD CONSTRAINT constraint_programist_unique UNIQUE (programist_first_name,programist_last_name);
+
+
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'artem','usenko','junior');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'vadim','vadim','junior');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'petya','petya','middle');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'vasya','vasya','middle');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'artur','artur','senior');
 
 CREATE TABLE Language
 (
-language_id varchar(5) not null,
-language_name VARCHAR(40) not null
+  language_id NUMBER not null,
+  language_name VARCHAR(40) not null,
+  language_version VARCHAR(10) not null,
+  language_interface_type VARCHAR(15) not null
 );
+
+
+CREATE SEQUENCE language_seq
+  START WITH 1
+  INCREMENT BY 1;
+  
+Alter TABLE language ADD CONSTRAINT language_pk PRIMARY KEY (language_id);
+Alter Table language ADD CONSTRAINT language_interface_type_check CHECK (REGEXP_LIKE(language_interface_type, '^(compiled|interpreted)$'));
+Alter Table language ADD CONSTRAINT language_name_check CHECK (REGEXP_LIKE(language_name, '^[a-z|+|#]{0,39}$'));
+Alter Table language ADD CONSTRAINT language_version_check CHECK (REGEXP_LIKE(language_version, '^((\d+\.)?(\d+\.)?(\*|\d+))$'));
+Alter Table language ADD CONSTRAINT constraint_language_unique UNIQUE (language_name,language_version,language_interface_type);
+
+
+INSERT INTO Language(language_id,language_name,language_version,language_interface_type) VALUES (language_seq.nextval,'C++','1.12','compiled');
+INSERT INTO Language(language_id,language_name,language_version,language_interface_type) VALUES (language_seq.nextval,'C#','9','compiled');
+INSERT INTO Language(language_id,language_name,language_version,language_interface_type) VALUES (language_seq.nextval,'Pascal','2.32','compiled');
+INSERT INTO Language(language_id,language_name,language_version,language_interface_type) VALUES (language_seq.nextval,'Java','8.162','interpreted');
+INSERT INTO Language(language_id,language_name,language_version,language_interface_type) VALUES (language_seq.nextval,'Kotlin','1.30','interpreted');
 
 CREATE TABLE Programist_Language 
 (
-programist_language_id varchar(5) not null,
-programist_id VARCHAR(5) not null,
-language_id varchar(5) not null
+programist_language_id NUMBER not null,
+programist_id NUMBER not null,
+language_id NUMBER not null,
+programist_language_exp number(3) not null
 );
 
-Alter TABLE Programist ADD CONSTRAINT programist_pk PRIMARY KEY (programist_id);
-Alter TABLE Language ADD CONSTRAINT language_pk PRIMARY KEY (language_id);
+CREATE SEQUENCE programist_language_seq
+  START WITH 1
+  INCREMENT BY 1;
+
 ALTER TABLE Programist_Language ADD CONSTRAINT programist_language_pk PRIMARY KEY (programist_language_id);
-ALTER TABLE Programist_Language ADD CONSTRAINT programist_language_fk FOREIGN KEY (programist_id) REFERENCES Programist(programist_id);
-ALTER TABLE Programist_Language ADD CONSTRAINT programist_language_fk FOREIGN KEY (language_id) REFERENCES Language(language_id);
+ALTER TABLE Programist_Language ADD CONSTRAINT pl_programist_fk FOREIGN KEY (programist_id) REFERENCES Programist(programist_id);
+ALTER TABLE Programist_Language ADD CONSTRAINT pl_language_fk FOREIGN KEY (language_id) REFERENCES Language(language_id);
+Alter Table Programist_Language ADD CONSTRAINT programist_language_unique UNIQUE (programist_id,language_id);
+
+INSERT INTO Programist_Language(programist_language_id,programist_id,language_id,programist_language_exp)
+VALUES 
+(programist_language_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='artem' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='usenko'),
+(Select LANGUAGE.language_id FROM LANGUAGE WHERE lower(trim(LANGUAGE.LANGUAGE_NAME)) = 'kotlin'),
+12);
+
+INSERT INTO Programist_Language(programist_language_id,programist_id,language_id,programist_language_exp)
+VALUES 
+(programist_language_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='vadim' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='vadim'),
+(Select LANGUAGE.language_id FROM LANGUAGE WHERE lower(trim(LANGUAGE.LANGUAGE_NAME)) = 'java'),
+12);
+
+INSERT INTO Programist_Language(programist_language_id,programist_id,language_id,programist_language_exp)
+VALUES 
+(programist_language_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='artem' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='usenko'),
+(Select LANGUAGE.language_id FROM LANGUAGE WHERE lower(trim(LANGUAGE.LANGUAGE_NAME)) = 'java'),
+2);
+
+INSERT INTO Programist_Language(programist_language_id,programist_id,language_id,programist_language_exp)
+VALUES 
+(programist_language_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='artur' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='artur'),
+(Select LANGUAGE.language_id FROM LANGUAGE WHERE lower(trim(LANGUAGE.LANGUAGE_NAME)) = 'java'),
+60);
+
+INSERT INTO Programist_Language(programist_language_id,programist_id,language_id,programist_language_exp)
+VALUES 
+(programist_language_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='artur' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='artur'),
+(Select LANGUAGE.language_id FROM LANGUAGE WHERE lower(trim(LANGUAGE.LANGUAGE_NAME)) = 'c++'),
+23);
+
+
+CREATE TABLE Programist_Job
+(
+programist_job_id NUMBER not null,
+programist_id NUMBER not null,
+project_name VARCHAR(30) not null,
+project_verison VARCHAR(10) not null
+);
+
+CREATE SEQUENCE programist_job_seq
+  START WITH 1
+  INCREMENT BY 1;
+
+ALTER TABLE Programist_Job ADD CONSTRAINT programist_job_pk PRIMARY KEY (programist_job_id);
+ALTER TABLE Programist_Job ADD CONSTRAINT pj_programist_fk FOREIGN KEY (programist_id) REFERENCES Programist(programist_id);
+Alter Table Programist_Job ADD CONSTRAINT project_verison_check CHECK (REGEXP_LIKE(project_verison, '^((\d+\.)?(\d+\.)?(\*|\d+))$'));
+Alter Table Programist_Job ADD CONSTRAINT project_name_check CHECK (REGEXP_LIKE(project_name, '^[A-Z|a-z]{0,39}$'));
+Alter Table Programist_Job ADD CONSTRAINT Programist_Job_unique UNIQUE(programist_id,project_name,project_verison);
+
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+VALUES 
+(programist_job_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='artem' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='usenko'),
+'Tetris',
+'2.0.0');
+
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+VALUES 
+(programist_job_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='vadim' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='vadim'),
+'Campus',
+'0.0.1');
+
+
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+VALUES 
+(programist_job_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='artur' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='artur'),
+'Campus',
+'0.0.1');
+
+
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+VALUES 
+(programist_job_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='vadim' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='vadim'),
+'Site',
+'0.0.1');
+
+
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+VALUES 
+(programist_job_seq.nextval,
+(Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='vadim' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='vadim'),
+'Site',
+'2.0.1');
+
+
+/*----------------------------
+РќСѓР¶РЅРѕ РµС‰Рµ СЂР°Р·Р±РёС‚СЊ С‚Р°Р±Р»РёС†Сѓ Programist_Job РЅР° 2 С‚Р°Р±Р»РёС†С‹
+-------------*/
+
   
-/* --------------------------------------------------------------------------- 
-3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
-внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
-Згенерувати базу даних використовуючи код з теки OracleScript та виконати запити: 
+/* ---------------------------------------------------------------------------
+3. РќР°РґР°С‚Рё РґРѕРґР°С‚РєРѕРІС– РїСЂР°РІР° РєРѕСЂРёСЃС‚СѓРІР°С‡РµРІС– (СЃС‚РІРѕСЂРµРЅРѕРјСѓ Сѓ РїСѓРЅРєС‚С– в„– 1) РґР»СЏ СЃС‚РІРѕСЂРµРЅРЅСЏ С‚Р°Р±Р»РёС†СЊ,
+РІРЅРµСЃРµРЅРЅСЏ РґР°РЅРёС… Сѓ С‚Р°Р±Р»РёС†С– С‚Р° РІРёРєРѕРЅР°РЅРЅСЏ РІРёР±С–СЂРѕРє РІРёРєРѕСЂРёСЃС‚РѕРІСѓСЋС‡Рё РєРѕРјР°РЅРґСѓ ALTER/GRANT.
+Р—РіРµРЅРµСЂСѓРІР°С‚Рё Р±Р°Р·Сѓ РґР°РЅРёС… РІРёРєРѕСЂРёСЃС‚РѕРІСѓСЋС‡Рё РєРѕРґ Р· С‚РµРєРё OracleScript С‚Р° РІРёРєРѕРЅР°С‚Рё Р·Р°РїРёС‚Рё:
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
 
-GRANT CREATE any TABLE to artem;
-GRANT SELECT any TABLE to artem;
-GRANT INSERT any TABLE to artem;
-GRANT ALTER any TABLe to artem;
+
+GRANT CREATE any TABLE to usenko;
+GRANT SELECT any TABLE to usenko;
+GRANT INSERT any TABLE to usenko;
+GRANT ALTER any TABLe to usenko;
 
 /*---------------------------------------------------------------------------
-3.a. 
-Який номер замовлення куди входить найдорожчий товар?
-Виконати завдання в Адгебрі кодда. 
-4 бали
+3.a.
+РЇРєРёР№ РЅРѕРјРµСЂ Р·Р°РјРѕРІР»РµРЅРЅСЏ РєСѓРґРё РІС…РѕРґРёС‚СЊ РЅР°Р№РґРѕСЂРѕР¶С‡РёР№ С‚РѕРІР°СЂ?
+Р’РёРєРѕРЅР°С‚Рё Р·Р°РІРґР°РЅРЅСЏ РІ РђРґРіРµР±СЂС– РєРѕРґРґР°.
+4 Р±Р°Р»Рё
 ---------------------------------------------------------------------------*/
 
---Код відповідь:
 SELECT 
     OrderItems.order_num  
       FROM OrderItems 
@@ -79,14 +226,12 @@ PROJECT  (OrderItems.order_num)
  
 
 /*---------------------------------------------------------------------------
-3.b. 
-Визначити скільки унікальних імен продавців - назвавши це поле name.
-Виконати завдання в SQL. 
-4 бали
+3.b.
+Р’РёР·РЅР°С‡РёС‚Рё СЃРєС–Р»СЊРєРё СѓРЅС–РєР°Р»СЊРЅРёС… С–РјРµРЅ РїСЂРѕРґР°РІС†С–РІ - РЅР°Р·РІР°РІС€Рё С†Рµ РїРѕР»Рµ name.
+Р’РёРєРѕРЅР°С‚Рё Р·Р°РІРґР°РЅРЅСЏ РІ SQL.
+4 Р±Р°Р»Рё
 
 ---------------------------------------------------------------------------*/
-
---Код відповідь:
 
 SELECT
    COUNT(DISTINCT TRIM(vend_name)) as name
@@ -94,13 +239,13 @@ FROM VENDORS;
 
 
 /*---------------------------------------------------------------------------
-c. 
-Вивести імена постачальників у нижньому регістрі,назвавши це поле vendor_name, що мають товар і його купляли.
-Виконати завдання в алгебрі Кодда. 
-4 бали
+c.
+Р’РёРІРµСЃС‚Рё С–РјРµРЅР° РїРѕСЃС‚Р°С‡Р°Р»СЊРЅРёРєС–РІ Сѓ РЅРёР¶РЅСЊРѕРјСѓ СЂРµРіС–СЃС‚СЂС–,РЅР°Р·РІР°РІС€Рё С†Рµ РїРѕР»Рµ vendor_name, С‰Рѕ РјР°СЋС‚СЊ С‚РѕРІР°СЂ С– Р№РѕРіРѕ РєСѓРїР»СЏР»Рё.
+Р’РёРєРѕРЅР°С‚Рё Р·Р°РІРґР°РЅРЅСЏ РІ Р°Р»РіРµР±СЂС– РљРѕРґРґР°.
+4 Р±Р°Р»Рё
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
+
 SELECT
   (LOWER (Vendors.vend_name)) as vendor_name
   FROM Vendors 
@@ -115,3 +260,10 @@ SELECT
          FROM OrderItems
       )
   );
+  
+  
+  A = PROJECT (OrderItems) {OrderItem.prod_id};
+  B = PROJECT (Products WHERE Products.prod_id IN A) {Products.vend_id};
+  ANS = PROJECT (Vendors WHERE Vendors.vend_id IN B) {RENAME ((LOWER (Trim(Vendors.vend_name))), vendor_name)};
+  
+  
