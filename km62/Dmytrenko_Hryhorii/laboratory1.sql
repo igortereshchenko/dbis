@@ -29,36 +29,8 @@ GRANT INSERT ANY TABLE TO dmytrenko;
 
 /*==============================================================*/
 /* DBMS name:      ORACLE Version 11g                           */
-/* Created on:     14.04.2018 17:30:52                          */
+/* Created on:     14.04.2018 19:05:50                          */
 /*==============================================================*/
-
-alter table Human_has_phone
-   drop constraint FK_PHONE_OWNED_BY_HUMAN;
-
-alter table Human_has_phone
-   drop constraint FK_HUMAN_HAS_PHONE;
-
-alter table Sim_card
-   drop constraint FK_SIM_CARD1;
-
-alter table Sim_card
-   drop constraint FK_SIM_CARD2;
-
-drop table Human cascade constraints;
-
-drop index Human_has_phone_FK;
-
-drop index Human_has_phone2_FK;
-
-drop table Human_has_phone cascade constraints;
-
-drop table Phone_type cascade constraints;
-
-drop index second_sim_card_FK;
-
-drop index First_sim_card_FK;
-
-drop table Sim_card cascade constraints;
 
 /*==============================================================*/
 /* Table: Human                                                 */
@@ -73,15 +45,29 @@ create table Human
    constraint PK_HUMAN primary key (human_id)
 );
 
+ALTER TABLE Human
+ADD CONSTRAINT human_unique UNIQUE (human_id);
+
+ALTER TABLE Human
+ADD CONSTRAINT check_human_name
+  CHECK (length(human_name)&gt;2);
+  
+ ALTER TABLE Human
+ADD CONSTRAINT check_human_country
+  CHECK (length(human_country)&gt;3);
+
 /*==============================================================*/
 /* Table: Human_has_phone                                       */
 /*==============================================================*/
 create table Human_has_phone 
 (
-   phone_type_name      VARCHAR2(15)         not null,
+   phone_id             INTEGER              not null,
    human_id             INTEGER              not null,
-   constraint PK_HUMAN_HAS_PHONE primary key (phone_type_name, human_id)
+   constraint PK_HUMAN_HAS_PHONE primary key (phone_id, human_id)
 );
+
+ALTER TABLE Human_has_phone
+ADD CONSTRAINT human_phone_unique UNIQUE (human_id, phone_id);
 
 /*==============================================================*/
 /* Index: Human_has_phone2_FK                                   */
@@ -94,7 +80,7 @@ create index Human_has_phone2_FK on Human_has_phone (
 /* Index: Human_has_phone_FK                                    */
 /*==============================================================*/
 create index Human_has_phone_FK on Human_has_phone (
-   phone_type_name ASC
+   phone_id ASC
 );
 
 /*==============================================================*/
@@ -102,41 +88,52 @@ create index Human_has_phone_FK on Human_has_phone (
 /*==============================================================*/
 create table Phone_type 
 (
+   phone_id             INTEGER              not null,
    phone_type_name      VARCHAR2(15)         not null,
-   year_of_creation     INTEGER              not null,
+   year_of_creation     INTEGER,
    creator_name         VARCHAR2(20)         not null,
    country              VARCHAR2(15),
-   constraint PK_PHONE_TYPE primary key (phone_type_name)
+   constraint PK_PHONE_TYPE primary key (phone_id)
 );
 
+ALTER TABLE Phone_type
+ADD CONSTRAINT phone_type_unique UNIQUE (phone_id);
+
+ALTER TABLE Phone_type
+ADD CONSTRAINT check_year_of_creation
+  CHECK (year_of_creation >= 2000);
+
 /*==============================================================*/
-/* Table: Sim_card                                              */
+/* Table: Сolleague                                             */
 /*==============================================================*/
-create table Sim_card 
+create table Сolleague 
 (
-   human_id1_fk         INTEGER              not null,
-   human_id2_fk         INTEGER              not null,
-   sim_number           INTEGER              not null,
-   constraint PK_SIM_CARD primary key (human_id1_fk, human_id2_fk, sim_number)
+   colleague_id1_fk     INTEGER              not null,
+   colleague_id2_fk     INTEGER              not null,
+   colleague_date       DATE                 not null,
+   constraint PK_СOLLEAGUE primary key (colleague_id1_fk, colleague_id2_fk, colleague_date)
+);
+
+ALTER TABLE Сolleague 
+ADD CONSTRAINT colleague_unique UNIQUE (colleague_date);
+
+/*==============================================================*/
+/* Index: second_colleague_FK                                   */
+/*==============================================================*/
+create index second_colleague_FK on Сolleague (
+   colleague_id2_fk ASC
 );
 
 /*==============================================================*/
-/* Index: First_sim_card_FK                                     */
+/* Index: first_colleague_FK                                    */
 /*==============================================================*/
-create index First_sim_card_FK on Sim_card (
-   human_id2_fk ASC
-);
-
-/*==============================================================*/
-/* Index: second_sim_card_FK                                    */
-/*==============================================================*/
-create index second_sim_card_FK on Sim_card (
-   human_id1_fk ASC
+create index first_colleague_FK on Сolleague (
+   colleague_id1_fk ASC
 );
 
 alter table Human_has_phone
-   add constraint FK_PHONE_OWNED_BY_HUMAN foreign key (phone_type_name)
-      references Phone_type (phone_type_name)
+   add constraint FK_PHONE_OWNED_BY_HUMAN foreign key (phone_id)
+      references Phone_type (phone_id)
       on delete cascade;
 
 alter table Human_has_phone
@@ -144,15 +141,72 @@ alter table Human_has_phone
       references Human (human_id)
       on delete cascade;
 
-alter table Sim_card
-   add constraint FK_SIM_CARD1 foreign key (human_id2_fk)
+alter table Сolleague
+   add constraint FK_СOLLEAGUE1 foreign key (colleague_id1_fk)
       references Human (human_id)
       on delete cascade;
 
-alter table Sim_card
-   add constraint FK_SIM_CARD2 foreign key (human_id1_fk)
+alter table Сolleague
+   add constraint FK_СOLLEAGUE2 foreign key (colleague_id2_fk)
       references Human (human_id)
       on delete cascade;
+
+
+/* Create human */
+
+INSERT INTO Human (human_id, human_name, human_sex, human_age, human_country) 
+  VALUES ('210023422', 'Robert', 'm', '34', 'Belgium');
+
+INSERT INTO Human (human_id, human_name, human_sex, human_age, human_country) 
+  VALUES ('238470932', 'Bob', 'm', '21', 'Austria');
+
+INSERT INTO Human (human_id, human_name, human_sex, human_age, human_country) 
+  VALUES ('934862897', 'Monica', 'f', '26', 'USA');
+
+INSERT INTO Human (human_id, human_name, human_sex, human_age, human_country) 
+  VALUES ('883456765', 'Richard', 'm', '19', 'Great Britain');
+
+/* Create Phone_type */
+
+INSERT INTO Phone_type (phone_id, phone_type_name, year_of_creation, creator_name, country) 
+   VALUES ('9234683', 'Pixel 2 XL', '2017', 'Google', 'USA');
+   
+INSERT INTO Phone_type (phone_id, phone_type_name, year_of_creation, creator_name, country) 
+   VALUES ('5400218', 'Galaxy S9', '2018', 'Samsung', 'South Korea');
+   
+INSERT INTO Phone_type (phone_id, phone_type_name, year_of_creation, creator_name, country) 
+   VALUES ('6744923', 'P20 PRO', '2018', 'Huawei', 'China');
+   
+INSERT INTO Phone_type (phone_id, phone_type_name, year_of_creation, creator_name, country) 
+   VALUES ('2758091', 'iPhone X', '2017', 'Apple', 'USA');
+
+/* Add phone_types to Human_has_phone */
+
+INSERT INTO Human_has_phone (phone_id, human_id)
+   VALUES ('6744923','238470932');
+   
+INSERT INTO Human_has_phone (phone_id, human_id)
+   VALUES ('2758091', '883456765');
+
+INSERT INTO Human_has_phone (phone_id, human_id)
+   VALUES ('9234683', '934862897');
+
+INSERT INTO Human_has_phone (phone_id, human_id)
+   VALUES ('5400218', '210023422' );
+
+/* Create Colleague */
+
+INSERT INTO Colleague (colleague_id1_fk, colleague_id2_fk, colleague_date) 
+  VALUES ('238470932', '883456765', TO_DATE('2009-04-23', 'YYYY-MM-DD'));
+  
+INSERT INTO Colleague (colleague_id1_fk, colleague_id2_fk, colleague_date) 
+  VALUES ('883456765', '210023422', TO_DATE('1989-06-14', 'YYYY-MM-DD') );
+  
+INSERT INTO Colleague (colleague_id1_fk, colleague_id2_fk, colleague_date) 
+  VALUES ('934862897', '238470932', TO_DATE('1977-12-28', 'YYYY-MM-DD'));
+  
+INSERT INTO Colleague (colleague_id1_fk, colleague_id2_fk, colleague_date) 
+  VALUES ('210023422', '238470932', TO_DATE('2014-08-17', 'YYYY-MM-DD'));
 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
