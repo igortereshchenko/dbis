@@ -40,13 +40,11 @@ GRANT SELECT ANY TABLE TO khodos;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT ORDERITEMS.ORDER_NUM
-FROM ORDERITEMS, ORDERS
-WHERE ORDERITEMS.ORDER_NUM IN ( SELECT MAX(QUANTITY*ITEM_PRICE),
-                                ORDERITEMS.ORDER_NUM
-        FROM ORDERITEMS
-        )
-AND ORDERITEMS.ORDER_NUM = ORDERS.ORDER_NUM;
+SELECT DISTINCT ORDERITEMS.ORDER_NUM
+FROM ORDERITEMS 
+WHERE QUANTITY*ITEM_PRICE IN 
+  (SELECT MAX(QUANTITY*ITEM_PRICE) 
+   FROM ORDERITEMS);
 /*---------------------------------------------------------------------------
 3.b. 
 Визначити скільки унікальних імен покупців - назвавши це поле count_name.
@@ -56,12 +54,12 @@ AND ORDERITEMS.ORDER_NUM = ORDERS.ORDER_NUM;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT COUNT(CUST_NAME) AS COUNT_NAME
+SELECT COUNT(distinct CUST_NAME) AS COUNT_NAME 
 FROM CUSTOMERS 
-WHERE CUST_NAME IN (SELECT DISTINCT CUST_NAME
-FROM CUSTOMERS, ORDERS
-WHERE CUSTOMERS.CUST_ID = ORDERS.CUST_ID
-);
+WHERE CUST_NAME IN (
+  SELECT CUST_NAME 
+  FROM CUSTOMERS, ORDERS 
+  WHERE CUSTOMERS.CUST_ID = ORDERS.CUST_ID );
 /*---------------------------------------------------------------------------
 c. 
 Вивести імена постачальників у нижньому регістрі,назвавши це поле vendor_name, що мають товар, але його ніхто не купляв.
@@ -70,12 +68,11 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-
-/*від сутності постачальників відняти сутність в якій є постачальники в сутностях products, orderitems*/
-/*VENDORS, ORDERITEMS, PRODUCTS, ORDERS*/
-A = VENDORS RENAME VEND_ID,VEND_IDFK
-B = ORDERS RENAME ORDER_NUM, ORDER_NUMBER
-C = PRODUCTS RENAME PROD_ID, PROD_IDFK
-D = A TIMES B TIMES C TIMES ORDERITEMS
-E = VENDORS PROJECT VEND_IDFK
-F = E WHERE 
+A = VENDORS RENAME LOWER(VEND_NAME), VENDOR_NAME 
+B = VENDORS PROJECT A 
+C = VENDORS RENAME VEND_ID, VEND_IDFK 
+D = PRODUCTS RENAME PROD_ID, PROD_IDFK 
+E = C TIMES D TIMES ORDERITEMS 
+F = E WHERE (VEND_ID = VEND_IDFK AND PROD_ID = PROD_IDFK) 
+G = A PROJECT F 
+H = B MINUS G
