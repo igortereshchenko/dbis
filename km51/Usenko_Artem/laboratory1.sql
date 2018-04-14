@@ -22,11 +22,6 @@ GRANT DROP any TABLE to usenko;
 
 ---------------------------------------------------------------------------*/
 
-DROP TABLE PROGRAMIST;
-DROP TABLE Language;
-DROP TABLE Programist_Language;
-DROP TABLE Programist_Job;
-
 CREATE TABLE Programist
 (
   programist_id NUMBER not null,
