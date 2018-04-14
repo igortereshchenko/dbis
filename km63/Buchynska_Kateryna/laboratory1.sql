@@ -128,9 +128,8 @@ alter table Room_in_house
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+GRANT INSERT ANY TABLE TO buchynska;
 
-GRANT ALTER TABLE to buchynska ;
-GRANT SELECT TABLE to buchynska ;
 
 
 
