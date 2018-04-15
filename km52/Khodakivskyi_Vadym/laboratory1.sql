@@ -156,4 +156,4 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-PROJECT ((CUSTOMERS TIMES ORDERS) WHERE CUSTOMERS.CUST_ID <> ORDERS.CUST_ID) (RENAME (CUST_NAME || CUST_EMAIL) client_email )
+PROJECT (CUSTOMERS  WHERE CUSTOMERS.CUST_ID IN ((PROJECT CUSTOMERS CUSTOMERS.CUST_ID) MINUS (PROJECT ORDERS ORDERS.CUST_ID)) (RENAME (CUST_NAME ||' '|| CUST_EMAIL) client_email )
