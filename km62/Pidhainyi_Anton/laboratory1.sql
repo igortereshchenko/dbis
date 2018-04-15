@@ -27,10 +27,10 @@ GRANT SELECT ANY TABLE TO pidgayny;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 CREATE TABLE hardware(
-  procc_id varchar2(2) NOT NULL,
-  power_block_id varchar2(2) NOT NULL,
+  procc_id number(2,0) NOT NULL,
+  power_block_id number(2,0) NOT NULL,
   procc_name varchar2(20),  
-  power_block_name varchar2(20),
+  power_block_name varchar2(20)
   );
   
 ALTER TABLE harware ADD CONSTRAINT procc_pk PRIMARY KEY (procc_id); 
@@ -44,7 +44,7 @@ CREATE TABLE software(
 ALTER TABLE software ADD CONSTRAINT os_pk PRIMARY KEY (os_id);
 
 CREATE TABLE computer(
-  comp_id varchar2(20);
+  comp_id varchar2(20)
 
   );
   
