@@ -74,8 +74,7 @@ GRANT SELECT ANY TABLE TO pidgayny;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT ORDER_NUM FROM 
-  SELECT * FROM ORDERITEMS WHERE ITEM_PRICE=MAX(ITEM_PRICE);
+SELECT ORDER_NUM FROM ORDERITEMS WHERE ITEM_PRICE IN (SELECT max(ORDERITEMS.ITEM_PRICE) FROM ORDERITEMS);
 
 
 
