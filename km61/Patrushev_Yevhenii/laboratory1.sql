@@ -86,10 +86,16 @@ grant alter any table to patrushev;
 
 --Код відповідь:
 
-
-
-
-
+Project (vendors) {vend_name}
+where (vend_id in (
+    project(orderitems TIMES products){vend_id}
+    where(
+        orderitems.prod_id = products.prod_id and
+        orderitems.item_price in (
+            project(orderitems){min(item_price)}
+        )
+    )
+))
 
 
 /*---------------------------------------------------------------------------
@@ -107,9 +113,9 @@ grant alter any table to patrushev;
 select upper(cust_name) as client_name
 from CUSTOMERS
 where 
-CUST_EMAIL != null
+CUST_EMAIL is not null
 and 
-cust_country = "USA";
+cust_country = 'USA';
 
 
 
@@ -125,14 +131,14 @@ c.
 
 
 select lower(vend_name) as vendor_name
-from (
+from vendors
+where vend_id in (
     select 
-    vend_name,
     vend_id
-    from vendors
+    from products
     minus 
     select
     vend_id
-    from ordersitems, product
-    where orderitems.prod_id = product.prod_id
+    from orderitems, products
+    where orderitems.prod_id = products.prod_id
 );
