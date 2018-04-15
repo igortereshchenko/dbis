@@ -97,7 +97,7 @@ SELECT ORDER_NUM FROM ORDERITEMS WHERE ITEM_PRICE IN (SELECT max(ORDERITEMS.ITEM
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-count_name=COUNT(SELECT CUST_NAME FROM CUSTOMERS);
+SELECT count(CUST_NAME) AS "count_name" FROM (SELECT DISTINCT CUST_NAME FROM CUSTOMERS);
 
 
 
