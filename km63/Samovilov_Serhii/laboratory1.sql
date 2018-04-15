@@ -7,7 +7,7 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 --create user Samovilov identified by 12345
---default tablespace "users
+--default tablespace "users"
 --temporary tablespace "temp"
 --alter user Samovilov quota 100mb on "users" 
 --grant create any table to Samovilov
