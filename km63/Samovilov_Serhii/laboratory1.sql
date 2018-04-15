@@ -50,7 +50,9 @@ alter user "Samovilov" quota 100mb on users ;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-
+grant create any table to Samovilov;
+grant insert any table to Samovilov;
+grant select any table to Samovilov
 
 
 
