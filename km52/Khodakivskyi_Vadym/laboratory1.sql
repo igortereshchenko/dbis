@@ -8,8 +8,8 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 CREATE USER Khodakivskyy IDENTIFIED BY vadim
-DEFAULT TABLESPACE "def"
-TEMPORARY TABLESPACE "temp";
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
 ALTER USER khodakivskyy QUOTA unlimited ON USERS;
 GRANT "CONNECT" TO Khodakivskyy;
 GRANT INSERT ANY TABLE TO Khodakivskyy;
