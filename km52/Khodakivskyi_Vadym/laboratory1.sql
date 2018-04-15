@@ -97,11 +97,21 @@ GRANT SELECT ANY TABLE TO Khodakivskyy;
 
 --Код відповідь:
 
-SELECT COUNT(cust_name)
-FROM CUSTOMERS, ORDERS, ORDERITEMS
-where CUSTOMERS.CUST_ID=ORDERS.CUST_ID AND
-      ORDERITEMS.ORDER_NUM=ORDERS.ORDER_NUM AND
-      ORDERITEMS.ITEM_PRICE = 11.99;
+SELECT
+    COUNT(cust_name)
+FROM
+    customers,
+    orders,
+    orderitems
+WHERE
+    customers.cust_id = orders.cust_id
+    AND   orderitems.order_num = orders.order_num
+    AND   orderitems.item_price IN (
+        SELECT
+            MAX(orderitems.item_price)
+        FROM
+            orderitems
+    );
 
 
 
@@ -122,7 +132,7 @@ where CUSTOMERS.CUST_ID=ORDERS.CUST_ID AND
 --Код відповідь:
 
 
-SELECT COUNT(DISTINCT CUST_EMAIL)
+SELECT COUNT(DISTINCT CUST_EMAIL) AS count_email
 FROM CUSTOMERS;
 
 
