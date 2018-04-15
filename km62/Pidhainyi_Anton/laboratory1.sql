@@ -48,9 +48,9 @@ CREATE TABLE computer(
 
   );
   
-ALTER TABLE computer ADD CONSTRAINT procc_fk FOREIGN KEY REFERENCES TO hardware(procc_id);
-ALTER TABLE computer ADD CONSTRAINT power_fk FOREIGN KEY REFERENCES TO hardware(power_block_id);
-ALTER TABLE computer ADD CONSTRAINT os_fk FOREIGN KEY REFERENCES TO software(os_id);
+ALTER TABLE computer ADD CONSTRAINT procc_fk FOREIGN KEY REFERENCES hardware(procc_id);
+ALTER TABLE computer ADD CONSTRAINT power_fk FOREIGN KEY REFERENCES hardware(power_block_id);
+ALTER TABLE computer ADD CONSTRAINT os_fk FOREIGN KEY REFERENCES software(os_id);
   
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
