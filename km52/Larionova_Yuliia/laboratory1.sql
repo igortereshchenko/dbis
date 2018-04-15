@@ -28,36 +28,50 @@ GRANT INSERT ANY TABLE TO larionova ;
 --Код відповідь:
 
 create table chairs(
-    chair_name varchar2(40) not null
+    serial_number varchar2(40) not null,
+    classroom_number numeric(10),
+    building_adress varchar2(40)
 );
 
 alter table chairs
-    ADD CONSTRAINT chairs_pk PRIMARY KEY (chair_name);
+    ADD CONSTRAINT chairs_pk PRIMARY KEY (serial_number);
 
 
 create table desks(
-    desk_name varchar2(40) not null
+    serial_number varchar2(40) not null,
+    classroom_number numeric(10),
+    building_adress varchar2(40) 
 );
 
 alter table desks
-    ADD CONSTRAINT desks_pk PRIMARY KEY (desk_name);
-
-create table classroom(
-    chairs_fk varchar2(40),
-    desks_fk varchar2(40),
-    desks_amount number(3),
-    chairs_amount number(3)
+    ADD CONSTRAINT desks_pk PRIMARY KEY (serial_number);
+    
+create table buildings(
+    building_adress varchar2(40) not null
+    number_of_floors numeric(10),
 );
 
-ALTER TABLE  classroom
-  ADD CONSTRAINT classroom_pk PRIMARY KEY (chairs_fk,desks_fk);  
-  
-ALTER TABLE  classroom
-  ADD CONSTRAINT chairs_fk FOREIGN KEY (chairs_fk) REFERENCES chairs (chair_name);
-  
-ALTER TABLE  classroom
-  ADD CONSTRAINT deks_fk FOREIGN KEY (desks_fk) REFERENCES desks (desk_name);
+alter table buildings
+    ADD CONSTRAINT buildings_pk PRIMARY KEY (building_adress);
 
+create table classrooms(
+    classroom_number numeric(10) not null,
+    building_adress varchar2(40) not null
+);
+
+ALTER TABLE  classrooms
+  ADD CONSTRAINT classrooms_pk PRIMARY KEY (classroom_number, building_adress);  
+  
+ALTER TABLE  classrooms
+  ADD CONSTRAINT chairs_fk FOREIGN KEY (chairs_fk) REFERENCES chairs (classroom_number, building_adress);
+  
+ALTER TABLE  classrooms
+  ADD CONSTRAINT deks_fk FOREIGN KEY (desks_fk) REFERENCES desks (classroom_number, building_adress);
+  
+  
+CREATE SEQUENCE classrooms_seq
+START WITH 1
+INCREMENT BY 1;
 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
@@ -69,7 +83,7 @@ ALTER TABLE  classroom
 GRANT CREATE ANY TABLE TO larionova ;
 GRANT ALTER ANY TABLE TO larionova ;
 GRANT SELECT ANY TABLE TO larionova ;
-GRANT UPDATE ANY TABLE TO larionova;
+
 
 
 
