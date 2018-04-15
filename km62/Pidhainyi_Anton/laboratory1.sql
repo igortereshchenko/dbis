@@ -120,7 +120,8 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-vendor_name=PROJECT(LOWER(VEND_NAME) VENDORS COND )
+lower(VEND_NAME) as "vendor_name" PROJECT (vendors TIMES products TIMES orderitems) WHERE 
+(vendors.VEND_ID=products.VEND_ID AND (products.PROD_ID NOT IN (PROD_ID PROJECT orderitems);
 
 
 
