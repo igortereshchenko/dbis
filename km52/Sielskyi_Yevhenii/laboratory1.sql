@@ -28,35 +28,116 @@ Grant Alter Any table to eugene_sel;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-Create table Classroom (
-    classroom_number char(4) NOT NULL,
-    classroom_subject char(20)
+/*==============================================================*/
+/* Table: Blackboard                                            */
+/*==============================================================*/
+create table Blackboard 
+(
+   blackboard_zip       NUMBER(10)           not null,
+   classroom_number_fk_bb CHAR(4),
+   blackboard_type      VARCHAR2(11)         not null,
+   blackboard_color     VARCHAR2(20)         not null
 );
 
-Alter Table Classroom 
-    Add Constraint classroom_pk Primary key (classroom_number);
-    
-Create table Desks (
-    desk_zip number(10) not null,
-    classroom_number_fk char(4) NOT NULL
+/*==============================================================*/
+/* Table: Chair                                                 */
+/*==============================================================*/
+create table Chair 
+(
+   chair_zip            NUMBER(10)           not null,
+   classroom_number_fk_ch CHAR(4),
+   chair_color          VARCHAR2(20)         not null,
+   chair_height         NUMBER(2,2)          not null
 );
 
-Alter Table Desks 
-    Add Constraint desk_pk Primary key (desk_zip);
-    
-Alter Table Desks 
-    Add Constraint classroom_fk Foreign key (classroom_number_fk) References Classroom (classroom_number);    
 
-Create table Chairs (
-    chair_zip number(10) not null,
-    classroom_number_fk char(4) NOT NULL
+/*==============================================================*/
+/* Table: Classroom                                             */
+/*==============================================================*/
+create table Classroom 
+(
+   classroom_number     CHAR(4)              not null,
+   classroom_subject    CHAR(20),
+   classroom_space      NUMBER(2,2)          not null,
+   classroom_floor      NUMBER(1)            not null
 );
 
-Alter Table Chairs 
-    Add Constraint chair_pk Primary key (chair_zip);
-    
-Alter Table Chairs
-    Add Constraint classroom_chair_fk Foreign key (classroom_number_fk) References Classroom (classroom_number);  
+/*==============================================================*/
+/* Table: Desk                                                  */
+/*==============================================================*/
+create table Desk 
+(
+   desk_zip             NUMBER(10)           not null,
+   classroom_number_fk_ds CHAR(4),
+   desk_color           VARCHAR2(20)         not null,
+   desk_height          NUMBER(2,2)          not null
+);
+
+alter table Blackboard
+    add constraint PK_BLACKBOARD primary key (blackboard_zip);
+
+alter table Chair
+   add constraint PK_CHAIR primary key (chair_zip);
+
+alter table Classroom
+   add constraint PK_CLASSROOM primary key (classroom_number);
+
+alter table Desk
+   add constraint PK_DESK primary key (desk_zip);
+
+alter table Blackboard
+   add constraint CLASSROOM_BLACKBOARD_FK foreign key (classroom_number_fk_bb)
+      references Classroom (classroom_number)
+      on delete cascade;
+
+alter table Chair
+   add constraint CLASSROOM_CHAIR_FK foreign key (classroom_number_fk_ch)
+      references Classroom (classroom_number)
+      on delete cascade;
+
+alter table Desk
+   add constraint CLASSROOM_DESK_FK foreign key (classroom_number_fk_ds)
+      references Classroom (classroom_number)
+      on delete cascade;
+
+alter table Classroom
+   add constraint valid_classroom_number check (Regexp_like(classroom_number, '^[0-9]{1,3}[A-Z, a-z]{0,1}'));
+   
+alter table Classroom
+   add constraint valid_classroom_subject check (Regexp_like(classroom_subject, '[A-Z][a-z]{2,}'));   
+   
+alter table Classroom
+   add constraint positive_classroom_space check (classroom_space > 0);  
+   
+alter table Classroom
+   add constraint valid_classroom_floor check (classroom_floor >= 0); 
+   
+alter table Blackboard
+   add constraint valid_blackboard_zip check (Regexp_like(blackboard_zip, '[0-9]{10}'));   
+   
+alter table Blackboard
+   add constraint valid_blackboard_type check (blackboard_type IN ('Default', 'Interactive'));     
+   
+alter table Blackboard
+   add constraint valid_blackboard_color check (blackboard_color IN ('Green', 'Brown', 'Black', 'White'));  
+
+alter table Chair
+   add constraint valid_chair_zip check (Regexp_like(chair_zip, '[0-9]{10}'));   
+   
+alter table Chair
+   add constraint valid_chair_color check (chair_color IN ('Yellow', 'Brown', 'Black', 'White', 'Grey')); 
+   
+alter table Chair
+   add constraint positive_chair_height check (chair_height > 0); 
+   
+alter table Desk
+   add constraint valid_desk_zip check (Regexp_like(desk_zip, '[0-9]{10}'));     
+   
+alter table Desk
+   add constraint valid_desk_color check (desk_color IN ('Yellow', 'Brown', 'Black', 'White', 'Grey')); 
+   
+alter table Desk
+   add constraint positive_desk_height check (desk_height > 0);   
 
 
 /* --------------------------------------------------------------------------- 
