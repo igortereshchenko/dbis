@@ -59,9 +59,9 @@ ALTER TABLE computer ADD CONSTRAINT os_fk FOREIGN KEY REFERENCES software(os_id)
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-GRANT CREATE ANY TABLE TO user1;
-GRANT INSERT ANY TABLE TO user1;
-
+GRANT CREATE ANY TABLE TO pidgayny;
+GRANT INSERT ANY TABLE TO pidgayny;
+GRANT SELECT ANY TABLE TO pidgayny;
 
 
 
