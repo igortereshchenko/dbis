@@ -7,14 +7,14 @@
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE USER user1 IDENTIFIED BY 1111
+CREATE USER pidgayny IDENTIFIED BY 1111
   DEFAULT TABLESPACE "USERS"
   TEMPORARY TABLESPACE "TEMP";
   
-ALTER USER user1 QUOTA 100M ON USERS;
+ALTER USER pidgayny QUOTA 100M ON USERS;
 
-GRANT CONNECT TO user1;
-GRANT SELECT ANY TABLE TO user1;
+GRANT CONNECT TO pidgayny;
+GRANT SELECT ANY TABLE TO pidgayny;
 
 
 
