@@ -8,8 +8,13 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-create user Serpokryl identified by serpokryl;
-grant DELETE   to Serpokryl;
+create user Serpokryl identified by serpokryl
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
+
+alter user Serpokryl quota 100M on USERS;
+
+grant delete any table to Serpokryl;
 
 
 
@@ -65,7 +70,7 @@ alter table faculty
 
 
 grant create any table to Serpokryl;
-grant select any table to Serpokryl;
+grant insert any table to Serpokryl;
 
 
 
@@ -80,11 +85,12 @@ grant select any table to Serpokryl;
 --Код відповідь:
 
 
-select order_num 
-from  Orders, ORDERITEMS
-where prod_price in ( select min(prod_pice)
-                        from Products
-) and orderitems.order_num = orders.order_num;
+select Distinct Orders.order_num
+from Orders left join orderitems 
+    On orders.order_num = orderitems.order_num left join products
+    On orderitems.prod_id = products.prod_id,(select min(prod_price) as a
+                                                    from products) b
+where products.prod_price = b.a;
 
 
 
@@ -107,10 +113,13 @@ where prod_price in ( select min(prod_pice)
 --Код відповідь:
 
 
-select count(Distinct cust_country) as "country"
+select count(Distinct Customer.cust_country) as "country"
 from Customers;
 
-
+  --Another way:
+ select count(*) as "country"
+ from (select Distinct Customers.cust_country
+        from Customers);
 
 
 
@@ -130,8 +139,11 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-project (Vendors times ORDERS)
-rename(vend_name "vendor_name")
-where vendors.vend_id = products.vend_id and
+RENAME(
+  LOWER(
+    PROJECT((VENDORS TIMES PRODUCTS TIMES ORDERITEMS) 
+            WHERE VENDORS.vend_id = PRODUCTS.vend_id AND PRODUCTS.prod_id = ORDERITEMS.prod_id ) 
+    vend_name)
+) AS "vendor_name"
 
 
