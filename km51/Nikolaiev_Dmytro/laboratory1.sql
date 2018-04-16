@@ -29,34 +29,122 @@ Grant "Connect" to Nikolaev;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE table humans (
-human_name char NOT NULL,  timbre varchar2(15) NOT NULL, age int NOT NULL
+create table Humans 
+(
+   human_name           VARCHAR2(40)         not null,
+   human_age            NUMBER               not null,
+   human_email          VARCHAR2(35),
+   human_id             NUMBER               not null,
+   constraint PK_HUMANS primary key (human_id)
 );
 
-CREATE table songs (
-song_name char NOT NULL, song_performer varchar2(30) NOT NULL
+CREATE SEQUENCE humans_seq
+  START WITH 1
+  INCREMENT BY 1;
+  
+Alter Table Humans ADD CONSTRAINT human_name_check CHECK (REGEXP_LIKE(human_name, '^[A-Z]{1,1}[a-z]{0,39}$'));
+Alter Table Humans ADD CONSTRAINT human_age_check CHECK (REGEXP_LIKE(human_age, '^[/d]){3}$'));
+Alter Table Humans ADD CONSTRAINT email_unique UNIQUE (human_email);
+
+INSERT INTO Humans(human_name,human_age,human_email,human_id) VALUES ('Dmitriy','20','d1ma_nikolaev@ukr.net',humans_seq.nextval);
+INSERT INTO Humans(human_name,human_age,human_email,human_id) VALUES ('Sergey','30','sergiy123@ukr.net',humans_seq.nextval);
+INSERT INTO Humans(human_name,human_age,human_email,human_id) VALUES ('Anatoliy','44','tolyan@gmail.com',humans_seq.nextval);
+INSERT INTO Humans(human_name,human_age,human_email,human_id) VALUES ('Vasiliy','20','vasya@gmail.com',humans_seq.nextval);
+                                                                      
+                                                                     
+                                                                      
+create table Songs 
+(
+   song_name            VARCHAR2(40)         not null,
+   compositor_id        NUMBER,
+   song_length          FLOAT                not null,
+   song_genre           VARCHAR2(40),
+   song_lyrics          VARCHAR2(800),
+   constraint PK_SONGS primary key (song_name)
 );
 
-ALTER TABLE humans 
-ADD Constraint human_pk Primary key (human_name);
+Alter Table Songs ADD CONSTRAINT song_name_check CHECK (REGEXP_LIKE(song_name, '^[A-Z]{1,1}[a-z]{0,39}$'));
+Alter Table Songs ADD CONSTRAINT song_length_check CHECK (REGEXP_LIKE(song_length, '^[/d]){2}$'));
+Alter Table Songs ADD CONSTRAINT song_genre CHECK (REGEXP_LIKE(song_genre, '^[A-Z]{1,1}[a-z]{0,39}$'));
+Alter Table Songs ADD CONSTRAINT song_lyrics CHECK (REGEXP_LIKE(song_lyrics, '^[A-Z]{1,1}[a-z]{0,799}$'));
 
-Alter table songs 
-ADD Constraint song_pk Primary Key (song_name);
-
-CREATE TABLE SONG_HUMAN
-(human_name_fk CHAR(30) NOT NULL,
-song_fk CHAR(30) NOT NULL,
-lines_amount NUMBER(2) NOT NULL);
-ALTER TABLE SONG_HUMAN
-ADD CONSTRAINT human_song_pk PRIMARY KEY (human_name_fk, song_fk);
-
-ALTER TABLE SONG_HUMAN
-ADD CONSTRAINT human_fk FOREIGN KEY (human_name_fk) REFERENCES humans (human_name);
-ALTER TABLE SONG_HUMAN 
-ADD CONSTRAINT songname_fk FOREIGN KEY (song_fk) REFERENCES songs (song_name);
+INSERT INTO Songs(song_name, compositor_id, song_length,song_genre,song_lyrics) VALUES ('Radioactive', (SELECT compositor_id FROM Compositors
+                                                                                        Where compositor_name='Imagine Dragons'),'2','Indie Rock','Insert lyrics here ');
+INSERT INTO Songs(song_name, compositor_id, song_length,song_genre,song_lyrics) VALUES ('Ace of Spades', (SELECT compositor_id FROM Compositors
+                                                                                        Where compositor_name='Motorhead'),'2','Metal','Insert lyrics here ');
+INSERT INTO Songs(song_name, compositor_id, song_length,song_genre,song_lyrics) VALUES ('Another Brick in the Wall', (SELECT compositor_id FROM Compositors
+                                                                                        Where compositor_name='Pink_Floyd'),'2','Rock','Insert lyrics here ');
+INSERT INTO Songs(song_name, compositor_id, song_length,song_genre,song_lyrics) VALUES ('Iron Man', (SELECT compositor_id FROM Compositors
+                                                                                        Where compositor_name='Black Sabbath'),'2','Metal','Insert lyrics here ');
 
 
+alter table Songs
+   add constraint FK_SONGS_COMPOSITO_COMPOSIT foreign key (compositor_id)
+      references Compositor (compositor_id);
+create table HUMAN_SING_SONG 
+(
+   song_name            VARCHAR2(40)         not null,
+   human_id             NUMBER               not null,
+   constraint PK_HUMAN_SING_SONG primary key (song_name, human_id)
+);
 
+
+alter table HUMAN_SING_SONG
+   add constraint FK_HUMAN_SI_HUMAN_SIN_SONGS foreign key (song_name)
+      references Songs (song_name);
+
+alter table HUMAN_SING_SONG
+   add constraint FK_HUMAN_SI_HUMAN_SIN_HUMANS foreign key (human_id)
+      references Humans (human_id);
+create table Compositor 
+(
+   compositor_id        NUMBER               not null,
+   compositor_name      VARCHAR2(40)       not null,
+   compositor_age       NUMBER               not null,
+   compositor_written_songs NUMBER,
+   constraint PK_COMPOSITOR primary key (compositor_id)
+);
+
+CREATE SEQUENCE compositor_seq
+  START WITH 1
+  INCREMENT BY 1;
+  
+Alter Table Compositor ADD CONSTRAINT compos_name_check CHECK (REGEXP_LIKE(compositor_name, '^[A-Z]{1,1}[a-z]{0,39}$'));
+Alter Table Compositor ADD CONSTRAINT compos_age_check CHECK (REGEXP_LIKE(compositor_age, '^[/d]){3}$'));
+Alter Table Compositor ADD CONSTRAINT compos_songs_check CHECK(REGEXP_LIKE(compositor_written_songs, '^[/d]){4}$'));
+
+INSERT INTO Compositor(compositor_id, compositor_name, compositor_age, compositor_written_songs) VALUES (compositor_seq.nextval,'Motorhead','30','50');
+INSERT INTO Compositor(compositor_id, compositor_name, compositor_age, compositor_written_songs) VALUES (compositor_seq.nextval,'Black Sabbath','50','70');
+INSERT INTO Compositor(compositor_id, compositor_name, compositor_age, compositor_written_songs) VALUES (compositor_seq.nextval,'Imagine Dragons','10','20');
+create table Scene 
+(
+   scene_adress         VARCHAR2(50)         not null,
+   scene_seat_places    NUMBER               not null,
+   constraint PK_SCENE primary key (scene_adress)
+);
+Alter Table Scene ADD CONSTRAINT scene_adress_unique UNIQUE (scene_adress);
+Alter Table Scene ADD CONSTRAINT scene_seat_places_check CHECK (REGEXP_LIKE(scene_seat_places, '^[/d]){5}$'));
+
+
+INSERT INTO Scene(scene_adress, scene_seat_places) VALUES ('Salutna 12B','500');
+INSERT INTO Scene(scene_adress, scene_seat_places) VALUES ('Marshala Grechka 8','100');
+INSERT INTO Scene(scene_adress, scene_seat_places) VALUES ('Kotova 13','1000');
+INSERT INTO Scene(scene_adress, scene_seat_places) VALUES ('Vilgelma Pika 21','2500');
+
+create table HUMAN_PERFORMANCE_SCENE 
+(
+   scene_adress         VARCHAR2(50)         not null,
+   human_id             NUMBER               not null,
+   constraint PK_HUMAN_PERFORMANCE_SCENE primary key (scene_adress, human_id)
+);
+
+alter table HUMAN_PERFORMANCE_SCENE
+   add constraint FK_HUMAN_PE_HUMAN_PER_SCENE foreign key (scene_adress)
+      references Scene (scene_adress);
+
+alter table HUMAN_PERFORMANCE_SCENE
+   add constraint FK_HUMAN_PE_HUMAN_PER_HUMANS foreign key (human_id)
+      references Humans (human_id);
 
 
 
