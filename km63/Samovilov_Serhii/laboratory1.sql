@@ -67,12 +67,8 @@ grant select any table to Samovilov
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-select PROD_NAME 
-from PRODUCTS, ORDERS, ORDERITEMS
-where PRODUCTS.PROD_ID = ORDERITEMS.PROD_ID 
-and ORDERITEMS.ORDER_NUM = ORDERS.ORDER_NUM
-and CUST_ID.
 
+(PROJECT (PRODUCTS TIMES ORDERITEMS) {prod_name}) WHERE PRODUCTS.prod_id != ORDERITEMS.prod_id
 
 
 
