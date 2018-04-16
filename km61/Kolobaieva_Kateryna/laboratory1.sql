@@ -29,35 +29,48 @@ GRAND UPDATE ANY TABLES To kolobaieva
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLES film
+CREATE TABLE films
 ( 
-   type_of_film char(30) NOT NULL
+   type_of char(30) NOT NULL,
+   release_of numeric(4),
+   building_adress varchar2(40)
 );
-ALTER TYPE film ADD CONSTRAIN type_of_film_pk PRIMARY KEY (type_of_film);
+ALTER TABLE films ADD CONSTRAINT films_pk PRIMARY KEY (type_of);
 
-CREATE TABLES watch
+CREATE TABLE serials
 (
-   watch_type char(30)  NOT NULL
+   type_of char(30) NOT NULL,
+   release_of numeric(4),
+   building_adress varchar2(40)
+   
 );
-ALTER TYPE watch ADD CONSTRAIN type_of_watch_pk PRIMARY KEY (type_of_watch);
+ALTER TABLE serials ADD CONSTRAINT serials_pk PRIMARY KEY (type_of);
 
-CREATE TABLES human 
+CREATE TABLE buildings
 (
-   type_of_film char(30) NOT NULL
-   watch_type char(30)  NOT NULL
-   human char(30)
+   building_adress varchar2(40) NOT NULL,
+   number_of_floors numeric(10),
+);
+ALTER TABLE buildings ADD CONSTRAINT buildings_pk PRIMARY KEY (building_adress);
+
+CREATE TABLE place(
+    place_type varchar2(40) not null,
+    building_adress varchar2(40) not null
 );
 
-AlTER TABLE human ADD CONSTRAIN  human_pk PRIMARY KEY (type_of_film,
-type_of_watch);
-
-AlTER TABLE human ADD CONSTRAIN typefilm_fk FOREIGN KEY (type_of_film)
-REFERENCE film (type_of_film);
-
-AlTER TABLE human ADD CONSTRAIN typewatch_fk FOREIGN KEY (type_of_watch)
-REFERENCE watcn (type_of_watch);
-
-
+ALTER TABLE  place
+  ADD CONSTRAINT place_pk PRIMARY KEY ( place_type, building_adress);  
+  
+ALTER TABLE  place
+  ADD CONSTRAINT films_fk FOREIGN KEY (films_fk) REFERENCES films (place_type, building_adress);
+  
+ALTER TABLE  place
+  ADD CONSTRAINT serials_fk FOREIGN KEY (serials_fk) REFERENCES serials (place_type, building_adress);
+  
+  
+CREATE SEQUENCE place_seq
+START WITH 1
+INCREMENT BY 1;
 
 
 
@@ -76,9 +89,9 @@ REFERENCE watcn (type_of_watch);
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-GRAND CREATE ANY TABLES To kolobaieva
-GRAND SELECT ANY TABLES To kolobaieva
-GRAND ALTER ANY TABLES To kolobaieva
+GRANT CREATE ANY TABLE TO kolobaieva
+GRANT SELECT ANY TABLE TO kolobaieva
+GRANT ALTER ANY TABLE TO kolobaieva
 
 
 
@@ -91,7 +104,13 @@ GRAND ALTER ANY TABLES To kolobaieva
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT 
+SELECT
+COUNT(customers.cust_id) amount_cust_with_min_price
+FROM customers, orders, orderitems 
+WHERE customers.cust_id = orders.cust_id 
+AND orders.order_num = orderitems.order_num
+AND item_price = (SELECT min(item_price) FROM orderitems);
+
 
 
 
@@ -114,7 +133,11 @@ SELECT
 
 --Код відповідь:
 
-
+SELECT VEND_COUNTY 
+FROM VENDORS
+WHERE LENGTH OF VEND_COUNTRY = MAX IN (
+ALTER TABLE VENDORS 
+SELECT VEND_COUNTRY );
 
 
 
@@ -136,3 +159,9 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+SELECT "client_name" from
+(SELECT DISTINCT (trim(CUST_NAME)||' '||trim(CUST_COUNTRY) )AS "client_name", CUSTOMERS.CUST_ID
+from CUSTOMERS, ORDERITEMS, ORDERS
+where(ORDERS.ORDER_NUM = ORDERITEMS.ORDER_NUM
+AND ORDERITEMS.QUANTITY >0
+and CUSTOMERS.CUST_ID = ORDERS.CUST_ID));
