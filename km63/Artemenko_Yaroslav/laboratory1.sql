@@ -99,7 +99,13 @@ GRANT INSERT ANY TABLE to artemenko;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
+--sql code
+SELECT cust_name
+FROM ORDERITEMS
+WHERE item_price in (select min(item_price)
+                     from ORDERITEMS);
 
+--Kodda's algebra
 Project CUSTOMERS {cust_name}
 WHERE cust_id in (
 Project ORDERS {cust_id}
@@ -125,8 +131,14 @@ Project ORDERITEMS {MIN(item_price)})));
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
+--sql code
+SELECT cust_name
+FROM CUSTOMERS
+WHERE length(trim(cust_email)) in (SELECT min(length(trim(cust_email)))
+                                   FROM CUSTOMERS
+                                   WHERE cust_email is NOT NULL);
 
-
+--Kodda's algebra
 Project CUSTOMERS {cust_name}
 WHERE length(trim(cust_email)) in (
 Project CUSTOMERS {min(length(trim(cust_email)))}
@@ -151,6 +163,14 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+
+--Kodda's algebra
+Project (PRODUCTS TIMES VENDORS) {vendors.vend_name}
+MINUS
+Project (PRODUCTS TIMES VENDORS) {vendors.vend_name}
+WHERE vendors.vend_id=products.vend_id;
+
+--sql code
 SELECT vendors.vend_name
 FROM
 products, vendors
