@@ -98,14 +98,15 @@ GRANT SELECT ANY TABLE TO KIZIM;
 Виконати завдання в SQL. 
 4 бали
 ---------------------------------------------------------------------------*/
-SELECT ORDER_NUM 
-FROM ORDERS
-WHERE
 
     
 --Код відповідь:
 
-
+SELECT DISTINCT ORDER_NUM
+FROM ORDERITEMS
+WHERE ITEM_PRICE IN (
+    SELECT MIN(ITEM_PRICE)
+    FROM ORDERITEMS);
 
 
 
@@ -125,18 +126,14 @@ WHERE
 4 бали
 
 ---------------------------------------------------------------------------*/
-SELECT COUNT(COUNTRY) as "county"
-FROM (SELECT DISTINCT CUST.COUNTRY FROM CUSTOMERS)
 
 --Код відповідь:
 
 
-
-
-
-
-
-
+SELECT COUNT("country") AS "country"
+FROM
+(SELECT DISTINCT CUSTOMERS.CUST_COUNTRY AS "country"
+FROM CUSTOMERS);
 
 
 
@@ -153,3 +150,9 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
+RENAME(
+    PROJECT ((((VENDORS JOIN PRODUCTS)
+        ON VENDORS.VEND_ID = PRODUCTS.VEND_ID)
+    JOIN ORDERITEMS)
+        ON PRODUCTS.PROD_ID = ORDERITEMS.PROD_ID) {LOWER(VENDORS.VEND_NAME)}
+) {LOWER(VENDORS.VEND_NAME) / "vendor_name"}
