@@ -9,9 +9,12 @@
 --Код відповідь:
 
 CREATE USER mykhaylenko IDENTIFIED BY mykhaylenko
-QUOTA 100M ON USERS; 
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
+ALTER USER mykhaylenko QUOTA 100M ON USERS;
+GRANT "CONNECT" TO mykhaylenko ;
 
-GRANT ALTER ANY TABLE TO mykhaylenko;
+GRANT INSERT ANY TABLE TO mykhaylenko;
 
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
@@ -63,6 +66,7 @@ REFERENCES room (chair_id);
 GRANT CREATE ANY TABLE TO mykhaylenko;
 GRANT INSERT ANY TABLE TO mykhaylenko;
 GRANT ALTER ANY TABLE TO mykhaylenko;
+GRANT SELECT ANY TABLE TO mykhaylenko;
 
 
 /*---------------------------------------------------------------------------
@@ -74,11 +78,13 @@ GRANT ALTER ANY TABLE TO mykhaylenko;
 
 --Код відповідь:
 
-SELECT COUNT(Cust_name)
-FROM Customers, Orders, Orderitems
-WHERE ORDERITEMS.ITEM_PRICE=MAX(ORDERITEMS.ITEM_PRICE)
-AND ORDERITEMS.ORDER_NUM=ORDERS.ORDER_NUM
-AND ORDERS.CUST_ID=CUSTOMERS.CUST_ID;
+SELECT COUNT(ORDERS.cust_id)
+FROM Orders, Orderitems
+ WHERE (
+        ORDERS.order_num = ORDERITEMS.order_num AND
+        ORDERITEMS.item_price = (
+            SELECT MAX(item_price) 
+            FROM ORDERITEMS   )
 
 
 
@@ -92,7 +98,7 @@ AND ORDERS.CUST_ID=CUSTOMERS.CUST_ID;
 
 --Код відповідь:
 
-SELECT COUNT (CUST_EMAIL) AS COUNT_EMAIL
+SELECT COUNT(DISTINCT(cust_email)) COUNT_EMAIL
 FROM CUSTOMERS;
 
 
@@ -106,6 +112,9 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-PROJECT TRIM(CUST_NAME) || TRIM(CUST_EMAIL)
-CUSTOMERS TIMES ORDERS
-WHERE ORDERS.CUST_ID != NULL
+PROJECT (CUSTOMERS)
+WHERE
+       CUSTOMERS.cust_id not IN (
+           PROJECT (ORDERS) 
+              { DISTINCT(cust_id)}
+        ) {TRIM(cust_name) || ' ' || TRIM(cust_email) "client_name"};
