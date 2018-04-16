@@ -65,7 +65,6 @@ GRANT INSERT ANY TABLE TO mykhaylenko;
 GRANT ALTER ANY TABLE TO mykhaylenko;
 
 
-
 /*---------------------------------------------------------------------------
 3.a. 
 Скільком покупцям продано найдорожчий товар?
@@ -80,14 +79,6 @@ FROM Customers, Orders, Orderitems
 WHERE ORDERITEMS.ITEM_PRICE=MAX(ORDERITEMS.ITEM_PRICE)
 AND ORDERITEMS.ORDER_NUM=ORDERS.ORDER_NUM
 AND ORDERS.CUST_ID=CUSTOMERS.CUST_ID;
-
-
-
-
-
-
-
-
 
 
 
