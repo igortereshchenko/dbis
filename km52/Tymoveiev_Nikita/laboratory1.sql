@@ -6,7 +6,7 @@
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE NAME Timofeev
+CREATE USER Timofeev
 IDENTIFIED BY nikita
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
