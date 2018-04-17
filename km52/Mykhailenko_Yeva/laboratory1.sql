@@ -25,34 +25,42 @@ GRANT INSERT ANY TABLE TO mykhaylenko;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE TABLE room
-( table_id int(6), 
-  chair_id int (6)
+CREATE TABLE Classroom
+( room_id number(3) NOT NULL, 
+  room_size float NOT NULL,
+  reconditioning_date date 
   ); 
-CREATE TABLE table_
-( size_table number(2,2),
-  id_table int(6) NOT NULL,
-  date_table date 
+CREATE TABLE Desk
+( desk_id number(6) NOT NULL,
+  desk_material varchar2(15),
+  desk_size float,
+  desk_date date,
+  desk_color varchar2(7),
+  room_id number (3) NOT NULL
   );
-CREATE TABLE chair
-( size_chair number(2,2),
-  id_chair int(6) NOT NULL,
-  date_chair date
+CREATE TABLE Chair
+( chair_id number(6) NOT NULL,
+  chair_material varchar2(15),
+  chair_size float,
+  chair_date date,
+  chair_color varchar2(7),
+  room_id number (3) NOT NULL,
+  desk_id number(6)
   );
 
-ALTER TABLE room
+ALTER TABLE Classroom
 ADD CONSTRAINT pk 
-PRIMARY KEY (table_id, chair_id);
+PRIMARY KEY (room_id);
 
-ALTER TABLE table_
-ADD CONSTRAINT fk_table
-FOREIGN KEY (id_table)
-REFERENCES room (table_id);
+ALTER TABLE Desk
+ADD CONSTRAINT fk_desk
+FOREIGN KEY (room_id)
+REFERENCES Classroom (room_id);
 
-ALTER TABLE chair_
+ALTER TABLE Chair
 ADD CONSTRAINT fk_chair
-FOREIGN KEY (id_chair)
-REFERENCES room (chair_id);
+FOREIGN KEY (room_id)
+REFERENCES Classroom (room_id);
 
   
 /* --------------------------------------------------------------------------- 
