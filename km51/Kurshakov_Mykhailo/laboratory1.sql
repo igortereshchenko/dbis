@@ -80,8 +80,8 @@ GRANT UPDATE ANY TABLE TO Kurshakov;
 --Код відповідь:
 
 PROJECT (ORDERITEMS TIMES PRODUCTS 
-    WHERE ORDERITEMS.ITEM_PRICE = (PROJECT (ORDERITEMS) MAX(ITEM_PRICE)) 
-        AND PRODUCTS.PROD_ID = ORDERITEMS.PROD_ID); 
+    WHERE ORDERITEMS.ITEM_PRICE = (PROJECT (ORDERITEMS) {MAX(ITEM_PRICE)}) 
+        AND PRODUCTS.PROD_ID = ORDERITEMS.PROD_ID){PROD_NAME}; 
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -92,7 +92,8 @@ PROJECT (ORDERITEMS TIMES PRODUCTS
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT CUST_CONTACT as "long_name" FROM CUSTOMERS
+SELECT CUST_CONTACT as "long_name" 
+FROM CUSTOMERS
     WHERE LENGTH(TRIM(CUST_CONTACT)) = (SELECT MIN(LENGTH(TRIM(CUST_CONTACT))) FROM CUSTOMERS);
 
 
