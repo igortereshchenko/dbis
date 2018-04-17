@@ -8,11 +8,15 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-ALTER USER "KHARYTONCHYK"
-DEFAULT TABLESPACE "SYSTEM"
-TEMPORARY TABLESPACE "TEMP"
-ACCOUNT UNLOCK 
-ENABLE EDITIONS ;
+CREATE USER кharytonchyk
+IDENTIFIED BY 12345
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
+
+ALTER USER kharrytonchyk QUOTA 100M ON USERS;
+
+GRANT "CONNECT" TO tereshchenko ;
+GRANT CREATE ANY TABLE TO tereshchenko;
 
 
 
@@ -60,9 +64,14 @@ ALTER TABLE singers
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-GRANT ADD,ALTER,SELECT TO KHARYTONCHYK; 
+--Код reviewer`a:
+GRANT INSERT ANY TABLE TO KHARITONCHYK ;
+GRANT SELECT ANY TABLE TO KHARITONCHYK;
 
-
+--Виправлений код:
+GRANT CREATE ANY TABLE TO Kharytonchyk;
+GRANT INSERT ANY TABLE TO Kharytonchyk;
+GRANT SELECT ANY TABLE TO Kharytonchyk;
 
 /*---------------------------------------------------------------------------
 3.a. 
