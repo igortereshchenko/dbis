@@ -6,14 +6,15 @@
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE USER lukianchenko
-IDENTIFIED BY LUK
+CREATE USER lukianchenko IDENTIFIED BY LUK
 DEFAULT TABLESPACE "USERS"
-TEMPORARY TABLESPACE "TEMP"
-QUOTA 200M ON USERS;
+TEMPORARY TABLESPACE "TEMP";
+
+ALTER USER lukianchenko QUOTA 200M ON USERS;
 
 
-GRANT connect TO lukianchenko;
+
+GRANT "CONNECT" TO lukianchenko;
 GRANT SELECT ANY TABLE TO lukianchenko;
 
 
@@ -115,14 +116,17 @@ GRANT SELECT ANY TABLE TO lukianchenko;
 
 --Код відповідь:
 
-
-
-
-
-
-
-
-
+SELECT
+    order_num
+FROM
+    orderitems
+WHERE
+    item_price = (
+        SELECT
+            MAX(item_price)
+        FROM
+            orderitems
+    );
 
 
 
@@ -138,7 +142,7 @@ GRANT SELECT ANY TABLE TO lukianchenko;
 
 --Код відповідь:
 
-select count(DISTINCT cust_name) from customers;
+select count(DISTINCT cust_name) as count_name from customers;
 
 
 
@@ -161,6 +165,9 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-
+ PROJECT (VENDORS TIMES PRODUCTS 
+        WHERE PRODUCTS.PROD_ID NOT IN (PROJECT(ORDERITEMS){ORDERITEMS.PROD_ID}) 
+        AND  VENDORS.VEND_ID  = PRODUCTS.VEND_ID
+    ){ DISTINCT RENAME(LOWER(TRIM(VENDORS.VEND_NAME)), "VENDOR_NAME")}
 
 -- BY Lukianchenko_Rehina
