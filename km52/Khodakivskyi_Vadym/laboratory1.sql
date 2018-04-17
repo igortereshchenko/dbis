@@ -31,33 +31,147 @@ GRANT INSERT ANY TABLE TO Khodakivskyy;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE ROOM(
-  room_number NUMBER(4) NOT NULL,
-  room_volume NUMBER(6,2)
-);
-CREATE TABLE DESK(
-  desk_id NUMBER(6) NOT NULL,
-  desk_color VARCHAR2(15),
-  room_number_fk NUMBER(4) NOT NULL
-);
-CREATE TABLE CHAIR(
-  chair_id NUMBER(6) NOT NULL,
-  chair_color VARCHAR2(15),
-  room_number_fkfk NUMBER(4) NOT NULL
+/*==============================================================*/
+/* DBMS name:      ORACLE Version 11g                           */
+/* Created on:     17.04.2018 23:14:03                          */
+/*==============================================================*/
+
+
+alter table Chair
+   drop constraint FK_CHAIR_CLASSROOM_CLASSROO;
+
+alter table Classroom
+   drop constraint "FK_CLASSROO_SCHOOL HA_SCHOOL";
+
+alter table "Table"
+   drop constraint FK_TABLE_CLASSROOM_CLASSROO;
+
+drop index "classroom has chairs_FK";
+
+drop table Chair cascade constraints;
+
+drop index "School has Classrooms_FK";
+
+drop table Classroom cascade constraints;
+
+drop table School cascade constraints;
+
+drop index "classrooms has Tables_FK";
+
+drop table "Table" cascade constraints;
+
+/*==============================================================*/
+/* Table: Chair                                                 */
+/*==============================================================*/
+create table Chair 
+(
+   chair_id             INTEGER              not null,
+   class_number         INTEGER,
+   chair_color          VARCHAR2(20),
+   chair_material       VARCHAR2(20),
+   chair_height         FLOAT(8)             not null,
+   constraint PK_CHAIR primary key (chair_id)
 );
 
-ALTER TABLE ROOM
-  ADD CONSTRAINT room_pk PRIMARY KEY (room_number);
-ALTER TABLE DESK
-  ADD CONSTRAINT desk_pk PRIMARY KEY (desk_id);
-ALTER TABLE CHAIR
-  ADD CONSTRAINT chair_pk PRIMARY KEY (chair_id);
-ALTER TABLE DESK
-  ADD CONSTRAINT desk_fk FOREIGN KEY (room_number_fk)
-  REFERENCES ROOM (room_number);
-ALTER TABLE CHAIR
-  ADD CONSTRAINT chair_fk FOREIGN KEY (room_number_fkfk)
-  REFERENCES ROOM (room_number);
+/*==============================================================*/
+/* Index: "classroom has chairs_FK"                             */
+/*==============================================================*/
+create index "classroom has chairs_FK" on Chair (
+   class_number ASC
+);
+
+/*==============================================================*/
+/* Table: Classroom                                             */
+/*==============================================================*/
+create table Classroom 
+(
+   class_number         INTEGER              not null,
+   school_number        INTEGER              not null,
+   adress               VARCHAR2(50)         not null,
+   class_volume         FLOAT(8),
+   class_floor          INTEGER,
+   constraint PK_CLASSROOM primary key (class_number)
+);
+
+/*==============================================================*/
+/* Index: "School has Classrooms_FK"                            */
+/*==============================================================*/
+create index "School has Classrooms_FK" on Classroom (
+   school_number ASC,
+   adress ASC
+);
+
+/*==============================================================*/
+/* Table: School                                                */
+/*==============================================================*/
+create table School 
+(
+   school_number        INTEGER              not null,
+   adress               VARCHAR2(50)         not null,
+   school_phone_number  VARCHAR2(20)         not null,
+   school_email         VARCHAR2(40)         not null,
+   constraint PK_SCHOOL primary key (school_number, adress)
+);
+
+/*==============================================================*/
+/* Table: "Table"                                               */
+/*==============================================================*/
+create table "Table" 
+(
+   table_id             INTEGER              not null,
+   class_number         INTEGER,
+   table_color          VARCHAR2(15),
+   table_material       VARCHAR2(20),
+   table_height         NUMBER(8)            not null,
+   table_lenght         NUMBER(8)            not null,
+   constraint PK_TABLE primary key (table_id)
+);
+
+/*==============================================================*/
+/* Index: "classrooms has Tables_FK"                            */
+/*==============================================================*/
+create index "classrooms has Tables_FK" on "Table" (
+   class_number ASC
+);
+
+alter table Chair
+   add constraint FK_CHAIR_CLASSROOM_CLASSROO foreign key (class_number)
+      references Classroom (class_number);
+
+alter table Classroom
+   add constraint "FK_CLASSROO_SCHOOL HA_SCHOOL" foreign key (school_number, adress)
+      references School (school_number, adress);
+
+alter table "Table"
+   add constraint FK_TABLE_CLASSROOM_CLASSROO foreign key (class_number)
+      references Classroom (class_number);
+INSERT INTO School (school_number,adress,school_phone_number,school_email)
+values (172,'Ruginska 30/32','+380445005050','sch172@ukr.net');
+INSERT INTO School (school_number,adress,school_phone_number,school_email)
+values (163,'Baumana 25','+380444004040','sch163@ukr.net');
+INSERT INTO School (school_number,adress,school_phone_number,school_email)
+values (145,'Shota Rustaveli 48','+380447777777','sch145@ukr.net');
+
+INSERT INTO CLASSROOM (class_number,school_number,adress,class_volume,class_floor)
+values (215,172,'Ruginska 30/32',85.7,2);
+INSERT INTO CLASSROOM (class_number,school_number,adress,class_volume,class_floor)
+values (308,163,'Baumana 25',70.1,3);
+INSERT INTO CLASSROOM (class_number,school_number,adress,class_volume,class_floor)
+values (301,172,'Ruginska 30/32',79.24,3);
+
+INSERT INTO "Table" (table_id,table_color, table_material, table_height, table_lenght,class_number)
+values (2150123456,'brown','wood', 74.5, 152,215);
+INSERT INTO "Table" (table_id,table_color, table_material, table_height, table_lenght,class_number)
+values (3010123456,'brown','wood', 74.5, 152,301);
+INSERT INTO "Table" (table_id,table_color, table_material, table_height, table_lenght,class_number)
+values (3080123456,'brown','wood', 74.5, 152,308);
+
+INSERT INTO Chair (Chair_id,Chair_color, Chair_material, Chair_height, class_number)
+values (2150123456,null,null, 74.5, 215);
+INSERT INTO Chair (Chair_id,Chair_color, Chair_material, Chair_height, class_number)
+values (3010123456,'brown','wood', 80, 301);
+INSERT INTO Chair (Chair_id,Chair_color, Chair_material, Chair_height, class_number)
+values (3080123456,'black','skin', 80, 308);
 
 
 
