@@ -29,42 +29,60 @@ grant select any table TO patrushev;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-
-CREATE table person (
-    name_person char(10)
+create table human (
+    ident_code number(6), 
+    name varchar2(30) not null, 
+    surname varchar2(30) not null, 
+    mail varchar2(50)
 );
 
-CREATE table house (
-    adress char(10)
+-- house_id искусственный ключ
+create table house (
+    house_id number(20),
+    country varchar2(30) not null, 
+    city varchar2(30) not null, 
+    street varchar2(30) not null, 
+    house_number number(3) not null,
+    number_of_floors number(3)
 );
 
-CREATE table person_auto (
-    number_auto char(10)
+-- table "прописка человека"
+create table registration_address (
+    house_id_fk number(20),
+    apartment_number number(3),
+    ident_code_fk number(6),
+    floor_number number(3)
 );
 
-
-create table person_house_auto(
-    name_person_fk char(10),
-    adress_fk char(10),
-    number_auto_fk char(10)
+create table personal_auto(
+    auto_number varchar(10), 
+    mark varchar2(10) not null, 
+    model varchar2(15) not null, 
+    ident_code_fk number(6)
 );
 
-ALTER TABLE person
-    add CONSTRAINT person_pk primary key (name_person);
-ALTER TABLE house
-    add CONSTRAINT adress_pk primary key (adress);
-ALTER TABLE person_auto
-    add CONSTRAINT number_pk primary key (number_auto);
-ALTER TABLE person_house_auto
-    add CONSTRAINT person_house_auto_pk primary key (adress_fk, number_auto_fk);
+alter table human
+add constraint human_key primary key (ident_code);
+alter table house
+add constraint house_key primary key (house_id);
+alter table registration_address
+add constraint reg_address_key primary key (house_id_fk, apartment_number);
+alter table personal_auto
+add constraint pers_auto_key primary key (auto_number);
 
-ALTER TABLE person_house_auto
-    add CONSTRAINT person_fk FOREIGN KEY (name_person_fk) REFERENCES person (name_person);
-ALTER TABLE person_house_auto
-    add CONSTRAINT adress_fk FOREIGN KEY (adress_fk) REFERENCES house (adress);
-ALTER TABLE person_house_auto
-    add CONSTRAINT auto_fk FOREIGN KEY (number_auto_fk) REFERENCES person_auto (number_auto);
-    
+alter table registration_address
+add constraint reg_address_human_fk FOREIGN KEY (ident_code_fk) REFERENCES human (ident_code);
+alter table registration_address
+add constraint reg_address_house_fk FOREIGN KEY (house_id_fk) REFERENCES house (house_id);
+alter table personal_auto
+add constraint pers_auto_fk FOREIGN KEY (ident_code_fk) REFERENCES human (ident_code);
+
+
+alter table house
+add constraint unique_house unique (country,city,street,house_number);
+alter table human
+add constraint check_human CHECK (REGEXP_LIKE(mail, '^\w+@\w+\.[a-z]{2,4}$') and REGEXP_LIKE(name, '^\w+$') and REGEXP_LIKE(surname, '^\w+$'));
+
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
