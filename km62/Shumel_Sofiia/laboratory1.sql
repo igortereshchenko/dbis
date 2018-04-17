@@ -119,10 +119,13 @@ GRANT SELECT ANE TABLE TO STUDENT;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT CUST_NAME
-FROM CUSTOMERS
-WHERE 
-(CUST_ADDRESS is null) AND ( orde);
+SELECT
+    customers.cust_name
+FROM
+    customers, orders
+WHERE
+    ( customers.cust_zip IS NULL )
+    AND   ( customers.cust_id = orders.cust_id );
 
 
 
