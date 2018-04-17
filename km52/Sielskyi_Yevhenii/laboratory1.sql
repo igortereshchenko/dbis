@@ -139,6 +139,33 @@ alter table Desk
 alter table Desk
    add constraint positive_desk_height check (desk_height > 0);   
 
+INSERT INTO Classroom(classroom_number, classroom_subject, classroom_space, classroom_floor)
+    VALUES('101', 'Chemistry', '22,2', '1');
+INSERT INTO Classroom(classroom_number, classroom_subject, classroom_space, classroom_floor)
+    VALUES('202', 'Math', '33,3', '2');
+INSERT INTO Classroom(classroom_number, classroom_subject, classroom_space, classroom_floor)
+    VALUES('303', 'Databases', '44,4', '3');
+    
+INSERT INTO Blackboard(blackboard_zip, classroom_number_fk_bb, blackboard_type, blackboard_color)
+    VALUES('1111111111', '101', 'Interactive', 'White');    
+INSERT INTO Blackboard(blackboard_zip, classroom_number_fk_bb, blackboard_type, blackboard_color)
+    VALUES('2222222222', '202', 'Default', 'Green'); 
+INSERT INTO Blackboard(blackboard_zip, classroom_number_fk_bb, blackboard_type, blackboard_color)
+    VALUES('3333333333', '303', 'Default', 'Brown');     
+    
+INSERT INTO Desk(desk_zip, classroom_number_fk_ds, desk_color, desk_height)
+    VALUES('4444444444', '101', 'Yellow', '12,2');      
+INSERT INTO Desk(desk_zip, classroom_number_fk_ds, desk_color, desk_height)
+    VALUES('5555555555', '202', 'Grey', '15,1'); 
+INSERT INTO Desk(desk_zip, classroom_number_fk_ds, desk_color, desk_height)
+    VALUES('6666666666', '202', 'Brown', '15,0');   
+    
+INSERT INTO Chair(chair_zip, classroom_number_fk_ch, chair_color, chair_height)
+    VALUES('7777777777', '303', 'Brown', '12,0');    
+INSERT INTO Chair(chair_zip, classroom_number_fk_ch, chair_color, chair_height)
+    VALUES('8888888888', '303', 'Black', '13,4');    
+INSERT INTO Chair(chair_zip, classroom_number_fk_ch, chair_color, chair_height)
+    VALUES('9999999999', '303', 'Yellow', '12,0');
 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
