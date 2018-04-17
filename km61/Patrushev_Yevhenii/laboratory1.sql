@@ -83,6 +83,23 @@ add constraint unique_house unique (country,city,street,house_number);
 alter table human
 add constraint check_human CHECK (REGEXP_LIKE(mail, '^\w+@\w+\.[a-z]{2,4}$') and REGEXP_LIKE(name, '^\w+$') and REGEXP_LIKE(surname, '^\w+$'));
 
+insert all(
+    into human values (1,'Peter','Vradiy','pet@gmail.com')
+    into human values (2,'Den','Semenov','vald@gmail.com')
+    into human values (3,'Vlad','Kopich','sam@mail.com')
+    into house values (1,'Ukr','Kiev','Obolon',1,25)
+    into house values (2,'Ukr','Kiev','Obolon',25,null)
+    into house values (3,'USA','New-York','Kolon',3,4)
+    into registration_address values (2,37,3,null)
+    into registration_address values (1,5,1,14)
+    into registration_address values (1,60,2,10)
+    into personal_auto values (4562,'ep54','BMW',2)
+    into personal_auto values (1732,'fs23','acura',1)
+    into personal_auto values (2415,'fs52','acura',1)
+)
+SELECT * FROM dual;
+
+
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
