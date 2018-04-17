@@ -86,9 +86,14 @@ GRANT SELECT ANY TABLE TO bilenko;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT ITEM_PRICE
-FROM ORDERITEMS
-WHERE ITEM_PRICE < 2,5;
+Select count(cust_id)
+from orders
+where order_num in (
+select order_num
+from orderitems
+where item_price in(
+select min(item_price)
+from orderitems));
 
 
 
@@ -113,12 +118,11 @@ WHERE ITEM_PRICE < 2,5;
 
 --Код відповідь:
 
-SELECT VEND_COUNTY 
-FROM VENDORS
-WHERE LENGTH OF VEND_COUNTRY = MAX IN (
-ALTER TABLE VENDORS 
-SELECT VEND_COUNTRY );
-
+select vend_country
+from vendors
+where length(trim(vend_country)) in (
+select max(length(trim(vend_country)))
+from vendors);
 
 
 
@@ -136,7 +140,6 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-PROJECT (QUANTITY TIMES CUST_NAME) AS client_name;
-WHERE QUANTITY IS NOT NULL;
-FROM (CUSTOMERS TIMES ORDERITEMS);
-
+PROJECT CUSTOMERS, ORDERITEMS, ORDERS
+WHERE (ORDERS.ORDER_NUM = ORDERITEMS.ORDER_NUM and CUSTOMERS.CUST_ID = ORDERS.CUST_ID)
+{DISTINCT RENAME trim(CUST_NAME)||' '||trim(CUST_COUNTRY) as "client_name"};
