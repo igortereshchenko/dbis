@@ -5,14 +5,27 @@
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+
+--rewier's version
 create user herasko IDENTIFIED by herasko;
 grant create any table to herasko;
 
+GRANT "CONNECT" TO herasko ;
 
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
 
+ALTER USER herasko QUOTA 200M ON USERS;
 
+-- author's version
+CREATE USER herasko IDENTIFIED BY herasko
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
 
+ALTER USER herasko QUOTA 200M ON USERS;
 
+GRANT "CONNECT" TO herasko;
+GRANT CREATE ANY TABLE TO herasko;
 
 
 /*---------------------------------------------------------------------------
@@ -62,16 +75,31 @@ grant select any table to herasko;
 
 --Код відповідь:
 
+SELECT 
+FROM SUM(QUANTITY), ORDERITEMS
+WHERE PROD_ID = (SELECT 
+                  FROM  PROD_ID,PRODUCTS 
+                  WHERE PROD_PRICE = (SELECT
+                                      FROM MAX(PROD_PRICE), PRODUCTS);
 
-
-
-
-
-
-
-
-
-
+SELECT
+    SUM(quantity)
+FROM
+    orderitems
+WHERE
+    prod_id IN (
+                SELECT
+                    prod_id
+                FROM
+                    orderitems
+                WHERE
+                    item_price = (
+                                    SELECT
+                                        MAX(item_price)
+                                    FROM
+                                        orderitems
+                    )
+    );
 
 
 
@@ -85,17 +113,22 @@ grant select any table to herasko;
 
 --Код відповідь:
 
-select prod_id, MIN(LENGTH(prod_mame)) as len from products where prod_name = len;
-
-
-
-
-
-
-
-
-
-
+SELECT 
+FROM PROD_ID, PRODUCTS
+WHERE LENGTH(REPLACE(PROD_NAME, ' ', '') )  = (SELECT 
+                  FROM  MIN(LENGTH(REPLACE(PROD_NAME, ' ', '') )),PRODUCTS );
+                                              
+SELECT
+    prod_id
+FROM
+    products
+WHERE
+    length(TRIM(prod_name) ) = (
+        SELECT
+            MIN(length(TRIM(prod_name) ) )
+        FROM
+            products
+    );       
 
 
 
@@ -107,4 +140,8 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+                 
+ PROJECT (VENDORS
+        WHERE VENDORS.VEND_ID NOT IN (PROJECT(PRODUCTS){ distinct PRODUCTS.VEND_ID}) 
+    ){ DISTINCT RENAME(UPPER(TRIM(VENDORS.VEND_NAME)), "vendor_name")}                 
 
