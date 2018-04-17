@@ -31,20 +31,42 @@ GRAND UPDATE ANY TABLES To kolobaieva
 --Код відповідь:
 CREATE TABLE films
 ( 
-   type_of char(30) NOT NULL,
+   name_of varchar2(30) NOT NULL,
    release_of numeric(4),
    building_adress varchar2(40)
 );
-ALTER TABLE films ADD CONSTRAINT films_pk PRIMARY KEY (type_of);
+ALTER TABLE films ADD CONSTRAINT films_pk PRIMARY KEY (name_of);
+
+ALTER TABLE  films
+    ADD CONSTRAINT  films_sn_check CHECK (REGEXP_LIKE(name_of, '^[A-Za-z0-9`\.\-\s\,]'));
+ALTER TABLE  films
+    ADD CONSTRAINT  films_cn_check CHECK (1950<release_of numeric and release_of numeric<2018);
+ALTER TABLE films 
+    ADD CONSTRAINT films_ba_check CHECK (REGEXP_LIKE(building_adress, '^[A-Za-z0-9`\.\-\s\,]'));
+    
+insert into films(name_of, release_of, building_adress) values ('	Three Billboards Outside Ebbing, Missouri ','2017','Politekhnichna Street, 10');
+insert into films(name_of, release_of, building_adress) values ('Guardians of the Galaxy','2014','Khreshchatyk , 33');
+insert into films(name_of, release_of, building_adress) values ('Love, Simon','2018','Politekhnichna Street, 41');
 
 CREATE TABLE serials
 (
-   type_of char(30) NOT NULL,
+   name_of char(30) NOT NULL,
    release_of numeric(4),
    building_adress varchar2(40)
    
 );
-ALTER TABLE serials ADD CONSTRAINT serials_pk PRIMARY KEY (type_of);
+ALTER TABLE serials ADD CONSTRAINT serials_pk PRIMARY KEY (name_of);
+
+ALTER TABLE  serials
+    ADD CONSTRAINT  serials_sn_check CHECK (REGEXP_LIKE(name_of, '^[A-Za-z0-9`\.\-\s\,]'));
+ALTER TABLE  serials
+    ADD CONSTRAINT  serials_cn_check CHECK (1950<release_of numeric and release_of numeric<2018);
+ALTER TABLE serials 
+    ADD CONSTRAINT serials_ba_check CHECK (REGEXP_LIKE(building_adress, '^[A-Za-z0-9`\.\-\s\,]'));
+    
+insert into serials(name_of, release_of, building_adress) values (' Game of Thrones ','2011','Academician Gorbunova , 19');
+insert into serials(name_of, release_of, building_adress) values (' Grey's Anatomy','2005','Bastion Lane , 3');
+insert into serials(name_of, release_of, building_adress) values (' Legends of Tomorrow','2016','Chekhov, 1');
 
 CREATE TABLE buildings
 (
@@ -52,6 +74,15 @@ CREATE TABLE buildings
    number_of_floors numeric(10),
 );
 ALTER TABLE buildings ADD CONSTRAINT buildings_pk PRIMARY KEY (building_adress);
+   
+ALTER TABLE buildings ADD CONSTRAINT buildings_building_adress_check CHECK (REGEXP_LIKE(building_adress, '^[A-Za-z0-9`\.\-\s\,]'));
+ALTER TABLE buildings ADD CONSTRAINT number_of_floors_check CHECK (0<number_of_floors and number_of_floors<100);
+
+
+insert into buildings(building_adress, number_of_floors) values ('Academician Gorbunova , 19','2');
+insert into buildings(building_adress, number_of_floors) values ('Bastion Lane , 3','3');
+insert into buildings(building_adress, number_of_floors) values ('Khreshchatyk , 33','5');
+insert into buildings(building_adress, number_of_floors) values ('Politekhnichna street, 41','5');
 
 CREATE TABLE place(
     place_type varchar2(40) not null,
@@ -67,10 +98,15 @@ ALTER TABLE  place
 ALTER TABLE  place
   ADD CONSTRAINT serials_fk FOREIGN KEY (serials_fk) REFERENCES serials (place_type, building_adress);
   
+ALTER TABLE place 
+    ADD CONSTRAINT place_building_adress_check CHECK (REGEXP_LIKE(building_adress, '^[A-Za-z0-9`\.\-\s\,]'));
+ALTER TABLE place 
+    ADD CONSTRAINT place_cn_check CHECK (REGEXP_LIKE(place_type, '^[A-Za-z0-9`\.\-\s\,]'));
+   
+insert into classrooms(place_type, building_adress) values ('cinema', 'Academician Gorbunova , 19');
+insert into classrooms(place_type, building_adress) values ('cinema','Khreshchatyk , 33');
+insert into classrooms(place_type, building_adress) values ('flat','Politekhnichna street, 41');
   
-CREATE SEQUENCE place_seq
-START WITH 1
-INCREMENT BY 1;
 
 
 
