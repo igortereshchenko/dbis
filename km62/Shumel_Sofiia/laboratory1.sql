@@ -148,5 +148,21 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-
-
+SELECT
+    upper(customers.cust_name) customer_name
+FROM
+    customers
+WHERE
+    cust_id IN (
+        SELECT
+            orders.cust_id
+        FROM
+            orders,
+            orderitems
+        WHERE
+            orders.order_num = orderitems.order_num
+            AND   orderitems.quantity IN (
+                0,
+                NULL
+            )
+    );
