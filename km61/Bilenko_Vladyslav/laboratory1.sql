@@ -28,32 +28,79 @@ GRANT UPDATE ANY TABLE TO bilenko;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE people (
-surname_person VARCHAR2(10),
-age_person NUMBER(2));
-ALTER TABLE people
-  ADD CONSTRAINT surname_person_pk PRIMARY KEY (surname_person);
-  
-CREATE TABLE the_film (
-name_film VARCHAR2(15),
-time_film NUMBER(3, 2));
-ALTER TABLE the_film
-  ADD CONSTRAINT name_film_pk PRIMARY KEY (name_film);
-  
-CREATE TABLE people_watch_film (
-name_person VARCHAR2(10),
-sex_person VARCHAR(5));
-ALTER TABLE people_watch_film
- ADD FOREIGN KEY name_person REFERENCE people (surname_person_pk);
+create table film(
+name_film VARCHAR2(30) NOT NULL,
+time_film NUMBER(3),
+release_year NUMBER(4) NOT NULL,
+PRIMARY KEY (name_film, release_year)
+);
 
+INSERT INTO film (name_film, time_film, release_year)
+VALUES ('Harry Potter', 120, 2014);
+INSERT INTO film (name_film, time_film, release_year)
+VALUES ('X-Men', 135, 2011);
+INSERT INTO film (name_film, time_film, release_year)
+VALUES ('Robocop', 86, 2001);
 
+create table people(
+name_person VARCHAR2(30) NOT NULL,
+surname_person VARCHAR2(50) NOT NULL,
+sex_person VARCHAR2(5) NOT NULL,
+PRIMARY KEY (name_person, surname_person)
+);
 
+INSERT INTO people (name_person, surname_person, sex_person)
+VALUES ('Oleg', 'Patov', 'man');
+INSERT INTO people (name_person, surname_person, sex_person)
+VALUES ('Natalie', 'Shatova', 'woman');
+INSERT INTO people (name_person, surname_person, sex_person)
+VALUES ('Dima', 'Svest', 'man');
 
+create table people_watch_film(
+hole_color VARCHAR(10) NOT NULL,
+name_person VARCHAR2(30) NOT NULL,
+surname_person VARCHAR2(50) NOT NULL,
+name_film VARCHAR2(30) NOT NULL,
+release_year NUMBER(4) NOT NULL,
+PRIMARY KEY (hole_color, name_person, surname_person, name_film, release_year),
+FOREIGN KEY (name_person, surname_person) REFERENCES people(name_person, surname_person),
+FOREIGN KEY (name_film, release_year) REFERENCES film(name_film, release_year)
+);
 
+INSERT INTO people_watch_film (hole_color, name_person, surname_person, name_film, release_year)
+VALUES ('Red', 'Oleg', 'Patov', 'X-Men', 2011);
+INSERT INTO people_watch_film (hole_color, name_person, surname_person, name_film, release_year)
+VALUES ('Green', 'Natalie', 'Shatova', 'Harry Potter', 2014);
+INSERT INTO people_watch_film (hole_color, name_person, surname_person, name_film, release_year)
+VALUES ('Green', 'Dima', 'Svest', 'Harry Potter', 2014);
 
+create table book(
+name_book VARCHAR(30) NOT NULL,
+author_name VARCHAR(30) NOT NULL,
+year_write NUMBER(4),
+PRIMARY KEY (name_book, author_name)
+);
 
+INSERT INTO book (name_book, author_name, year_write)
+VALUES ('Harry Potter', 'Rolling', 2007);
+INSERT INTO book (name_book, author_name, year_write)
+VALUES ('Universe', 'Hocking', 1989);
+INSERT INTO book (name_book, author_name, year_write)
+VALUES ('SQL', 'Fort', 2006);
 
+create table film_by_book(
+rating_film NUMBER(2) NOT NULL,
+name_film VARCHAR2(30) NOT NULL,
+release_year NUMBER(4) NOT NULL,
+name_book VARCHAR(30) NOT NULL,
+author_name VARCHAR(30) NOT NULL,
+PRIMARY KEY (rating_film, name_film, release_year),
+FOREIGN KEY (name_film, release_year) REFERENCES film (name_film, release_year),
+FOREIGN KEY (name_book, author_name) REFERENCES book (name_book, author_name)
+);
 
+INSERT INTO film_by_book (rating_film, name_film, release_year, name_book, author_name)
+VALUES (8, 'Harry Potter', 2014, 'Harry Potter', 'Rolling');
 
 
 
