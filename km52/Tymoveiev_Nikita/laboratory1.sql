@@ -64,9 +64,9 @@ ALTER TABLE Student
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-GRANT CREATE TO Timofeev;
-GRANT INSERT TO Timofeev;
-GRANT SELECT TO Timofeev
+GRANT CREATE ANY TABLE TO Timofeev;
+GRANT INSERT ANY TABLE TO Timofeev;
+GRANT SELECT ANY TABLE TO Timofeev;
 
 /*---------------------------------------------------------------------------
 3.a. 
