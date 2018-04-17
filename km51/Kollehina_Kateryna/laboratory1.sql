@@ -49,3 +49,19 @@ add constraint human_name_fk foreign  key(human_name_pk)references (human_name);
 Alter table number_song
 add constraint song_name_fk foreign  key(song_name_pk)references (song_name);
 
+3.a.
+Скільки проданого найдорожчого товару?
+Виконати завдання в SQL.
+4 бали
+—-------------------------------------------------------------------------/
+SELECT
+    SUM(orderitems.quantity)
+FROM
+    orderitems
+WHERE
+    orderitems.item_price IN (
+        SELECT
+            MAX(orderitems.item_price)
+        FROM
+            orderitems
+    );
