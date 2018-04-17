@@ -6,9 +6,12 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 create user ASIMER
-identified by 123456;
+identified by 123456
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
+ALTER USER ASIMER QUOTA 100M ON USERS;
+GRANT "CONNECT" TO ASIMER;
 grant select any table to ASIMER;
-
 
 
 
@@ -59,7 +62,6 @@ add constraints table1_pk primary key(processor);
 --Код відповідь:
 
 grant create any table to ASIMER;
-grant select any table to ASIMER;
 grant insert any table to ASIMER;
 
 
