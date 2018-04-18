@@ -22,6 +22,8 @@ GRANT INSERT ANY TABLE TO alukyanenko;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
+--Old version
+
 CREATE TABLE USERS(
 EMAIL VARCHAR(40) NOT NULL,
 USER_NAME VARCHAR(30) NULL,
@@ -134,6 +136,153 @@ INSERT INTO USER_CONTACTS(EMAIL_FK, CONTACT_EMAIL, CONTACT_NAME, DATE_ADDED)
 VALUES('jjones@fun4all.com', 'sales@villagetoys.com', 'John', TO_DATE('2017-02-08', 'yyyy-mm-dd'));
 INSERT INTO USER_CONTACTS(EMAIL_FK, CONTACT_EMAIL, CONTACT_NAME, DATE_ADDED)
 VALUES('dstephens@fun4all.com', 'vanessa_paradi@gmail.com', 'Vanessa', TO_DATE('2000-05-30', 'yyyy-mm-dd'));
+
+--Power Designer version
+
+/*==============================================================*/
+/* Table: MUSIC                                                 */
+/*==============================================================*/
+create table MUSIC 
+(
+   music_id             INTEGER              not null,
+   music_name           VARCHAR2(30)         not null,
+   music_author         VARCHAR2(30)         not null,
+   music_genre          VARCHAR2(30),
+   music_dance_lvl      NUMBER(1,0),
+   constraint PK_MUSIC primary key (music_id)
+);
+
+/*==============================================================*/
+/* Table: Music_in_playlist                                     */
+/*==============================================================*/
+create table Music_in_playlist 
+(
+   playlist_user_id_fk  INTEGER              not null,
+   playlist_music_id_fk INTEGER              not null,
+   playlist_id          INTEGER              not null,
+   music_id             INTEGER              not null,
+   constraint PK_MUSIC_IN_PLAYLIST primary key (playlist_user_id_fk, playlist_music_id_fk, playlist_id, music_id)
+);
+
+/*==============================================================*/
+/* Index: Music_in_playlist2_FK                                 */
+/*==============================================================*/
+create index Music_in_playlist2_FK on Music_in_playlist (
+   music_id ASC
+);
+
+/*==============================================================*/
+/* Index: Music_in_playlist_FK                                  */
+/*==============================================================*/
+create index Music_in_playlist_FK on Music_in_playlist (
+   playlist_id ASC
+);
+
+/*==============================================================*/
+/* Table: PLAYLIST                                              */
+/*==============================================================*/
+create table PLAYLIST 
+(
+   playlist_id          INTEGER              not null,
+   playlist_user_id_fk  INTEGER              not null,
+   playlist_music_id_fk INTEGER              not null,
+   playlist_name        VARCHAR2(30),
+   constraint PK_PLAYLIST primary key (playlist_id)
+);
+
+/*==============================================================*/
+/* Table: USERS                                                 */
+/*==============================================================*/
+create table USERS 
+(
+   user_id              INTEGER              not null,
+   user_email           VARCHAR2(40)         not null,
+   user_name            VARCHAR2(30),
+   user_lastname        VARCHAR2(30),
+   user_sex             VARCHAR2(30),
+   constraint PK_USERS primary key (user_id)
+);
+
+/*==============================================================*/
+/* Table: USER_CONTACTS                                         */
+/*==============================================================*/
+create table USER_CONTACTS 
+(
+   user_contacts_id     INTEGER              not null,
+   user_contacts_user_id_fk INTEGER              not null,
+   user_contacts_contact_email VARCHAR2(40)         not null,
+   user_contacts_name   VARCHAR2(30),
+   user_contacts_date_added DATE,
+   constraint PK_USER_CONTACTS primary key (user_contacts_id)
+);
+
+/*==============================================================*/
+/* Table: User_has_contacts                                     */
+/*==============================================================*/
+create table User_has_contacts 
+(
+   user_contacts_id     INTEGER              not null,
+   user_contacts_user_id_fk INTEGER              not null,
+   user_id              INTEGER              not null,
+   constraint PK_USER_HAS_CONTACTS primary key (user_contacts_id, user_contacts_user_id_fk, user_id)
+);
+
+/*==============================================================*/
+/* Index: User_has_contacts2_FK                                 */
+/*==============================================================*/
+create index User_has_contacts2_FK on User_has_contacts (
+   user_id ASC
+);
+
+/*==============================================================*/
+/* Table: User_has_playlists                                    */
+/*==============================================================*/
+create table User_has_playlists 
+(
+   playlist_user_id_fk  INTEGER              not null,
+   playlist_music_id_fk INTEGER              not null,
+   playlist_id          INTEGER              not null,
+   user_id              INTEGER              not null,
+   constraint PK_USER_HAS_PLAYLISTS primary key (playlist_user_id_fk, playlist_music_id_fk, playlist_id, user_id)
+);
+
+/*==============================================================*/
+/* Index: User_has_playlists2_FK                                */
+/*==============================================================*/
+create index User_has_playlists2_FK on User_has_playlists (
+   user_id ASC
+);
+
+/*==============================================================*/
+/* Index: User_has_playlists_FK                                 */
+/*==============================================================*/
+create index User_has_playlists_FK on User_has_playlists (
+   playlist_id ASC
+);
+
+alter table Music_in_playlist
+   add constraint FK_MUSIC_PLAYLIST foreign key (playlist_id)
+      references PLAYLIST (playlist_id);
+
+alter table Music_in_playlist
+   add constraint FK_MUSIC_IN_PLAYLIST foreign key (music_id)
+      references MUSIC (music_id);
+
+alter table User_has_contacts
+   add constraint FK_USER_CONTACTS foreign key (user_contacts_id)
+      references USER_CONTACTS (user_contacts_id);
+
+alter table User_has_contacts
+   add constraint FK_USER_HAS_CONTACTS foreign key (user_id)
+      references USERS (user_id);
+
+alter table User_has_playlists
+   add constraint FK_USER_PLAYLIST foreign key (playlist_id)
+      references PLAYLIST (playlist_id);
+
+alter table User_has_playlists
+   add constraint FK_USER_HAS_PLAYLIST foreign key (user_id)
+      references USERS (user_id);
 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
