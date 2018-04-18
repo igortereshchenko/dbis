@@ -22,6 +22,9 @@ GRANT UPDATE ANY TABLE TO Timofeev;
 створювати окремо від таблиць використовуючи команди ALTER TABLE. 
 Студент має власний комп’ютер та кімнату в гуртожитку
 4 бали
+---------------------------------------------------------------------------*/
+--Код відповідь:
+
 /*==============================================================*/
 /* DBMS name:      ORACLE Version 11g                           */
 /* Created on:     17.04.2018 22:14:39                          */
@@ -251,11 +254,7 @@ INSERT INTO room (room_number)
 INSERT INTO room (room_number)
  VALUES('320');
 
-
-
----------------------------------------------------------------------------*/
---Код відповідь:
-CREATE TABLE Comp_Student(
+/*CREATE TABLE Comp_Student(
   st_comp char(30) not null
   st_name char(50) not null
  );
@@ -285,7 +284,7 @@ ALTER TABLE Student
  ADD CONSTRAINT FK_st_room FOREIGN KEY(st_room) REFERENCES dorminatory (st_room);
 
 ALTER TABLE Student
- ADD CONSTRAINT FK_st_comp FOREIGN KEY(st_comp) REFERENCES Comp_Student (st_comp);
+ ADD CONSTRAINT FK_st_comp FOREIGN KEY(st_comp) REFERENCES Comp_Student (st_comp);*/
 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
@@ -306,7 +305,7 @@ GRANT SELECT ANY TABLE TO Timofeev;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-My:
+/*  My code:  */
 
 (OrderItems TIMES (Products RENAME prod_id -> prod_id_fk)) 
 WHERE (prod_id = prod_id_fk AND item_price IN (OrderItems PROJECT min(item_price)))
@@ -314,22 +313,13 @@ PROJECT prod_name,item_price
 
 
 
-Reviewer code:
+/*  Reviewer code:  */
 
 SELECT prod_name, item_price
 FROM Products, OrderItems
 WHERE
 OrderItems.prod_id= Products.prod_id AND OrderItems.item_price
 IN (SELECT MIN(item_price) FROM OrderItems);
-
-
-
-
-
-
-
-
-
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -338,9 +328,8 @@ IN (SELECT MIN(item_price) FROM OrderItems);
 4 бали
 
 ---------------------------------------------------------------------------*/
-
 --Код відповідь:
-My:
+/*  My code:  */
 SELECT 
     DISTINCT(prod_id)
 FROM 
@@ -352,24 +341,11 @@ WHERE
         FROM Products
     );
 
-Reviewer code:
+/*  Reviewer code:  */
 
 SELECT prod_id
 FROM products
 WHERE (LENGTH(TRIM(prod_name)))=MAX(LENGTH(TRIM(prod_name)));
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*---------------------------------------------------------------------------
 c. 
@@ -379,6 +355,26 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+/*  My code:  */
+/*(Так як у завданні просять вивести ім'я покупця а не логін, то я виводжу поле cust_contact. Якщо має потреба виводити логін то в першому SELECT слід замінити 'cust_contact' на  'cust_name'*/
 
+SELECT TRIM(cust_contact) || ' ' || TRIM(cust_country)  AS "client_name"
+FROM Customers
+WHERE cust_id IN (
+    SELECT cust_id 
+    FROM Customers
+    
+    INTERSECT
+    
+    SELECT  Orders.cust_id 
+    FROM Orders
+);
 
+/*  Reviewer code:  */
+
+(Customers TIMES Orders TIMES OrderItems)
+WHERE
+(Customers.cust_id=Orders.cust_id)
+[cust_name || cust_country]
+RENAME (cust_name || cust_country) AS client_name
 -- BY Tymoveiev_Nikita
