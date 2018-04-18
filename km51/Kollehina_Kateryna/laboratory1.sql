@@ -65,3 +65,47 @@ WHERE
         FROM
             orderitems
     );
+    /---------------------------------------------------------------------------
+3.a.
+Скільки проданого найдорожчого товару?
+Виконати завдання в SQL.
+4 бали
+—-------------------------------------------------------------------------/
+SELECT
+    SUM(quantity)
+FROM
+    Orderitems
+WHERE
+    item_price =(
+        SELECT
+            MAX(item_price)
+        FROM
+            Orderitems
+    );
+
+/---------------------------------------------------------------------------
+3.b.
+Який PROD_ID товару, з найкоротшою назвою?
+Виконати завдання в SQL.
+4 бали
+—-------------------------------------------------------------------------/
+SELECT
+    prod_id
+FROM
+    Products
+WHERE
+    length(TRIM(prod_name) ) = (
+        SELECT
+            MIN(length(TRIM(prod_name) ) )
+        FROM
+            Products
+    );
+/*---------------------------------------------------------------------------
+c.
+Вивести імена постачальників у верхньому регістрі,назвавши це поле vendor_name, що не мають жодного товару.
+Виконати завдання в алгебрі Кодда.
+4 бали
+
+A = Project (Vendors) { Upper(vend_name)}
+B =  Project (Vendors Times Products Where Vendors.vend_id = Products.vend_id) {Upper(vendors.vend_name)}
+Answer = Project (A MINUS B) {RENAME(Upper(vend_name), vendor_name)}
