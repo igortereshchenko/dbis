@@ -140,6 +140,13 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+  PROJECT (VENDORS
+        WHERE VEND_ID IN (PROJECT(VENDORS){VEND_ID}) 
+    ){ RENAME(UPPER(VEND_NAME), "vendor_name")}  
+
+MINUS 
+PROJECT(PRODUCTS){VEND_ID};                
+                 
                  
  PROJECT (VENDORS
         WHERE VENDORS.VEND_ID NOT IN (PROJECT(PRODUCTS){ distinct PRODUCTS.VEND_ID}) 
