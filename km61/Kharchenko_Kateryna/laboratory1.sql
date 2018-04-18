@@ -50,7 +50,8 @@ ALTER TABLE know
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-GRANT ANY INSTAL by kharchenko;
+GRANT INSERT INTO ANY TABLE by kharchenko;
+GRANT SELECT ANY TABLE by kharchenko;
 
 /*---------------------------------------------------------------------------
 3.a. 
@@ -60,12 +61,33 @@ GRANT ANY INSTAL by kharchenko;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
+--Версія рев'ювера в SQL
+SELECT Clients.name FROM Clients, OrderItems
+WHERE
+OrderItems.item_price in (SELECT max(item_price) FROM OrderItems)
+AND
+Clients.client_id = OrderItems.client.id
 
-SELECT name 
-From shop 
-Where valume im select (
-min(valyme) frome shop
-)
+---Правильний варіант в Алгебрі Кодда
+(
+  (Customers TIMES 
+   (
+    (Orders RENAME cust_id cust_id_fk)   TIMES 
+    (
+      (
+        (OrderItems RENAME order_num order_num_fk) 
+        PROJECT item_price order_num_fk
+      ) TIMES 
+      (
+        OrderItems RENAME min(item_price) min_price
+      ) 
+    )
+   )
+ ) WHERE cust_id_fk == cust_id AND order_num_fk == order_num AND item_price == min_price
+) PROJECT cust_name
+
+
+
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -77,9 +99,23 @@ min(valyme) frome shop
 
 --Код відповідь:
 
-SELECT client_name(name)  
+--Версія рев'ювера в SQL
+SELECT '('||trim(name)||')'
 FROM shop
-WHERE mail = not null
+WHERE mail is not null
+
+---Правильний варіант в SQL
+Select '('||trim(cust_name)||')'  AS "client_name"
+
+from (Select customers.cust_name
+      From customers
+      Where customers.cust_zip is null
+      
+      MINUS
+      Select customers.cust_name
+      From customers, orders
+      Where customers.cust_zip is null 
+      and customers.cust_id = orders.cust_id);
 
 
 /*---------------------------------------------------------------------------
@@ -90,6 +126,18 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-SELECT client_name(name)  
-FROM shop
-WHERE 
+--Версія рев'ювера в SQL
+SELECT upper(name) AS "vendor_name"
+From vendors
+Where products is null
+
+---Правильний варіант в SQL
+Select vend_name  AS "vendor_name"
+From (
+  SELECT vendors.vend_name
+  From vendors
+  MINUS
+  SELECT vendors.vend_name
+  From vendors, products, orderitems
+  Where products.prod_id = orderitems.prod_id 
+  and vendors.vend_id = products.vend_id);
