@@ -96,7 +96,7 @@ GRANT SELECT ANY TABLE, INSERT ANY TABLE, SELECT ANY TABLE TO dreyev;
 --Код відповід 
 
 
-
+project(Products ITEM_NAME where ITEM_PRICE = project(OrderItems MIN(ITEM_PRICE))) 
 
 
 
@@ -116,7 +116,7 @@ GRANT SELECT ANY TABLE, INSERT ANY TABLE, SELECT ANY TABLE TO dreyev;
 
 --Код відповідь:
 
-
+project(Products PROD_ID where LEN(ITEM_NAME) = project(Products MAX(LEN(ITEM_NAME))))
 
 
 
@@ -138,3 +138,7 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+
+
+select (trim(CUST_NAME) || trim(CUST_COUNTRY)) client_name 
+where CUST_ID in (select CUST_ID from Orders);
