@@ -32,32 +32,71 @@ GRANT ALTER ANY /*Якесь слово*/ TO OLEH_KULISH;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE PEOPLES (people VARCHAR(20));
-ALTER TABLE PEOPLES 
-    ADD CONSTRAINT people_pk PRIMARY KEY (people);
+create table oleh.residents_Ukraine(
+    resident varchar2(50));
+    
+alter table oleh.residents_ukraine
+    add constraint resedent_pk primary key (resident);
+    
+insert into oleh.residents_Ukraine VALUES('Michael Joseph Jackson');
+insert into oleh.residents_Ukraine VALUES('lun hoo');
+insert into oleh.residents_Ukraine VALUES('Kim Gordon');
 
-CREATE TABLE HOMES (home VARCHAR(25));
-ALTER TABLE HOMES
-    ADD CONSTRAINT home_pk PRIMARY KEY (home);
+----------------------------------------------------------------------------
 
-CREATE TABLE CARS (car VARCHAR(25));
-ALTER TABLE CARS
-    ADD CONSTRAINT car_pk PRIMARY KEY (car);
+create table oleh.homes(
+    adres varchar2(500));
+    
+alter table oleh.homes
+    add constraint adres_pk primary key (adres);
 
+insert into oleh.homes VALUES('Ukraine Kiev Kovalsky Prospect 6');
+insert into oleh.homes VALUES('Ukraine Kiev Yangileva Prospect 23');
+insert into oleh.homes VALUES('Ukraine Kiev Hrushevsky Prospect 15');
+----------------------------------------------------------------------------
 
+create table oleh.cars(
+    car varchar2(50));
+    
+alter table oleh.cars
+    add constraint car_pk primary key (car);
 
+insert into oleh.cars VALUES('Nisan');
+insert into oleh.cars VALUES('Akura');
+insert into oleh.cars VALUES('Tesla');
+ ---------------------------------------------------------------------------   
+    
+create table oleh.residents_Ukraine_your_homes(
+    resident_h_fk varchar2(50),
+    home_resident_fk varchar2(30)
+);
 
+alter table oleh.residents_Ukraine_your_homes
+    add constraint resident1_fk FOREIGN key (resident_h_fk) references oleh.residents_ukraine(resident);
+    
+alter table oleh.residents_Ukraine_your_homes
+    add constraint home_fk FOREIGN key (home_resident_fk) references oleh.homes(adres);
+    
+insert into oleh.residents_Ukraine_your_homes VALUES('Michael Joseph Jackson', 'Ukraine Kiev Yangileva Prospect 23');
+insert into oleh.residents_Ukraine_your_homes VALUES('lun hoo', 'Ukraine Kiev Hrushevsky Prospect 15');
+insert into oleh.residents_Ukraine_your_homes VALUES('Kim Gordon', 'Ukraine Kiev Hrushevsky Prospect 15');
+----------------------------------------------------------------------------
 
+create table oleh.residents_Ukraine_your_cars(
+    resident_c_fk varchar2(50),
+    car_resident_fk varchar2(500)
+);
 
+alter table oleh.residents_Ukraine_your_cars
+    add constraint resident2_fk FOREIGN key (resident_c_fk) references oleh.residents_ukraine(resident);
+    
+alter table oleh.residents_Ukraine_your_cars
+    add constraint car_fk FOREIGN key (car_resident_fk) references oleh.cars(car);
 
+insert into oleh.residents_Ukraine_your_cars VALUES('Kim Gordon', 'Akura');
+insert into oleh.residents_Ukraine_your_cars VALUES('Michael Joseph Jackson', 'Nisan');
+insert into oleh.residents_Ukraine_your_cars VALUES('lun hoo', 'Tesla');
 
-
-
-
-
-
-
-  
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
@@ -80,7 +119,7 @@ GRANT ALTER ANY /*Якесь слово*/ TO OLEH_KULISH;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-
+SELECT provider FROM providers where min(price)
 
 
 
