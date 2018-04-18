@@ -178,16 +178,6 @@ add constraint song_album_check check(regexp_like(song_album,'^[A-Z][a-z]{1,49}$
 alter table Song
 add constraint song_duration_check check(regexp_like(song_duration,'^\d{1,5}$'));
 
-
-Song 
-(
-   song_title           VARCHAR2(50)         not null,
-   song_release_year    DATE                 not null,
-   song_album           VARCHAR2(50),
-   song_duration  
-
-
-
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
