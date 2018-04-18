@@ -329,10 +329,22 @@ GRANT SELECT ANY TABLE TO Timofeev;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT MAX(length(prod_id))
-FROM Products;
+My:
+SELECT 
+    DISTINCT(prod_id)
+FROM 
+    Products
+WHERE 
+    LENGTH(TRIM(prod_name)) = (
+        SELECT 
+            MAX(LENGTH(TRIM(prod_name))) 
+        FROM Products
+    );
 
-
+Reviewer code:
+SELECT prod_id
+FROM products
+WHERE (LENGTH(TRIM(prod_name)))=MAX(LENGTH(TRIM(prod_name)));
 
 
 
