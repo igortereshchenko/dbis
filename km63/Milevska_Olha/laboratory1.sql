@@ -1,5 +1,3 @@
--- LABORATORY WORK 1
-Tables
 /*---------------------------------------------------------------------------
 1.Створити схему даних з назвою – прізвище студента, у якій користувач може: 
 видаляти таблиці та робити запити з таблиць
@@ -12,20 +10,10 @@ DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
 
 ALTER USER milevska QUOTA 100M ON USERS;
-GRANT "CONECT" TO milevska;  
+GRANT "CONNECT" TO milevska;  
 
-GRANT INSERT ANY TABLE TO milevska;
+GRANT SELECT ANY TABLE TO milevska;
 GRANT DROP ANY TABLE TO milevska;
-
-
-
-
-
-
-
-
-
-
 
 
 /*---------------------------------------------------------------------------
@@ -38,32 +26,33 @@ GRANT DROP ANY TABLE TO milevska;
 --Код відповідь:
 
 CREATE TABLE user(
-    user_name VARCHAR(20)
+    user_name VARCHAR2(20) NOT NULL
 );
+
 
 ALTER TABLE user
 ADD CONSTRAINT user_name_pk PRIMARY KEY (user_name);
 
 CREATE TABLE os(
-    os_name VARCHAR(20)
+    os_name VARCHAR2(20)
 ); 
 
 ALTER TABLE os
 ADD CONSTRAINT os_name_pk PRIMARY KEY (os_name);    
 
 CREATE TABLE user_os(
-    user_name_fk VARCHAR(20)
-    os_name_fk VARCHAR(20)
+    user_name_fk VARCHAR(20) NOT NULL
+    os_name_fk VARCHAR2(20) NOT NULL
 );
 
 ALTER TABLE user_os
 ADD CONSTRAINT user_os_pk PRIMARY KEY (user_name_fk,os_name_fk );    
 
 ALTER TABLE user_os
-ADD CONSTRAINT user_name_fk FOREIGN KEY (user_name_fk) REFERENCES TO (user_name);
+ADD CONSTRAINT user_name_fk FOREIGN KEY (user_name_fk) REFERENCES (user_name);
 
 ALTER TABLE user_os
-ADD CONSTRAINT os_name_fk FOREIGN KEY (os_name_fk) REFERENCES TO (os_name);
+ADD CONSTRAINT os_name_fk FOREIGN KEY (os_name_fk) REFERENCES (os_name);
 
 
 
@@ -80,9 +69,9 @@ ADD CONSTRAINT os_name_fk FOREIGN KEY (os_name_fk) REFERENCES TO (os_name);
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-
-
-
+GRANT CREATE ANY TABLE TO milevska;
+GRANT INSERT ANY TABLE TO milevska;
+GRANT SELECT ANY TABLE TO milevska;
 
 
 
@@ -96,16 +85,11 @@ ADD CONSTRAINT os_name_fk FOREIGN KEY (os_name_fk) REFERENCES TO (os_name);
 
 --Код відповідь:
 
-
-
-
-
-
-
-
-
-
-
+SELECT CUST_NAME
+FROM CUSTOMERS, ORDERITEMS, ORDERS
+WHERE ITEM_PRICE NOT IN(
+SELECT MIN(ITEM_PRICE)
+FROM ORDERITEMS);
 
 
 
@@ -141,6 +125,3 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-
-
--- BY Milevska_Olha
