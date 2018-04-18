@@ -93,20 +93,13 @@ grant select any table to Lutsyk;
 4 бали
 ---------------------------------------------------------------------------*/
 
---Код відповідь:
+--Код відповідь: (додано 18.04.2018)
 
-
-
-REFERENCES (MIN_PRISE , PRODUCT (MIN(MIN_PRICE) AND NAMEOFCUST
-
-
-
-
-
-
-
-
-
+SELECT CUST_NAME
+FROM Customers,Orders, ORDERITEMS
+ WHERE customers.cust_id = orders.cust_id
+ AND orders.order_num = orderitems.order_num
+AND item_price IN (SELECT MIN(orderitems.item_price) FROM orderitems);
 
 /*---------------------------------------------------------------------------
 3.b. 
