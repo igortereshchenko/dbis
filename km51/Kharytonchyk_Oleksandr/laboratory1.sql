@@ -157,6 +157,37 @@ alter table human_writes_song
       references Human (human_identific_number)
       on delete cascade;
 
+alter table Human
+add constraint human_identific_number_check check(regexp_like(human_identific_number,'^\d{10}$'));
+
+alter table Human
+add constraint human_name_check check(regexp_like(human_name,'^[A-Z][a-z]{1,29}$'));
+
+alter table Human
+add constraint human_surname_check check(regexp_like(human_surname,'^[A-Z][a-z]{1,29}$'));
+
+alter table Song
+add constraint song_title_check check(regexp_like(song_title,'^[A-Z][a-z]{1,49}$'));
+
+alter table Song
+add constraint song_release_year_check check(regexp_like(song_release_year,'^([1-9]|[12][0-9]|[31]|[30]).([A-Z]{3}).[1-2][0-9]{3}$'));
+
+alter table Song
+add constraint song_album_check check(regexp_like(song_album,'^[A-Z][a-z]{1,49}$'));
+
+alter table Song
+add constraint song_duration_check check(regexp_like(song_duration,'^\d{1,5}$'));
+
+
+Song 
+(
+   song_title           VARCHAR2(50)         not null,
+   song_release_year    DATE                 not null,
+   song_album           VARCHAR2(50),
+   song_duration  
+
+
+
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
