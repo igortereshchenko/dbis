@@ -26,34 +26,84 @@ TO adamovskiy;
 4 бали
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
-
-create table computer(
-    comp_name varchar2(30),
+CREATE TABLE comp_hard_fk (
+    computer_mac_address     VARCHAR2(30) NOT NULL,
+    hardware_party_number    INTEGER NOT NULL,
+    hardware_serial_number   INTEGER NOT NULL
 );
-alter table computer
-  add constraint comp_pk primary key (comp_name);
 
-drop table computer;
+ALTER TABLE comp_hard_fk
+    ADD CONSTRAINT comp_hard_fk_pk PRIMARY KEY ( computer_mac_address,
+                                                 hardware_party_number,
+                                                 hardware_serial_number );
 
-create table aparat(
-  prosesor varchar2(30),
-  block_power varchar2(30)
+CREATE TABLE comp_soft_fk (
+    computer_mac_address   VARCHAR2(30) NOT NULL,
+    software_soft_name     VARCHAR2(30) NOT NULL,
+    software_version       VARCHAR2(30) NOT NULL
 );
-alter table aparat
-  add constraint apar_pk primary key (block_power);
 
-create table prog(
-  prog_name varchar2(30)
+ALTER TABLE comp_soft_fk
+    ADD CONSTRAINT comp_soft_fk_pk PRIMARY KEY ( computer_mac_address,
+                                                 software_soft_name,
+                                                 software_version );
+
+CREATE TABLE computer (
+    mac_address            VARCHAR2(30),
+    comp_name              VARCHAR2(30),
+    owner_owner_passport   VARCHAR2(30) NOT NULL
 );
-alter table prog
-  add constraint prog_id primary key (prog_name);
 
-alter table computer
-  add constraint comp_apparat_fk foreign key (apar_pk) references aparat;
-alter table prog
-  add constraint comp_prog_fk foreign key (prog_pk) references prog;
+ALTER TABLE computer ADD CONSTRAINT computer_pk PRIMARY KEY ( mac_address );
 
+CREATE TABLE hardware (
+    party_number    INTEGER NOT NULL,
+    serial_number   INTEGER NOT NULL,
+    aparat_name     VARCHAR2(30)
+);
+
+ALTER TABLE hardware ADD CONSTRAINT hardware_pk PRIMARY KEY ( party_number,
+                                                              serial_number );
+
+CREATE TABLE owner (
+    owner_name       VARCHAR2(30),
+    owner_passport   VARCHAR2(30) NOT NULL
+);
+
+ALTER TABLE owner ADD CONSTRAINT owner_pk PRIMARY KEY ( owner_passport );
+
+CREATE TABLE software (
+    soft_name     VARCHAR2(30),
+    version       VARCHAR2(30),
+    description   CLOB
+);
+
+ALTER TABLE software ADD CONSTRAINT software_pk PRIMARY KEY ( soft_name,
+                                                              version );
+
+ALTER TABLE comp_hard_fk
+    ADD CONSTRAINT comp_hard_fk_computer_fk FOREIGN KEY ( computer_mac_address )
+        REFERENCES computer ( mac_address );
+
+ALTER TABLE comp_hard_fk
+    ADD CONSTRAINT comp_hard_fk_hardware_fk FOREIGN KEY ( hardware_party_number,
+                                                          hardware_serial_number )
+        REFERENCES hardware ( party_number,
+                              serial_number );
+
+ALTER TABLE comp_soft_fk
+    ADD CONSTRAINT comp_soft_fk_computer_fk FOREIGN KEY ( computer_mac_address )
+        REFERENCES computer ( mac_address );
+
+ALTER TABLE comp_soft_fk
+    ADD CONSTRAINT comp_soft_fk_software_fk FOREIGN KEY ( software_soft_name,
+                                                          software_version )
+        REFERENCES software ( soft_name,
+                              version );
+
+ALTER TABLE computer
+    ADD CONSTRAINT computer_owner_fk FOREIGN KEY ( owner_owner_passport )
+        REFERENCES owner ( owner_passport );
 
   
 /* --------------------------------------------------------------------------- 
