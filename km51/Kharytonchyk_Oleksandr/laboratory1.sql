@@ -178,6 +178,18 @@ add constraint song_album_check check(regexp_like(song_album,'^[A-Z][a-z]{1,49}$
 alter table Song
 add constraint song_duration_check check(regexp_like(song_duration,'^\d{1,5}$'));
 
+alter table human_sings_song 
+ add constraint sing_time_unique unique(sing_time);
+ 
+alter table human_sings_song 
+ add constraint sing_time_check check(sing_time <= GETDATE());
+ 
+ alter table human_sings_song 
+ add constraint adequate_check check(sing_time >= end_date);
+ 
+alter table human_writes_song 
+ add constraint end_date_check check(end_date <= GETDATE());
+
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
