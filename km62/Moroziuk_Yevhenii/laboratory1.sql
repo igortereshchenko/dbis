@@ -79,7 +79,8 @@ GRANT SELECT ANY TABLE TO student;
 
 --Код відповідь:
 
-
+(((Products WHERE prod_id NOT IN (Orderitems PROJECT prod_id))
+ Project prod_id, prod_price) RENAME max(prod_price) -> max_price) Project max_price
 
 
 
