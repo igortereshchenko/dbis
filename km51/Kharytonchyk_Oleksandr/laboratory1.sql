@@ -26,30 +26,137 @@ GRANT CREATE ANY TABLE TO tereshchenko;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+/*==============================================================*/
+/* DBMS name:      ORACLE Version 11g                           */
+/* Created on:     18.04.2018 23:21:45                          */
+/*==============================================================*/
 
 
-CREATE TABLE singers
+alter table human_sings_song
+   drop constraint FK_SINGER_SINGS_SONG;
+
+alter table human_sings_song
+   drop constraint FK_SINGER_SONG;
+
+alter table human_writes_song
+   drop constraint FK_AUTHOR_SONG;
+
+alter table human_writes_song
+   drop constraint FK_AUTOR_WROTE_SONG;
+
+drop table Human cascade constraints;
+
+drop table Song cascade constraints;
+
+drop index human_sings_song_FK;
+
+drop index human_sings_song2_FK;
+
+drop table human_sings_song cascade constraints;
+
+drop index human_writes_song_FK;
+
+drop index human_writes_song2_FK;
+
+drop table human_writes_song cascade constraints;
+
+/*==============================================================*/
+/* Table: Human                                                 */
+/*==============================================================*/
+create table Human 
 (
-    name char (30) NOT NULL,
-    experienceInYears int (3),
-    quality varchar2(50)
+   human_identific_number NUMBER(10)           not null,
+   human_name           VARCHAR2(30)         not null,
+   human_surname        VARCHAR2(30)         not null,
+   constraint PK_HUMAN primary key (human_identific_number)
 );
 
-CREATE TABLE songs
+/*==============================================================*/
+/* Table: Song                                                  */
+/*==============================================================*/
+create table Song 
 (
-    song   char (30) NOT NULL,
-    author char (30)
+   song_title           VARCHAR2(50)         not null,
+   song_release_year    DATE                 not null,
+   song_album           VARCHAR2(50),
+   song_duration        NUMBER(5),
+   constraint PK_SONG primary key (song_title, song_release_year)
 );
 
-ALTER TABLE singers
+/*==============================================================*/
+/* Table: human_sings_song                                      */
+/*==============================================================*/
+create table human_sings_song 
 (
-    ADD CONSTRAINT name_pk PRIMARY KEY (name)
+   song_title           VARCHAR2(50)         not null,
+   song_release_year    DATE                 not null,
+   human_identific_number NUMBER(10)           not null,
+   sing_time            DATE                 not null,
+   constraint PK_HUMAN_SINGS_SONG primary key (song_title, song_release_year, human_identific_number, sing_time)
 );
 
+/*==============================================================*/
+/* Index: human_sings_song2_FK                                  */
+/*==============================================================*/
+create index human_sings_song2_FK on human_sings_song (
+   human_identific_number ASC
+);
 
+/*==============================================================*/
+/* Index: human_sings_song_FK                                   */
+/*==============================================================*/
+create index human_sings_song_FK on human_sings_song (
+   song_title ASC,
+   song_release_year ASC
+);
 
+/*==============================================================*/
+/* Table: human_writes_song                                     */
+/*==============================================================*/
+create table human_writes_song 
+(
+   song_title           VARCHAR2(50)         not null,
+   song_release_year    DATE                 not null,
+   human_identific_number NUMBER(10)           not null,
+   end_date             DATE,
+   constraint PK_HUMAN_WRITES_SONG primary key (song_title, song_release_year, human_identific_number)
+);
 
-  
+/*==============================================================*/
+/* Index: human_writes_song2_FK                                 */
+/*==============================================================*/
+create index human_writes_song2_FK on human_writes_song (
+   human_identific_number ASC
+);
+
+/*==============================================================*/
+/* Index: human_writes_song_FK                                  */
+/*==============================================================*/
+create index human_writes_song_FK on human_writes_song (
+   song_title ASC,
+   song_release_year ASC
+);
+
+alter table human_sings_song
+   add constraint FK_SINGER_SINGS_SONG foreign key (human_identific_number)
+      references Human (human_identific_number)
+      on delete cascade;
+
+alter table human_sings_song
+   add constraint FK_SINGER_SONG foreign key (song_title, song_release_year)
+      references Song (song_title, song_release_year)
+      on delete cascade;
+
+alter table human_writes_song
+   add constraint FK_AUTHOR_SONG foreign key (song_title, song_release_year)
+      references Song (song_title, song_release_year)
+      on delete cascade;
+
+alter table human_writes_song
+   add constraint FK_AUTOR_WROTE_SONG foreign key (human_identific_number)
+      references Human (human_identific_number)
+      on delete cascade;
+
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
