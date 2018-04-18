@@ -42,7 +42,8 @@ create table fb_users
 create table fb_news
     (
             new_id number(6) not null,
-            new_topic varchar2(30)
+            new_topic varchar2(30) not null,
+            fact_name_fk varchar2(50) not null
         );
         
     alter table fb_users
@@ -53,17 +54,61 @@ create table fb_news
         
 CREATE TABLE fb_news_users
     (
-        new_id number(6) not null,
-        user_id number(6) not null,
+        new_id_fk number(6) not null,
+        user_id_fk number(6) not null,
         
     );
+    
     alter table fb_news_users
-  add constraint fb_n_u_pk primary key (new_id, user_id);
+  add constraint fb_n_u_pk primary key (new_id_fk, user_id_fk);
 alter table fb_news_users
-  add constraint new_id_fk foreign key (new_id) references  fb_news (new_id);
+  add constraint new_id_fk foreign key (new_id_fk) references  fb_news (new_id);
 alter table fb_news_users
-  add constraint user_id_fk foreign key (user_id) references  fb_users (user_id);
+  add constraint user_id_fk foreign key (user_id_fk) references  fb_users (user_id);
         
+        
+        create table facts
+            (
+                fact_name varchar2(50),
+                fact_date date
+            )
+        
+        alter table facts
+        add constraint fn_pk primary key (fact_name);
+        
+        alter table fb_news
+        add CONSTRAINT fn_fk foreign key (fact_name_fk) references facts (fact_name);
+        
+        
+        
+        insert into fb_users (user_id, user_name)
+        values ('000001','petya');
+        insert into fb_users (user_id, user_name)
+        values ('000002','sasha');
+        insert into fb_users (user_id, user_name)
+        values ('000003','anton');
+        
+        insert into fb_news (new_id, new_topic, fact_name_fk)
+        values ('000001','viboru', 'vibory prezidenta ukrainu');
+        insert into fb_news (new_id, new_topic, fact_name_fk)
+        values ('000002','katastrofa', 'vzriv likerovodochnogo zavoda');
+        insert into fb_news (new_id, new_topic, fact_name_fk)
+        values ('000003','kosmos', 'polet mejgalakticheskou rakety');
+        
+        
+        insert into fb_news_users (new_id_fk, user_id_fk)
+        values ('000001','000001');
+        insert into fb_news_users (new_id_fk, user_id_fk)
+        values ('000002','000002');
+        insert into fb_news_users (new_id_fk, user_id_fk)
+        values ('000003','000003');
+        
+        insert into facts (fact_name, fact_date)
+        values ('vibory prezidenta ukrainu','2018-03-01');
+       insert into facts (fact_name, fact_date)
+       values ('vzriv likerovodochnogo zavoda','1961-04-12');
+       insert into facts (fact_name, fact_date)
+       values ('polet mejgalakticheskou rakety','2017-01-15');
 
 
 
@@ -104,9 +149,7 @@ grant select any table to milev;
 --Код відповідь:
 
 
-select prod_name
-from products
-where 
+(PROJECT (PRODUCTS TIMES ORDERITEMS) {prod_name}) WHERE PRODUCTS.prod_id != ORDERITEMS.prod_id
 
 
 
@@ -128,6 +171,10 @@ where
 
 --Код відповідь:
 
+select prod_name
+  FROM PRODUCTS, ORDERITEMS
+  WHERE PRODUCTS.prod_id = ORDERITEMS.prod_id and
+ (SELECT length(TRIM(prod_name)) FROM PRODUCTS) = (SELECT max(length(TRIM(prod_name))) FROM PRODUCTS);
 
 
 
@@ -151,9 +198,10 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-select cust_name, cust_email as "client_name"
-from customers, orders
-where ( select 
+SELECT 
+cust_name || ' ' ||cust_email as client_name
+FROM CUSTOMERS, ORDERS
+WHERE CUSTOMERS.cust_id=ORDERS.cust_id;
 
 
 
