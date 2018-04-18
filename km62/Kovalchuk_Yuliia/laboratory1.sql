@@ -38,16 +38,7 @@ CREATE TABLE phone (
     phone_price,
     phone_id )
  );
- 
- INSERT INTO phone  (phone_name, phone_id, phone_marka, phone_price) 
- VALUES ( '23B39','10001','MEIZU','1200'
- );
-INSERT INTO phone  (phone_name, phone_id, phone_marka, phone_price) 
- VALUES ( '23B39','10002','SAMSUNG','1200'
- );
- INSERT INTO phone  (phone_name, phone_id, phone_marka, phone_price) 
- VALUES ( '33bbccer2','10003','LENOVO','1200'
- );
+
 
  CREATE TABLE human (
     human_name        VARCHAR(15) NOT NULL,
@@ -57,15 +48,6 @@ INSERT INTO phone  (phone_name, phone_id, phone_marka, phone_price)
     CONSTRAINT human_pk PRIMARY KEY ( human_id )
 );
 
-INSERT INTO human  (human_name, human_id, hunam_age, human_sex) 
- VALUES ( 'KOLIN','10281','23','M'
- );
- INSERT INTO human  (human_name, human_id, hunam_age, human_sex) 
- VALUES ( 'JHON','10881','19','M'
- );
- INSERT INTO human  (human_name, human_id, hunam_age, human_sex) 
- VALUES ( 'OLHA','143281','43','V'
- );
 
 CREATE TABLE orders (
     human_id_fk   NUMBER(20) NOT NULL,
@@ -74,16 +56,8 @@ CREATE TABLE orders (
     order_date  DATE NOT NULL
 	
 );
-INSERT INTO orders  (human_id_fk, phone_name_fk, order_type, order_date) 
- VALUES ( '12048892','NOKIA','NOT_GOLD','16-07-2008'
- );
- INSERT INTO orders  (human_id_fk, phone_name_fk, order_type, order_date) 
- VALUES ( '8394839','NOKIA','GOLD','18-03-2018'
- );
- INSERT INTO orders  (human_id_fk, phone_name_fk, order_type, order_date) 
- VALUES ( '3029029','MEIZU','NOT_GOLD','14-05-2012'
- );
-----------------------------
+
+
 
  ALTER TABLE phone
     ADD CONSTRAINT phone_nam UNIQUE ( phone_name,
@@ -115,7 +89,6 @@ ALTER TABLE orders
     ADD CONSTRAINT human_fk FOREIGN KEY ( human_id_fk )
         REFERENCES human ( human_id );
         
-—----------------------------------------------------------------------------
 
 CREATE TABLE shop (
     phone_price_fk     NUMBER(8) NOT NULL,
@@ -124,16 +97,6 @@ CREATE TABLE shop (
     location    VARCHAR2(20) NOT NULL,
     profit   NUMBER(10) NOT NULL
 );
-
-INSERT INTO shop  (phone_price_fk, phone_id_fk, order_date_fk, location, profit) 
- VALUES ( '1200','32222','16-03-2006','Kyiv', '20000'
- );
- INSERT INTO shop  (phone_price_fk, phone_id_fk, order_date_fk, location, profit) 
- VALUES ( '2000','334322','11-04-2017','lviv', '3267000'
- );
- INSERT INTO shop  (phone_price_fk, phone_id_fk, order_date_fk, location, profit) 
- VALUES ( '5000','47483','18-03-2012','Kyiv', '3000000'
- );
 
 ALTER TABLE shop
     ADD CONSTRAINT shop_pk PRIMARY KEY ( phone_price_fk,
@@ -155,6 +118,50 @@ ALTER TABLE shop
 
 
 
+ 
+ 
+ 
+ 
+ INSERT INTO phone  (phone_name, phone_id, phone_marka, phone_price) 
+ VALUES ( '23B39','10001','MEIZU','1200'
+ );
+INSERT INTO phone  (phone_name, phone_id, phone_marka, phone_price) 
+ VALUES ( '23B39','10002','SAMSUNG','1200'
+ );
+ INSERT INTO phone  (phone_name, phone_id, phone_marka, phone_price) 
+ VALUES ( '33bbccer2','10003','LENOVO','1200'
+ );
+ 
+ INSERT INTO human  (human_name, human_id, hunam_age, human_sex) 
+ VALUES ( 'KOLIN','10281','23','M'
+ );
+ INSERT INTO human  (human_name, human_id, hunam_age, human_sex) 
+ VALUES ( 'JHON','10881','19','M'
+ );
+ INSERT INTO human  (human_name, human_id, hunam_age, human_sex) 
+ VALUES ( 'OLHA','143281','43','V'
+ );
+ 
+ INSERT INTO orders  (human_id_fk, phone_name_fk, order_type, order_date) 
+ VALUES ( '12048892','NOKIA','NOT_GOLD','16-07-2008'
+ );
+ INSERT INTO orders  (human_id_fk, phone_name_fk, order_type, order_date) 
+ VALUES ( '8394839','NOKIA','GOLD','18-03-2018'
+ );
+ INSERT INTO orders  (human_id_fk, phone_name_fk, order_type, order_date) 
+ VALUES ( '3029029','MEIZU','NOT_GOLD','14-05-2012'
+ );
+ 
+ 
+INSERT INTO shop  (phone_price_fk, phone_id_fk, order_date_fk, location, profit) 
+ VALUES ( '1200','32222','16-03-2006','Kyiv', '20000'
+ );
+ INSERT INTO shop  (phone_price_fk, phone_id_fk, order_date_fk, location, profit) 
+ VALUES ( '2000','334322','11-04-2017','lviv', '3267000'
+ );
+ INSERT INTO shop  (phone_price_fk, phone_id_fk, order_date_fk, location, profit) 
+ VALUES ( '5000','47483','18-03-2012','Kyiv', '3000000'
+ );
 
 
 
