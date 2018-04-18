@@ -1,0 +1,26 @@
+Вариант 1.
+    Вивести дані про замовлення №20005:
+
+-вивести ім’я клієнта (назвати поле як client_name),
+
+-повну адресу клієнта (у форматі “КРАЇНА штат Місто (zip-код) адреса” та назвати це поле як client_adress),
+
+- дату замовлення,
+
+- грошову суму замовлення (назвати поле як order_price, грошову суму округлити та подати у вигляді числа з одним знаком після коми).
+- грошову суму замовлення у доларах, без центів (назвати поле як order_price_$)
+
+Join та Group by використовувати заборонено
+
+SELECT CUST_NAME AS client_name,
+       (CUST_COUNTRY)  | | (CUST_STATE)  | |  (CUST_CITY)  | | (CUST_ZIP) | | (CUST_ADDRESS) AS client_adress,
+       Orders.ORDER_DATE,
+       ROUND(QUANTITY*ITEM_PRICE,1) AS order_price,
+       FLOOR (QUANTITY*ITEM_PRICE) AS order_price_$
+   
+       
+    
+    FROM Customers,Orders,OrderItems
+    WHERE Customers.CUST_ID = Orders.CUST_ID
+    AND Orders.ORDER_NUM = OrderItems.ORDER_NUM
+    AND Orders.ORDER_NUM = 20005 ;
