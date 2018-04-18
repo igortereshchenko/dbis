@@ -42,6 +42,10 @@ grant select any to Artem;
 4 бали
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+PROJECT CUSTOMERS TIMES ORDERS TIMES ORDERITEMS {CUSTOMERS.CUST_NAME} 
+    WHERE CUSTOMERS.CUST_ID = ORDERS.CUST_ID AND 
+                    ORDERS.ORDER_NUM = ORDERITEMS.ORDER_NUM AND
+                        ORDERITEMS.ITEM_PRICE IN (PROJECT ORDERITEMS {MIN(ITEM_PRICE)});
 /*---------------------------------------------------------------------------
 3.b. 
 Вивести імена покупців, що не мають поштової адреси та замовлення, у дужках - назвавши це поле client_name.
