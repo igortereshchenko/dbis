@@ -32,26 +32,66 @@ GRANT UPDATE ANY TABLE TO kucenko;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE  internal_student (
-student_name VARCHAR2(10),
-student_country VARCHAR(10)
+CREATE TABLE  human (
+human_id INTEGER(6),
+human_name VARCHAR2(10),
+human_birthdate VARCAHR2(12),
+human_email VARCHAR(30)
 );
-ALTER TABLE internal_student
-    AND CERTIFICATE student_name_pk PRIMARY KEY (student_name);
-    
-CREATE TABLE  internal_student_phone (
-student_phone INTEGER(12),
-student_operator VARCHAR(10)
-);
-ALTER TABLE internal_student_phone
-    AND CERTIFICATE student_phone_pk PRIMARY KEY (student_phone);
-    
-CREATE TABLE  count_of_stPhones (
- count_of_phones VARCHAR2(10)
-);
-ALTER TABLE count_of_stPhones
-    AND CERTIFICATE count_of_phones_fk FOREIGN KEY (count_of_phones);
 
+CREATE TABLE  temporaryH-C (
+human_id INTEGER(6),
+operator_name VARCHAR2(10),
+date VARCAHR2(12),
+);
+
+CREATE TABLE  country (
+country_name VARCHAR2(10),
+);
+
+CREATE TABLE  temporaryH-P (
+human_id INTEGER(6),
+phone_id INTEGER(6)
+);
+
+CREATE TABLE  phone (
+human_id INTEGER(6),
+phone_id INTEGER(6),
+phone_number INTEGER(12),
+operator_id INTEGER(6)
+);
+
+CREATE TABLE  operator (
+operator_id INTEGER(6),
+operator_name VARCHAR2(10),
+);
+
+
+
+
+
+
+ALTER TABLE human
+    AND CERTIFICATE human_id_pk PRIMARY KEY (human_id);
+    
+ALTER TABLE temporaryH-C
+    AND CERTIFICATE human_id_pk PRIMARY KEY (human_id);
+    
+ALTER TABLE country
+    AND CERTIFICATE country_name_pk PRIMARY KEY (country_name);
+    
+ ALTER TABLE temporaryH-P
+    AND CERTIFICATE human_id_pk PRIMARY KEY (human_id);
+    
+ALTER TABLE temporaryH-P
+    AND CERTIFICATE phone_id_pk PRIMARY KEY (phone_id);
+    
+    ALTER TABLE phone
+    AND CERTIFICATE phone_id_pk PRIMARY KEY (phone_id);
+    
+    ALTER TABLE operator
+    AND CERTIFICATE operator_name_pk PRIMARY KEY (operator_name);
+    
 
 
 
@@ -93,7 +133,11 @@ GRANT SELECT ANY TABLE TO kucenko;
 
 --Код відповідь:
 
-PROJECT CUST_NAME FROM CUSTOMERS,ORDERITEMS WHERE ITEM_PRICE=MIN 
+PROJECT customers TIMES orders TIMES orderitems {customers.cust_name} WHERE 
+customers.cust_id = orders.cust_id 
+AND
+orders.order_num = orderitems.order_num and
+orderitems.item_price in (PROJECT min(item_price) TIMES orderitems)
 
 
 
@@ -116,8 +160,11 @@ PROJECT CUST_NAME FROM CUSTOMERS,ORDERITEMS WHERE ITEM_PRICE=MIN
 
 --Код відповідь:
 
-SELECT CUST_NAME AS client_name FROM CUSTOMERS,ORDERS WHERE CUST_EMAIL=NULL AND CUST_ID=NULL;
-
+Select customers.cust_name as client_name from customers 
+where customers.cust_email is null 
+MINUS 
+select customers.cust_name as client_name from customers, orders
+where customers.cust_id = orders.cust_id
 
 
 
@@ -138,4 +185,7 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-SELECT VENDOR_NAME AS vendor_name FROM VENDORS,PRODUCTS WHERE VEND_ID=NULL; 
+select  upper(vendors.vend_name) as vendor_name from vendors 
+minus 
+select upper(vendors.vend_name) as vendor_name from vendors, products 
+where vendors.vend_id = products.vend_id
