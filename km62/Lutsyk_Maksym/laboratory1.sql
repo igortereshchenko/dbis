@@ -116,21 +116,15 @@ REFERENCES (MIN_PRISE , PRODUCT (MIN(MIN_PRICE) AND NAMEOFCUST
 
 ---------------------------------------------------------------------------*/
 
---Код відповідь:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--Код відповідь:    (додано 18.04.2018)
+SELECT     
+	CUST_NAME as "client_name"
+FROM CUSTOMERS
+	WHERE CUST_ID  IN (
+                        SELECT CUST_ID  
+			FROM ORDERS
+            		)
+     		and CUST_EMAIL IS NULL;
 
 /*---------------------------------------------------------------------------
 c. 
@@ -139,5 +133,11 @@ c.
 4 бали
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
+--Код відповідь:   (додано 18.04.2018)
+                                 
+                                 SELECT upper(CUST_NAME) as "customer_name"
+FROM CUSTOMERS
+WHERE CUSTOMERS.CUST_ID NOT IN (
+                         SELECT CUST_ID   
+                         FROM ORDERS);
 
