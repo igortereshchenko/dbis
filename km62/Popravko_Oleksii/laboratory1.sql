@@ -1,5 +1,3 @@
--- LABORATORY WORK 1
--- BY Popravko_Oleksii
 /*---------------------------------------------------------------------------
 1.Створити схему даних з назвою – прізвище студента, у якій користувач може: 
 робити вибірки з таблиць
@@ -32,40 +30,158 @@ GRANT SELECT ALL TABLES TO popravko;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE TABLE HARDWARE(
-    detail varchar2(30) NOT NULL
-    );
-ALTER TABLE HARDWARE
-    ADD CONSTRAINT detail_pk PRIMARY KEY (detail);
-CREATE TABLE SOFTWARE(
-    program_name varchar2(30) NOT NULL
-    );
-ALTER TABLE SOFTWARE
-    ADD CONSTRAINT program_pk PRIMARY KEY (program_name);
-CREATE TABLE COMPUTER(
-    detail_on varchar2(30) NOT NULL,
-    program_on varchar2(30) NOT NULL,
-    part_price number(6,2) NOT NULL
-    );
-ALTER TABLE COMPUTER
-    ADD CONSTRAINT detail_on_pk PRIMARY KEY (detail_on);
-ALTER TABLE COMPUTER
-    ADD CONSTRAINT program_on_pk PRIMARY KEY (program_on);
-ALTER TABLE COMPUTER
-    ADD CONSTRAINT part_price_fk FOREIGN KEY (part_price) REFERENCES TO HARDWARE(detail_pk);
+CREATE TABLE computer (
+    computer_name   VARCHAR(20),
+    computer_id     VARCHAR(4) NOT NULL
+)
 
+CREATE TABLE hardware (
+    hardware_name   VARCHAR(20),
+    hardware_id     VARCHAR(4) NOT NULL
+)
 
+CREATE TABLE software (
+    software_name   VARCHAR(20),
+    software_id     VARCHAR(4) NOT NULL
+)
 
+CREATE TABLE computer_hardware (
+    computer_id   VARCHAR(4) NOT NULL,
+    hardware_id   VARCHAR(4) NOT NULL
+)
 
+CREATE TABLE computer_software (
+    computer_id   VARCHAR(4) NOT NULL,
+    software_id   VARCHAR(4) NOT NULL
+)
 
+ALTER TABLE computer ADD CONSTRAINT computer_pk PRIMARY KEY ( computer_id );
 
+ALTER TABLE hardware ADD CONSTRAINT hardware_pk PRIMARY KEY ( hardware_id );
 
+ALTER TABLE software ADD CONSTRAINT software_pk PRIMARY KEY ( software_id );
 
+ALTER TABLE computer_hardware ADD CONSTRAINT computer_hardware_pk PRIMARY KEY ( computer_id,
+hardware_id );
 
+ALTER TABLE computer_software ADD CONSTRAINT computer_software_pk PRIMARY KEY ( computer_id,
+software_id );
 
+ALTER TABLE computer_hardware
+    ADD CONSTRAINT hardware_fk FOREIGN KEY ( hardware_id )
+        REFERENCES hardware ( hardware_id );
 
+ALTER TABLE computer_software
+    ADD CONSTRAINT software_fk FOREIGN KEY ( software_id )
+        REFERENCES software ( software_id );
 
+ALTER TABLE computer
+    ADD CONSTRAINT computer_check CHECK ( REGEXP_LIKE ( computer_id,
+    '[A-Z]\d{3}' ) );
 
+ALTER TABLE hardware
+    ADD CONSTRAINT hardware_check CHECK ( REGEXP_LIKE ( hardware_id,
+    '[A-Z]\d{3}' ) );
+
+ALTER TABLE software
+    ADD CONSTRAINT software_check CHECK ( REGEXP_LIKE ( software_id,
+    '[A-Z]\d{3}' ) );
+
+INSERT INTO computer (
+    computer_name,
+    computer_id
+) VALUES (
+    'Apple Mac Mini A1347',
+    'C001'
+);
+
+INSERT INTO computer (
+    computer_name,
+    computer_id
+) VALUES (
+    'HP Envy',
+    'C002'
+);
+
+INSERT INTO computer (
+    computer_name,
+    computer_id
+) VALUES (
+    'Lenovo I-350',
+    'C003'
+);
+
+INSERT INTO computer (
+    computer_name,
+    computer_id
+) VALUES (
+    'ASUS X7',
+    'C004'
+);
+
+INSERT INTO software (
+    software_name,
+    software_id
+) VALUES (
+    'WINDOWS X',
+    'S001'
+);
+
+INSERT INTO software (
+    software_name,
+    software_id
+) VALUES (
+    'MAC OS',
+    'S002'
+);
+
+INSERT INTO software (
+    software_name,
+    software_id
+) VALUES (
+    'UBUNTU',
+    'S003'
+);
+
+INSERT INTO software (
+    software_name,
+    software_id
+) VALUES (
+    'FEDORA',
+    'S004'
+);
+
+INSERT INTO hardware (
+    hardware_name,
+    hardware_id
+) VALUES (
+    'AMD Ryzen',
+    'H001'
+);
+
+INSERT INTO hardware (
+    hardware_name,
+    hardware_id
+) VALUES (
+    'Intel core i3',
+    'H002'
+);
+
+INSERT INTO hardware (
+    hardware_name,
+    hardware_id
+) VALUES (
+    'Intel Core i7',
+    'H003'
+);
+
+INSERT INTO hardware (
+    hardware_name,
+    hardware_id
+) VALUES (
+    'Intel Core i5',
+    'H004'
+);
   
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
@@ -75,9 +191,9 @@ ALTER TABLE COMPUTER
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-GRANT CREATE ANY TABLES TO popravko;
-GRANT INSERT ANY TABLES TO popravko;
-GRANT SELECT ANY TABLES TO popravko;
+GRANT CREATE ANY TABLE TO popravko;
+GRANT INSERT ANY TABLE TO popravko;
+GRANT SELECT ANY TABLE TO popravko;
 
 
 
@@ -92,7 +208,8 @@ GRANT SELECT ANY TABLES TO popravko;
 
 --Код відповідь:
 SELECT CUST_ID
-WHERE MAX(ITEM_PRICE); 
+FROM ORDERITEMS
+WHERE ITEM_PRICE=(SELECT MAX(ITEM_PRICE) FROM ORDERITEMS)); 
 
 
 
@@ -115,8 +232,8 @@ WHERE MAX(ITEM_PRICE);
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT  CUST_NAME as count_name
-where CUS tNAME is distinct;
+SELECT COUNT(DISTINCT CUST_NAME) AS count_name
+FROM CUSTOMERS;
     
 
 
