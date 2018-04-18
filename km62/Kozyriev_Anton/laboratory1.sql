@@ -41,31 +41,49 @@ GRANT INSERT ANY TABLE TO kozyrev;
 
 CREATE TABLE Customer
 (
-    cust_id VARCHAR(30) NOT NULL,
-    customer_name VARCHAR(30) NOT NULL
+    cust_reserved_phone_number VARCHAR(12) NOT NULL,
+    cust_name VARCHAR(20) NOT NULL,
+    cust_registration_date VARCHAR(20) NOT NULL,
+    cust_email VARCHAR(30) NULL,
 );
 
-ALTER TABLE Customer ADD CONSTRAINT CustomerPK PRIMARY KEY(cust_id);
-ALTER TABLE PhoneBrand ADD CONSTRAINT PhoneBrandFK FOREIGN KEY(phone_id) REFERENCES Phone(phone_id);
+ALTER TABLE Customer ADD CONSTRAINT CustomerPK PRIMARY KEY(cust_reserved_phone_number, cust_name);
 
 CREATE TABLE Phone
 (
-    phone_id VARCHAR(30) NOT NULL, 
-    phone_model VARCHAR(30) NULL,
-    cust_id VARCHAR(30) NOT NULL
+    phone_model VARCHAR(30) NOT NULL,
+    phone_serial VARCHAR(20) NOT NULL, 
+    phone_brand VARCHAR(30) NOT NULL,
+    cust_reserved_phone_number VARCHAR(12) NOT NULL,
+    brand_name VARCHAR(30) NOT NULL,
+    phone_price NUMBER NOT NULL,
+    vend_id VARCHAR(30) NOT NULL
 );
 
-ALTER TABLE Phone ADD CONSTRAINT PhonePK PRIMARY KEY(phone_id);
-ALTER TABLE Phone ADD CONSTRAINT PhoneFK FOREIGN KEY(cust_id) REFERENCES Customer(cust_id);
+ALTER TABLE Phone ADD CONSTRAINT PhonePK PRIMARY KEY(phone_model, phone_serial);
+ALTER TABLE Phone ADD CONSTRAINT Phone_NumberFK FOREIGN KEY(cust_reserved_phone_number) REFERENCES Customer(cust_reserved_phone_number);
+ALTER TABLE Phone ADD CONSTRAINT Phone_BrandFK FOREIGN KEY(brand_name) REFERENCES PhoneBrand(brand_name);
+ALTER TABLE Phone ADD CONSTRAINT Phone_VendorFK FOREIGN KEY(vend_id) REFERENCES Vendor(vend_id);
 
 CREATE TABLE PhoneBrand
 (
-    phone_brand VARCHAR(30) NOT NULL,
-    phone_id VARCHAR(30) NOT NULL
+    brand_company VARCHAR(30) NOT NULL,
+    brand_name VARCHAR(30) NOT NULL,
+    brand_rating NUMBER NULL,
+    brand_state BOOLEAN NOT NULL,
 );
 
-ALTER TABLE PhoneBrand ADD CONSTRAINT PhoneBrandPK PRIMARY KEY(phone_brand);
-ALTER TABLE PhoneBrand ADD CONSTRAINT PhoneBrandFK FOREIGN KEY(phone_id) REFERENCES Phone(phone_id)
+ALTER TABLE PhoneBrand ADD CONSTRAINT PhoneBrandPK PRIMARY KEY(brand_company, brand_name);
+
+CREATE TABLE Vendor
+(
+    vend_id VARCHAR(30) NOT NULL,
+    vend_name VARCHAR(30) NOT NULL,
+    brand_rating NUMBER NULL,
+    brand_state BOOLEAN NOT NULL,
+);
+
+ALTER TABLE Vendor ADD CONSTRAINT VendorPK PRIMARY KEY(vend_id);
 
 
 
@@ -92,8 +110,14 @@ GRANT SELECT ANY TABLE TO kozyrev;
 
 --Код відповідь:
 
-SELECT max(Products.prod_price) FROM Products
-WHERE NOT exists(SELECT * FROM OrderItems WHERE Products.prod_id = OrderItems.prod_id);
+A = Products RENAME prod_id PRID
+B = OrderItems RENAME prod_id ORID
+C = OrderItems TIMES Products
+D = C WHERE PRID = ORID
+E = Products WHERE D = NULL
+F = Products RENAME prod_price PRPRICE
+G = E PROJECT PRPRICE
+H = MAX(G)
 
 /*---------------------------------------------------------------------------
 3.b. 
