@@ -37,60 +37,29 @@ GRANT INSERT ANY TABLE TO pochta;
 CREATE TABLE STUDENTS(
   student_id varchar(7) not null
 );
-INSERT INTO STUDENTS(STUDENT_ID) VALUES ('KM6220');
-INSERT INTO STUDENTS(STUDENT_ID) VALUES ('KM6218');
-INSERT INTO STUDENTS(STUDENT_ID) VALUES ('KM6219');
-INSERT INTO STUDENTS(STUDENT_ID) VALUES ('KM6210');
 CREATE TABLE TICKETS(
   ticket_id varchar(15) not null
 );
-INSERT INTO TICKETS VALUES('880055535300000');
-INSERT INTO TICKETS VALUES('880055535300001');
-INSERT INTO TICKETS VALUES('880055535300002');
-INSERT INTO TICKETS VALUES('880055535300003');
-
 CREATE TABLE TRAINS(
   train_id varchar(5) not null
 );
-
-INSERT INTO TRAINS VALUES('00000');
-INSERT INTO TRAINS VALUES('00001');
-INSERT INTO TRAINS VALUES('00002');
-INSERT INTO TRAINS VALUES('00003');
-
 CREATE TABLE STATIONS(
   station_id varchar(5) not null,
   station_name varchar(50) not null
 );
-INSERT INTO STATIONS(station_id, station_name) VALUES('00000', 'Ladyzhyn');
-INSERT INTO STATIONS(station_id, station_name) VALUES('00001', 'Smila');
-INSERT INTO STATIONS(station_id, station_name) VALUES('00002', 'Turiysk');
-INSERT INTO STATIONS(station_id, station_name) VALUES('00003', 'Vinogradiv');
-
 CREATE TABLE TRAIN_HAS_TICKET(
     ticket_fk varchar(15) not null,
     train_fk varchar(5) not null
 );
-INSERT INTO TRAIN_HAS_TICKET(ticket_fk, train_fk) VALUES('880055535300000', '00000');
-INSERT INTO TRAIN_HAS_TICKET(ticket_fk, train_fk) VALUES('880055535300001', '00000');
-INSERT INTO TRAIN_HAS_TICKET(ticket_fk, train_fk) VALUES('880055535300002', '00000');
-INSERT INTO TRAIN_HAS_TICKET(ticket_fk, train_fk) VALUES('880055535300003', '00001');
 CREATE TABLE TRAIN_HAS_STATION(
   train_fk varchar(5) not null,
   station_fk varchar(5) not null
 );
-INSERT INTO TRAIN_HAS_STATION(train_fk, station_fk) VALUES('00000', '00001');
-INSERT INTO TRAIN_HAS_STATION(train_fk, station_fk) VALUES('00000', '00002');
-INSERT INTO TRAIN_HAS_STATION(train_fk, station_fk) VALUES('00000', '00003');
-INSERT INTO TRAIN_HAS_STATION(train_fk, station_fk) VALUES('00000', '00000');
 CREATE TABLE STUDENT_BUY_TICKET(
   student_fk varchar(6) not null,
   ticket_fk varchar(15) not null 
 );
-INSERT INTO STUDENT_BUY_TICKET(ticket_fk, student_fk) VALUES('880055535300000', 'KM6220');
-INSERT INTO STUDENT_BUY_TICKET(ticket_fk, student_fk) VALUES('880055535300001', 'KM6219');
-INSERT INTO STUDENT_BUY_TICKET(ticket_fk, student_fk) VALUES('880055535300002', 'KM6218');
-INSERT INTO STUDENT_BUY_TICKET(ticket_fk, student_fk) VALUES('880055535300003', 'KM6210');
+
 ALTER TABLE STUDENTS add constraint students_pk primary key (student_id);
 ALTER TABLE TICKETS add constraint tickets_pk primary key (ticket_id);
 ALTER TABLE TRAINS add constraint trains_pk primary key (train_id);
@@ -107,7 +76,6 @@ ALTER TABLE TRAIN_HAS_TICKET add constraint train_has_ticket_fk_ticket FOREIGN K
 alter table tickets
   add constraint check_ticket_id 
   check (REGEXP_LIKE(ticket_id, '^[0-9]{15}'));
-
 alter table trains
   add constraint check_train_id 
   check (REGEXP_LIKE(train_id, '^[0-9]{5}'));
@@ -121,6 +89,36 @@ alter table stations
 alter table stations
   add constraint check_station_name
   check (REGEXP_LIKE(station_name ,'^[A-Z][a-z]{1,49}'));
+
+INSERT INTO STUDENTS(STUDENT_ID) VALUES ('KM6220');
+INSERT INTO STUDENTS(STUDENT_ID) VALUES ('KM6218');
+INSERT INTO STUDENTS(STUDENT_ID) VALUES ('KM6219');
+INSERT INTO STUDENTS(STUDENT_ID) VALUES ('KM6210');
+INSERT INTO TICKETS VALUES('880055535300000');
+INSERT INTO TICKETS VALUES('880055535300001');
+INSERT INTO TICKETS VALUES('880055535300002');
+INSERT INTO TICKETS VALUES('880055535300003');
+INSERT INTO TRAINS VALUES('00000');
+INSERT INTO TRAINS VALUES('00001');
+INSERT INTO TRAINS VALUES('00002');
+INSERT INTO TRAINS VALUES('00003');
+INSERT INTO STATIONS(station_id, station_name) VALUES('00000', 'Ladyzhyn');
+INSERT INTO STATIONS(station_id, station_name) VALUES('00001', 'Smila');
+INSERT INTO STATIONS(station_id, station_name) VALUES('00002', 'Turiysk');
+INSERT INTO STATIONS(station_id, station_name) VALUES('00003', 'Vinogradiv');
+INSERT INTO TRAIN_HAS_TICKET(ticket_fk, train_fk) VALUES('880055535300000', '00000');
+INSERT INTO TRAIN_HAS_TICKET(ticket_fk, train_fk) VALUES('880055535300001', '00000');
+INSERT INTO TRAIN_HAS_TICKET(ticket_fk, train_fk) VALUES('880055535300002', '00000');
+INSERT INTO TRAIN_HAS_TICKET(ticket_fk, train_fk) VALUES('880055535300003', '00001');
+INSERT INTO TRAIN_HAS_STATION(train_fk, station_fk) VALUES('00000', '00001');
+INSERT INTO TRAIN_HAS_STATION(train_fk, station_fk) VALUES('00000', '00002');
+INSERT INTO TRAIN_HAS_STATION(train_fk, station_fk) VALUES('00000', '00003');
+INSERT INTO TRAIN_HAS_STATION(train_fk, station_fk) VALUES('00000', '00000');
+INSERT INTO STUDENT_BUY_TICKET(ticket_fk, student_fk) VALUES('880055535300000', 'KM6220');
+INSERT INTO STUDENT_BUY_TICKET(ticket_fk, student_fk) VALUES('880055535300001', 'KM6219');
+INSERT INTO STUDENT_BUY_TICKET(ticket_fk, student_fk) VALUES('880055535300002', 'KM6218');
+INSERT INTO STUDENT_BUY_TICKET(ticket_fk, student_fk) VALUES('880055535300003', 'KM6210');
+
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
