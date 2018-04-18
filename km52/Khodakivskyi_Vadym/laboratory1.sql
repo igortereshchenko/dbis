@@ -145,47 +145,83 @@ alter table Classroom
 alter table "Table"
    add constraint FK_TABLE_CLASSROOM_CLASSROO foreign key (class_number)
       references Classroom (class_number);
+
+alter table School
+add constraint school_number_check CHECK (school_number > 0 AND school_number < 1000);
+alter table School
+add constraint school_adress_check CHECK (REGEXP_LIKE(adress,'^[A-Z]([a-z0-9\S]+[ ])*'));
+alter table School
+add constraint school_phone_number_check CHECK (REGEXP_LIKE(school_phone_number,'\+[0-9]{12}'));
+alter table School
+add constraint school_email_check CHECK (REGEXP_LIKE(school_email,'[a-z0-9]{1,15}\@[a-z]{1,5}\.[a-z]{1,3}'));
+
+alter table classroom
+add constraint class_number_check CHECK (class_number > 0 and class_number < 1000);
+alter table classroom
+add constraint class_volume_check CHECK (class_volume > 0 and class_volume < 1000);
+alter table classroom
+add constraint class_floor_check CHECK (class_floor > 0 and class_floor < 10);
+
+alter table "Table"
+add constraint table_id_check CHECK (table_id > 999999999);
+alter table "Table"
+add constraint table_color_check CHECK (REGEXP_LIKE(table_color, '^[A-Z]{0,1}[a-z]*'));
+alter table "Table"
+add constraint table_material_check CHECK (REGEXP_LIKE(table_material, '^[A-Z]{0,1}[a-z]*'));
+alter table "Table"
+add constraint table_height_check CHECK (table_height > 0);
+alter table "Table"
+add constraint table_lenght_check CHECK (table_lenght > 0);
+
+alter table Chair
+add constraint Chair_id_check CHECK (Chair_id > 999999999);
+alter table Chair
+add constraint Chair_color_check CHECK (REGEXP_LIKE(Chair_color, '^[A-Z]{0,1}[a-z]*'));
+alter table Chair
+add constraint Chair_material_check CHECK (REGEXP_LIKE(Chair_material, '^[A-Z]{0,1}[a-z]*'));
+alter table Chair
+add constraint Chair_height_check CHECK (Chair_height > 0);
+
+alter table School
+add constraint email_unique unique (school_email); 
+alter table School
+add constraint phone_unique unique (school_phone_number);
+
 INSERT INTO School (school_number,adress,school_phone_number,school_email)
 values (172,'Ruginska 30/32','+380445005050','sch172@ukr.net');
 INSERT INTO School (school_number,adress,school_phone_number,school_email)
 values (163,'Baumana 25','+380444004040','sch163@ukr.net');
 INSERT INTO School (school_number,adress,school_phone_number,school_email)
 values (145,'Shota Rustaveli 48','+380447777777','sch145@ukr.net');
+INSERT INTO School (school_number,adress,school_phone_number,school_email)
+values (48,'Bohdana 75','+380441234567','sch48@ukr.net');
 
-INSERT INTO CLASSROOM (class_number,school_number,adress,class_volume,class_floor)
+INSERT INTO classroom (class_number,school_number,adress,class_volume,class_floor)
 values (215,172,'Ruginska 30/32',85.7,2);
 INSERT INTO CLASSROOM (class_number,school_number,adress,class_volume,class_floor)
 values (308,163,'Baumana 25',70.1,3);
 INSERT INTO CLASSROOM (class_number,school_number,adress,class_volume,class_floor)
 values (301,172,'Ruginska 30/32',79.24,3);
+INSERT INTO CLASSROOM (class_number,school_number,adress,class_volume,class_floor)
+values (302,48,'Bohdana 75',111,1);
 
 INSERT INTO "Table" (table_id,table_color, table_material, table_height, table_lenght,class_number)
-values (2150123456,'brown','wood', 74.5, 152,215);
+values (2150123456,'Brown','Wood', 74.5, 152,215);
 INSERT INTO "Table" (table_id,table_color, table_material, table_height, table_lenght,class_number)
-values (3010123456,'brown','wood', 74.5, 152,301);
+values (3010123456,'Brown','Wood', 74.5, 152,301);
 INSERT INTO "Table" (table_id,table_color, table_material, table_height, table_lenght,class_number)
-values (3080123456,'brown','wood', 74.5, 152,308);
+values (3080123456,'Brown','Wood', 74.5, 152,308);
+INSERT INTO "Table" (table_id,table_color, table_material, table_height, table_lenght,class_number)
+values (3080123457,'Yellow','Metal', 74.5, 152,308);
 
 INSERT INTO Chair (Chair_id,Chair_color, Chair_material, Chair_height, class_number)
 values (2150123456,null,null, 74.5, 215);
 INSERT INTO Chair (Chair_id,Chair_color, Chair_material, Chair_height, class_number)
-values (3010123456,'brown','wood', 80, 301);
+values (3010123456,'Brown','Wood', 80, 301);
 INSERT INTO Chair (Chair_id,Chair_color, Chair_material, Chair_height, class_number)
-values (3080123456,'black','skin', 80, 308);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+values (3080123456,'Black','Skin', 80, 308);
+INSERT INTO Chair (Chair_id,Chair_color, Chair_material, Chair_height, class_number)
+values (1000000000,'Black','Skin', 75, 308);
   
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
@@ -227,14 +263,6 @@ WHERE
             orderitems
     );
 
-
-
-
-
-
-
-
-
 /*---------------------------------------------------------------------------
 3.b. 
 Визначити скільки різних електронних адрес зберігається в таблиці CUSTOMERS - назвавши це поле count_email.
@@ -248,17 +276,6 @@ WHERE
 
 SELECT COUNT(DISTINCT CUST_EMAIL) AS count_email
 FROM CUSTOMERS;
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*---------------------------------------------------------------------------
