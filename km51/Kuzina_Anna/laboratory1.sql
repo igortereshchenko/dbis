@@ -104,6 +104,28 @@ GRANT ALTER ANY TABLE TO kuzina;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
+SELECT
+    cust_name
+FROM
+    orders,
+    orderitems,
+    customers
+WHERE
+    item_price IN (
+        SELECT
+            MAX(item_price)
+        FROM
+            orderitems
+    )
+    AND   customers.cust_id = orders.cust_id
+    AND   orders.order_num = orderitems.order_num;
+
+
+PROJECT 
+(Orders TIMES OrderItems TIMES CUSTOMERS
+WHERE (item_price in ( PROJECT (orderitems) (max(item_price))) AND customers.cust_id = orders.cust_id
+AND orders.order_num = orderitems.order_num)
+)(cust_name)
 
 
 
@@ -128,6 +150,18 @@ GRANT ALTER ANY TABLE TO kuzina;
 
 --Код відповідь:
 
+SELECT DISTINCT
+    ( cust_country )
+FROM
+    customers
+WHERE
+    length(TRIM(cust_country) ) IN (
+        SELECT
+            MIN(length(TRIM(cust_country) ) )
+        FROM
+            customers
+    );
+
 
 
 
@@ -150,4 +184,22 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+SELECT
+    TRIM(cust_country)
+    || ' '
+    || TRIM(cust_email) AS "CLIENT_NAME"
+FROM
+    customers
+WHERE
+    cust_id IN (
+        SELECT
+            cust_id AS "CUST_ID"
+        FROM
+            customers
+        MINUS
+        SELECT DISTINCT
+            orders.cust_id AS "CUST_ID"
+        FROM
+            orders
+    );
 
