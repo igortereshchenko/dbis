@@ -5,10 +5,17 @@
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-Create user vasilisa_ushatska,
-IDENTIFIED BY vasilisa
-grant alter any table to vasilisa_ushatska
-grant create any table to vasilisa_ushatska
+
+CREATE USER ushatska IDENTIFIED BY ushatska 
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
+
+ALTER USER ushatska QUOTA 100M ON USERS;
+
+GRANT "CONNECT" TO ushatska ;
+
+GRANT CREATE ANY TABLE TO ushatska ;
+GRANT ALTER ANY TABLE TO ushatska;
 
 
 
@@ -56,7 +63,9 @@ primary key
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-alter grant select any table to vasilisa_ushatska
+GRANT CREATE ANY TABLE TO ushatska;
+GRANT ALTER ANY TABLE TO ushatska;
+GRANT INSERT ANY TABLE TO ushatska;
 
 
 
