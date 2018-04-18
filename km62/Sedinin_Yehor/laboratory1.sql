@@ -114,7 +114,7 @@ create index "ticket on train_FK" on "Ticket" (
 create table "Train" 
 (
    "train_id"           INTEGER              not null,
-   "departue_time"      DATE                 not null,
+   "departure"      INTEGER                 not null,
    constraint PK_TRAIN primary key ("train_id")
 );
 
@@ -176,7 +176,7 @@ create table STUDENT
 (
    "student_id"         INTEGER              not null,
    "student_name"       VARCHAR2(20)         not null,
-   "birthday"           DATE                 not null,
+   "birthday"           INTEGER                 not null,
    constraint PK_STUDENT primary key ("student_id")
 );
 
@@ -245,43 +245,43 @@ alter table "Ticket"
       references "Train" ("train_id");
 
 INSERT INTO Student (student_id, student_name, birthday) 
-VALUES (000001, Alex, 19890219) 
+VALUES (000001, 'Alex', 19890219); 
 
 INSERT INTO Student (student_id, student_name, birthday) 
-VALUES (000002, Tom, 19921006) 
+VALUES (000002, 'Tom', 19921006);
 
 INSERT INTO Salepoint (student_id, student_name, birthday) 
-VALUES (000002, Jack, 19900725) 
+VALUES (000002, 'Jack', 19900725);
 
 
 INSERT INTO Salepoint (salepoint_id) 
-VALUES (387610) 
+VALUES (387610);
 
 INSERT INTO Salepoint (salepoint_id) 
-VALUES (870061) 
+VALUES (870061);
 
 INSERT INTO Salepoint (salepoint_id) 
-VALUES (000987) 
+VALUES (000987); 
 
 
-INSERT INTO Train (train_id, departure_time) 
-VALUES (000012, 20180420 10:30:00 AM) 
+INSERT INTO Train (train_id, departure) 
+VALUES (000012, 20180420); 
 
-INSERT INTO Train (train_id, departure_time) 
-VALUES (00003, 20180422 09:00:00 AM) 
+INSERT INTO Train (train_id, departure) 
+VALUES (00003, 20180422); 
 
-INSERT INTO Train (train_id, departure_time) 
-VALUES (000998, 20180501 07:30:00 PM) 
+INSERT INTO Train (train_id, departure) 
+VALUES (000998, 20180501); 
 
 
 INSERT INTO Ticket (ticket_id) 
-VALUES (341404)
+VALUES (341404);
 
 INSERT INTO Ticket (ticket_id) 
-VALUES (124007)
+VALUES (124007);
 
 INSERT INTO Ticket (ticket_id) 
-VALUES (103211)
+VALUES (103211);
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
