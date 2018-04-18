@@ -306,10 +306,21 @@ GRANT SELECT ANY TABLE TO Timofeev;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
+My:
+
+(OrderItems TIMES (Products RENAME prod_id -> prod_id_fk)) 
+WHERE (prod_id = prod_id_fk AND item_price IN (OrderItems PROJECT min(item_price)))
+PROJECT prod_name,item_price
 
 
 
+Reviewer code:
 
+SELECT prod_name, item_price
+FROM Products, OrderItems
+WHERE
+OrderItems.prod_id= Products.prod_id AND OrderItems.item_price
+IN (SELECT MIN(item_price) FROM OrderItems);
 
 
 
@@ -342,6 +353,7 @@ WHERE
     );
 
 Reviewer code:
+
 SELECT prod_id
 FROM products
 WHERE (LENGTH(TRIM(prod_name)))=MAX(LENGTH(TRIM(prod_name)));
@@ -367,8 +379,6 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-SELECT (cust_name, cust_state)  as slient_name
-FROM Customers
-WHERE 
+
 
 -- BY Tymoveiev_Nikita
