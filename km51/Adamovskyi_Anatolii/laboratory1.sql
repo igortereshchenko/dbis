@@ -34,8 +34,8 @@ CREATE TABLE comp_hard_fk (
 
 ALTER TABLE comp_hard_fk
     ADD CONSTRAINT comp_hard_fk_pk PRIMARY KEY ( computer_mac_address,
-                                                 hardware_party_number,
-                                                 hardware_serial_number );
+    hardware_party_number,
+    hardware_serial_number );
 
 CREATE TABLE comp_soft_fk (
     computer_mac_address   VARCHAR2(30) NOT NULL,
@@ -45,8 +45,8 @@ CREATE TABLE comp_soft_fk (
 
 ALTER TABLE comp_soft_fk
     ADD CONSTRAINT comp_soft_fk_pk PRIMARY KEY ( computer_mac_address,
-                                                 software_soft_name,
-                                                 software_version );
+    software_soft_name,
+    software_version );
 
 CREATE TABLE computer (
     mac_address            VARCHAR2(30),
@@ -63,7 +63,7 @@ CREATE TABLE hardware (
 );
 
 ALTER TABLE hardware ADD CONSTRAINT hardware_pk PRIMARY KEY ( party_number,
-                                                              serial_number );
+serial_number );
 
 CREATE TABLE owner (
     owner_name       VARCHAR2(30),
@@ -79,7 +79,7 @@ CREATE TABLE software (
 );
 
 ALTER TABLE software ADD CONSTRAINT software_pk PRIMARY KEY ( soft_name,
-                                                              version );
+version );
 
 ALTER TABLE comp_hard_fk
     ADD CONSTRAINT comp_hard_fk_computer_fk FOREIGN KEY ( computer_mac_address )
@@ -87,9 +87,9 @@ ALTER TABLE comp_hard_fk
 
 ALTER TABLE comp_hard_fk
     ADD CONSTRAINT comp_hard_fk_hardware_fk FOREIGN KEY ( hardware_party_number,
-                                                          hardware_serial_number )
+    hardware_serial_number )
         REFERENCES hardware ( party_number,
-                              serial_number );
+        serial_number );
 
 ALTER TABLE comp_soft_fk
     ADD CONSTRAINT comp_soft_fk_computer_fk FOREIGN KEY ( computer_mac_address )
@@ -97,9 +97,9 @@ ALTER TABLE comp_soft_fk
 
 ALTER TABLE comp_soft_fk
     ADD CONSTRAINT comp_soft_fk_software_fk FOREIGN KEY ( software_soft_name,
-                                                          software_version )
+    software_version )
         REFERENCES software ( soft_name,
-                              version );
+        version );
 
 ALTER TABLE computer
     ADD CONSTRAINT computer_owner_fk FOREIGN KEY ( owner_owner_passport )
@@ -111,15 +111,15 @@ ALTER TABLE computer
 
 ALTER TABLE computer
     ADD CONSTRAINT comp_name_check CHECK ( REGEXP_LIKE ( comp_name,
-    '^[A-Za-z]{30}$' ) );
-    
+    '^[A-Za-z]{2,30}$' ) );
+
 ALTER TABLE owner
     ADD CONSTRAINT owner_passport_check CHECK ( REGEXP_LIKE ( owner_passport,
     '^[A-Z]{2}[0-9]{8}$' ) );
 
 ALTER TABLE owner
     ADD CONSTRAINT owner_name_check CHECK ( REGEXP_LIKE ( owner_name,
-    '^[A-Za-z]{30}$' ) );
+    '^[A-Za-z]{2,30}$' ) );
 
 ALTER TABLE hardware
     ADD CONSTRAINT party_number_check CHECK ( REGEXP_LIKE ( party_number,
@@ -131,20 +131,134 @@ ALTER TABLE hardware
 
 ALTER TABLE hardware
     ADD CONSTRAINT aparat_name_check CHECK ( REGEXP_LIKE ( aparat_name,
-    '^[-0-9A-Za-z]{30}$' ) );
+    '^[-0-9A-Za-z]{2,30}$' ) );
 
 ALTER TABLE software
     ADD CONSTRAINT soft_name_check CHECK ( REGEXP_LIKE ( soft_name,
-    '^[-0-9A-Za-z]{30}$' ) );
+    '^[-0-9A-Za-z]{2,30}$' ) );
 
 ALTER TABLE software
     ADD CONSTRAINT version_check CHECK ( REGEXP_LIKE ( version,
-    '^[-0-9A-Za-z]{30}$' ) );
+    '^[-0-9A-Za-z]{2,30}$' ) );
 
 ALTER TABLE software
     ADD CONSTRAINT description_check CHECK ( REGEXP_LIKE ( description,
-    '^[-0-9A-Za-z]{100}$' ) );
-  
+    '^.{0,100}$' ) );
+
+INSERT INTO owner (
+    owner_name,
+    owner_passport
+) VALUES (
+    'Anatoliy',
+    'DF32482349'
+);
+
+INSERT INTO owner (
+    owner_name,
+    owner_passport
+) VALUES (
+    'Vlad',
+    'DL33452349'
+);
+
+INSERT INTO owner (
+    owner_name,
+    owner_passport
+) VALUES (
+    'Mike',
+    'YT34556349'
+);
+
+INSERT INTO computer (
+    mac_address,
+    comp_name,
+    owner_owner_passport
+) VALUES (
+    'ad-ff-we-df-df',
+    'python',
+    'DF32482349'
+);
+
+INSERT INTO computer (
+    mac_address,
+    comp_name,
+    owner_owner_passport
+) VALUES (
+    'ae-ff-we-df-df',
+    'pandas',
+    'DF32482349'
+);
+
+INSERT INTO computer (
+    mac_address,
+    comp_name,
+    owner_owner_passport
+) VALUES (
+    'ad-ff-re-dt-lf',
+    'help',
+    'YT34556349'
+);
+
+INSERT INTO hardware (
+    party_number,
+    serial_number,
+    aparat_name
+) VALUES (
+    342324321,
+    213121331,
+    'CPU'
+);
+
+INSERT INTO hardware (
+    party_number,
+    serial_number,
+    aparat_name
+) VALUES (
+    344312321,
+    213143331,
+    'RAM'
+);
+
+INSERT INTO hardware (
+    party_number,
+    serial_number,
+    aparat_name
+) VALUES (
+    343566521,
+    223435451,
+    'culer'
+);
+
+INSERT INTO software (
+    soft_name,
+    version,
+    description
+) VALUES (
+    'my-program',
+    '1-4',
+    'YT34556349'
+);
+
+INSERT INTO software (
+    soft_name,
+    version,
+    description
+) VALUES (
+    'laba',
+    '0-1',
+    'my desc'
+);
+
+INSERT INTO software (
+    soft_name,
+    version,
+    description
+) VALUES (
+    'good-program',
+    '11',
+    'bla bla bla'
+);
+
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
