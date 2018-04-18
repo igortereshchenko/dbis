@@ -189,10 +189,4 @@ FROM Vendors, Products
 WHERE VENDORS.VEND_ID = PRODUCTS.VEND_ID;
 
 
-VENDORS RENAME( 
-PROJECT VENDORS  {vend_name || '_' || vend_country} 
-MINUS
-PROJECT Vendors TIMES Products {Vendors.vend_id Products.vend_id} WHERE VENDORS.VEND_ID = PRODUCTS.VEND_ID
-)vend_name || '_' || vend_country->vendor_name
-
 
