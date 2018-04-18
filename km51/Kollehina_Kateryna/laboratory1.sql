@@ -7,12 +7,12 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 CREATE USER kollehina identified by kollehina
-default tablespace "USERS",
+default tablespace "USERS"
 temporary tablespace "TEMP";
 
-ALter user kollehina 100M quota on USERS;
+ALter user kollehina quota 100M  on USERS;
 
-grant user kollehina "Connect";
+grant "Connect" to kollehina ;
 grant Create any table to kollehina;
  
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
@@ -49,6 +49,14 @@ add constraint human_name_fk foreign  key(human_name_pk)references (human_name);
 Alter table number_song
 add constraint song_name_fk foreign  key(song_name_pk)references (song_name);
 
+3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць,
+внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT.
+Згенерувати базу даних використовуючи код з теки OracleScript та виконати запити:
+—-------------------------------------------------------------------------*/
+—Код відповідь:
+
+GRANT INSERT ANY TABLE kollehina
+GRANT SELECT ANY TABLE kollehina
 3.a.
 Скільки проданого найдорожчого товару?
 Виконати завдання в SQL.
