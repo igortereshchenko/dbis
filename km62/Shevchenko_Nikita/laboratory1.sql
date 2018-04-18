@@ -8,7 +8,7 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 --USER SQL
-CREATE USER SHEVCHENKO IDENTIFIED BY DOPKA
+CREATE USER SHEVCHENKO IDENTIFIED BY "KOMI$$IY@"
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
 -- QUOTAS
@@ -21,13 +21,6 @@ GRANT DELETE ANY TABLE TO SHEVCHENKO ;
 GRANT CREATE ANY TABLE TO SHEVCHENKO ;
 
 
-
-
-
-
-
-
-
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
 створювати окремо від таблиць використовуючи команди ALTER TABLE. 
@@ -38,35 +31,39 @@ GRANT CREATE ANY TABLE TO SHEVCHENKO ;
 --Код відповідь:
 
 CREATE TABLE MY_STUDENT(
+  id INTEGER NOT NULL;
   student_name VARCHAR2(20) NOT NULL
 );
 
 ALTER TABLE MY_STUDENT
-  add CONSTRAINT pk_name PRIMARY KEY (student_name);
+  add CONSTRAINT pk_name PRIMARY KEY (id);
 
-CREATE TABLE MY_MARK(
-  db_mark INTEGER NOT NULL
+CREATE TABLE TEACHER(
+  id INTEGER NOT NULL;
+  birthday DATE NOT NULL;
+  name VARCHAR2(40) NOT NULL;
+  phone_number INTEGER(10);
+  mark INTEGER;
 );
-ALTER TABLE MY_MARK
-  add CONSTRAINT pk_mark PRIMARY KEY (db_mark);
 
-CREATE TABLE MY_ADDSESSION(
-  student_name_fk VARCHAR2(20) NOT NULL,
-  db_mark_fk INTEGER NOT NULL,
-  count_of_add_sessions INTEGER NOT NULL
-);
-ALTER TABLE MY_ADDSESSION
- ADD CONSTRAINT pk_set PRIMARY KEY (student_name_fk, db_mark_fk);
+ALTER TABLE TEACHER
+  ADD CONSTRAINT pk_teacher PRIMARY KEY(id);
   
-ALTER TABLE MY_ADDSESSI0N
- ADD CONSTRAINT fk_name_set FOREIGN KEY(student_name_fk) REFERENCES STUDENT(student_name);
+CREATE TABLE ASSESMENTS(
+  id INTEGER NOT NULL;
+  student_id INTEGER NOT NULL;
+  teacher_id INTEGER NOT NULL;
+  mark INTEGER;
+);
+ 
+ALTER TABLE ASSESMENTS
+  ADD CONSTRAINT ass_id PRIMARY KEY(id)
 
-ALTER TABLE MY_ADDSESSI0N
-  ADD  CONSTRAINT fk_mark_set FOREIGN KEY(db_mark_fk) REFERENCES MARK(db_mark);
+ALTER TABLE ASSESMENTS
+ ADD CONSTRAINT stud_id FOREIGN KEY(student_id) REFERENCES STUDENT(id);
 
-
-
-
+ALTER TABLE ASSESMENTS
+  ADD  CONSTRAINT teach_id FOREIGN KEY(teacher_id) REFERENCES TEACHER(id);
 
   
 /* --------------------------------------------------------------------------- 
@@ -76,11 +73,7 @@ ALTER TABLE MY_ADDSESSI0N
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-GRANT CREATE ANY TABLE TO SHEVCHENKO
-
-
-
-
+GRANT INSERT ANY TABLE TO SHEVCHENKO
 
 
 /*---------------------------------------------------------------------------
@@ -91,20 +84,12 @@ GRANT CREATE ANY TABLE TO SHEVCHENKO
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT CUST_NAME FROM CUSTOMERS WHERE CUSTOMERS.CUST_ID IN (SELECT CUST_ID FROM ORDERS WHERE ORDERS.ORDER_NUM IN (SELECT ORDER_NUM FROM ORDERITEMS WHERE ORDERITEMS.ITEM_PRICE = min(ORDERITEMS.ITEM_PRICE)));
 
-
-
-
-
-
-
-
-
-
-
-
-
+PROJECT cust_name (customers)
+where cust_id in (PROJECT orders.cust_id ((orders TIMES orderitems) TIMES products)
+                 where orders.order_num = orderitems.order_num
+                 and products.PROD_ID = orderitems.PROD_ID
+                 and products.PROD_price = (PROJECT min(prod_price)  (products)));
 
 
 /*---------------------------------------------------------------------------
@@ -117,18 +102,9 @@ SELECT CUST_NAME FROM CUSTOMERS WHERE CUSTOMERS.CUST_ID IN (SELECT CUST_ID FROM 
 
 --Код відповідь:
 
-
-
-
-
-
-
-
-
-
-
-
-
+select cust_name from customers, orders
+where (customers.cust_zip is null)
+and customers.cust_id = orders.cust_id
 
 
 /*---------------------------------------------------------------------------
@@ -140,3 +116,7 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
+select upper(cust_name) cust_name from customers
+where cust_id in (select orders.cust_id from orders, orderitems
+                 where orders.order_num = orderitems.order_num
+                 and ORDERITEMS.QUANTITY in (null, 0))
