@@ -10,14 +10,15 @@
 --SQL USER
 CREATE USER kondratyuk IDENTIFIED BY 1111
 DEFAULT TABLESPACE "USERS"
-TEMPORARY TABLESPACE "TEMP"
+TEMPORARY TABLESPACE "TEMP";
 --QUOUTE
-ALTER USER kondratyuk QUOTE 100M ON "USERS"
+ALTER USER kondratyuk QUOTA 100M ON "USERS";
 --CONNECTION
-GRANT CONNECT TO studentpma
+GRANT "CONNECT" TO kondratyuk;
 --GRANTED
-INSERT ANY TABLE
-ALTER ANY EDITION;
+GRANT ALTER ANY TABLE TO kondratyuk; 
+GRANT DELETE ANY TABLE TO kondratyuk;
+GRANT INSERT ANY TABLE TO kondratyuk;
 
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
@@ -53,12 +54,8 @@ ALTER TABLE STUDENT
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-GRANT CREATE ANY TABLE
-GRANT SELECT ANY TABLE
-GRANT ALTER ANY TABLE
-
-
-
+GRANT CREATE ANY TABLE TO kondratyuk;
+GRANT SELECT ANY TABLE TO kondratyuk;
 
 /*---------------------------------------------------------------------------
 3.a. 
@@ -66,22 +63,27 @@ GRANT ALTER ANY TABLE
 Виконати завдання в SQL. 
 4 бали
 ---------------------------------------------------------------------------*/
-
 --Код відповідь:
-SELECT PROD_ID, MIN(ORDER_ITEM) AS res_quant FROM ORDERITEMS
-GROUP BY PROD_ID;
+--Завдання має нечіткі границі розуміння, тому виконано в двох варіантах.
 
+--Виводиться найменше проданого товару за одне замовлення:
+SELECT DISTINCT orderitems.prod_id, orderitems.quantity FROM orderitems
+WHERE orderitems.quantity IN (SELECT MIN(orderitems.quantity) FROM orderitems);
 
-
-
-
-
-
-
-
-
-
-
+--Виводиться найменше проданого товару зі всіх зроблених замовлень, без GROUP BY цей варіант не можливо виконати:
+SELECT prod_id, "amount" FROM 
+(
+  SELECT orderitems.prod_id, SUM(orderitems.quantity) as "amount" FROM orderitems 
+  GROUP BY orderitems.prod_id
+) 
+WHERE "amount" IN 
+(
+  SELECT MIN("amount") FROM 
+  (
+    SELECT orderitems.prod_id, SUM(orderitems.quantity) as "amount" FROM orderitems 
+    GROUP BY orderitems.prod_id
+  )
+);
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -90,23 +92,14 @@ GROUP BY PROD_ID;
 4 бали
 
 ---------------------------------------------------------------------------*/
-
 --Код відповідь:
-SELECT PROD_ID, QUANTITY FROM ORDERITEMS
-WHERE (SELECT CUST_COUNTRY FROM CUSTOMERS WHERE CUST_COUNTRY = 'USA');
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT SUM(quantity) FROM 
+( 
+  SELECT orderitems.quantity FROM orderitems, orders, customers 
+  WHERE(orderitems.order_num = orders.order_num)
+  AND (orders.cust_id = customers.cust_id) 
+  AND (customers.cust_country = 'USA')
+);
 
 /*---------------------------------------------------------------------------
 c. 
@@ -116,4 +109,9 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-
+PROJECT((PROJECT(vendors){vend_name, vend_id}){vend_name}
+MINUS
+PROJECT DISTINCT (PROJECT DISTINCT(products TIMES vendors TIMES orderitems)
+{vendors.vend_name, products.vend_id, orderitems.prod_id}
+WHERE (products.prod_id = orderitems.prod_id) 
+AND products.vend_id = vendors.vend_id)){vend_name, vend_id};
