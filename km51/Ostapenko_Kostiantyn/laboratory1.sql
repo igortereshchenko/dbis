@@ -10,7 +10,9 @@ IDENTIFIED by ostapenko
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
 
-GRANT conect to "ostapenko";
+ALTER USER ostapenko QUOTA 100M ON USERS;
+
+GRANT "CONNECT" to ostapenko;
 GRANT CREATE ANY table TO ostapenko;
 GRANT ALTER any table TO  ostapenko;
 
@@ -224,7 +226,8 @@ VALUES('342435','love','rota23@gmil.com','21.02.2018');
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-
+GRANT INSERT ANY TABLE TO ostapenko;
+GRANT SELECT ANY TABLE TO ostapenko;
 
 
 
@@ -239,7 +242,7 @@ VALUES('342435','love','rota23@gmil.com','21.02.2018');
 
 --Код відповідь:
 
-
+PROJECT(
 
 
 
