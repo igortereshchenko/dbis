@@ -7,15 +7,17 @@
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-create user adamovskiy identified by password;
-grant select any table to adamovskiy;
 
+CREATE USER adamovskiy IDENTIFIED BY password
+    DEFAULT TABLESPACE "USERS"
+    TEMPORARY TABLESPACE "TEMP"
+    QUOTA 100 M ON users;
 
+GRANT "CONNECT" TO adamovskiy;
 
-
-
-
-
+GRANT
+    SELECT ANY TABLE
+TO adamovskiy;
 
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
@@ -60,13 +62,17 @@ alter table prog
 Згенерувати базу даних використовуючи код з теки OracleScript та виконати запити: 
 
 ---------------------------------------------------------------------------*/
-grant select any table to adamovskiy;
-grant insert any table to adamovskiy;
+GRANT
+    CREATE ANY TABLE
+TO adamovskiy;
 
+GRANT
+    INSERT ANY TABLE
+TO adamovskiy;
 
-
-
-
+GRANT
+    SELECT ANY TABLE
+TO adamovskiy;
 
 /*---------------------------------------------------------------------------
 3.a. 
@@ -75,17 +81,49 @@ grant insert any table to adamovskiy;
 4 бали
 ---------------------------------------------------------------------------*/
 
---Код відповідь:
+-- Відповідь reviewer-а
 
-select
-  order_num 
-from 
-  orderitems,products
-where
-  orderitems.prod_id = products.prod_id and
-  products.prod_price in (select max(prod_price) from products);
+PROJECT(
+    orderitems TIMES products
+    WHERE orderitems.prod_id = products.prod_id
+    AND products.prod_price = max(
+        PROJECT products {prod_price}
+    )
+){order_num}
 
+-- Відповідь reviewer-а переписана в SQL
 
+SELECT
+    order_num
+FROM
+    orderitems,
+    products
+WHERE
+    orderitems.prod_id = products.prod_id
+    and products.prod_price = max(
+        SELECT 
+            prod_price
+        FROM
+            products
+    );
+
+-- Завдання було виконано неправильно
+
+-- Правильна відповідь
+
+SELECT
+    orders.order_num
+FROM
+    orders,
+    orderitems
+WHERE
+    orders.order_num = orderitems.order_num
+    AND   orderitems.item_price IN (
+        SELECT
+            MAX(item_price)
+        FROM
+            orderitems
+    );
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -95,22 +133,30 @@ where
 
 ---------------------------------------------------------------------------*/
 
-select 
-  unique cust_name as "count_name" 
-from customers;
+-- Відповідь reviewer-а
 
+PROJECT 
+    customers{cust_name} 
+RENAME cust_name AS count_name
 
+-- Якщо проігнорувати неправильний синтаксис то можна переписати це в ось такий SQL запит
 
+SELECT
+    cust_name count_name
+FROM
+    customers;
 
+-- Завдання було виконано неправильно
 
+-- Правильна відповідь
 
-
-
-
-
-
-
-
+SELECT
+    COUNT(DISTINCT customers.cust_name) count_name
+FROM
+    customers,
+    orders
+WHERE
+    orders.cust_id = customers.cust_id;
 
 /*---------------------------------------------------------------------------
 c. 
@@ -119,5 +165,44 @@ c.
 4 бали
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
 
+-- reviewer на надав його метод розв'язку даної задач в SQL
+
+-- Правильна відповідь 
+
+SELECT DISTINCT
+    lower(TRIM(vendors.vend_name) ) vendor_name
+FROM
+    vendors,
+    products
+WHERE
+    vendors.vend_id = products.vend_id
+MINUS
+SELECT DISTINCT
+    lower(TRIM(vendors.vend_name) ) vendor_name
+FROM
+    vendors,
+    products,
+    orderitems
+WHERE
+    vendors.vend_id = products.vend_id
+    AND   products.prod_id = orderitems.prod_id;
+
+(
+    PROJECT(
+        vendors TIMES products
+        WHERE
+            vendors.vend_id = products.vend_id
+    ){lower(TRIM(vendors.vend_name))} 
+    RENAME TRIM(vendors.vend_name)) as vendor_name)
+
+MINUS
+
+(
+    PROJECT(
+        vendors TIMES products TIMES orderitems
+        WHERE
+            vendors.vend_id = products.vend_id
+            AND  products.prod_id = orderitems.prod_id
+    ){lower(TRIM(vendors.vend_name))} 
+    RENAME TRIM(vendors.vend_name)) as vendor_name);
