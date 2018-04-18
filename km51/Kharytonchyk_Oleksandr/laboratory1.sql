@@ -18,12 +18,6 @@ ALTER USER kharrytonchyk QUOTA 100M ON USERS;
 GRANT "CONNECT" TO tereshchenko ;
 GRANT CREATE ANY TABLE TO tereshchenko;
 
-
-
-
-
-
-
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
 створювати окремо від таблиць використовуючи команди ALTER TABLE. 
@@ -82,23 +76,31 @@ GRANT SELECT ANY TABLE TO Kharytonchyk;
 
 --Код відповідь:
 
-SELECT  MAX(ITEM_PRICE) AS result
-FROM ORDERITEMS;
-SELECT COUNT( result )
-FROM ORDERITEMS,ORDERS,CUSTOMERS
-WHERE ( CUSTOMER.CUST_ID = ORDERS.CUST_ID )
-AND   ( ORDERS.ORDER_NUM = = ORDERITEMS.ORDER_NUM );
-
-
-
-
-
-
-
-
-
-
-
+--Код reviewer`a:
+SELECT SUM(QUANTITY)
+FROM ORDERITEMS
+WHERE ORDERITEMS.ITEM_PRICE = (SELECT MAX(ITEM_PRICE)
+                                FROM ORDERITEMS);
+                                
+--Виправлений код:                              
+SELECT
+    SUM(quantity)
+FROM
+    orderitems
+WHERE
+    prod_id IN (
+                SELECT
+                    prod_id
+                FROM
+                    orderitems
+                WHERE
+                    item_price = (
+                                    SELECT
+                                        MAX(item_price)
+                                    FROM
+                                        orderitems
+                                   )
+              );
 
 /*---------------------------------------------------------------------------
 3.b. 
@@ -110,29 +112,35 @@ AND   ( ORDERS.ORDER_NUM = = ORDERITEMS.ORDER_NUM );
 
 --Код відповідь:
 
+--Код reviewer`a:
+SELECT PROD_ID 
+FROM PRODUCTS
+WHERE PRODUCTS.PROD_NAME = (SELECT  MAX(LENGTH(TRIM(PROD_NAME)))
+                            FROM PRODUCTS);
 
-SELECT ( ORDER_ITEM LIKE '%' ) AS result
-FROM ORDERITEMS;
-SELECT PROD_ID
-FROM ORDERITEMS
-WHERE ORDER_ITEM = RESULT;
-
-
-
-
-
-
-
-
-
-
-
+--Виправлений код:
+SELECT PROD_ID 
+FROM PRODUCTS
+WHERE LENGTH(TRIM(PROD_NAME)) = (SELECT  MAX(LENGTH(TRIM(PROD_NAME)))
+                            FROM PRODUCTS);
 
 /*---------------------------------------------------------------------------
-c. 
+3.c. 
 Вивести імена постачальників у верхньому регістрі,назвавши це поле vendor_name, що не мають жодного товару.
 Виконати завдання в алгебрі Кодда. 
 4 бали
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+
+--Код reviewer`a:
+PROJECT(VENDORS){VEND_NAME}
+MINUS 
+PROJECT(VENDORS TIMES PRODUCTS
+WHERE VENDORS.VEND_ID = PRODUCTS.VEND_ID){VEND_NAME};
+
+--Виправлений код:
+PROJECT (VENDORS
+        WHERE VENDORS.VEND_ID NOT IN (PROJECT(PRODUCTS){ distinct PRODUCTS.VEND_ID}) 
+    ){ DISTINCT RENAME(UPPER(TRIM(VENDORS.VEND_NAME)), "vendor_name")};
+    
