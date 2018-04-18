@@ -31,32 +31,130 @@ GRANT CREATE ANY TABLE TO mironchenko;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE TABLE HUMAN(
-  human_name VARCHAR2(35) NOT NULL
-);
-ALTER TABLE HUMAN
-  ADD CONSTRAINT human_prk PRIMARY KEY (human_name);
--------------------------------------------------------
+drop table "Singer" cascade constraints;
 
-CREATE TABLE ACTION(
-  action_name VARCHAR2(15) NOT NULL
+/*==============================================================*/
+/* Table: "Singer"                                              */
+/*==============================================================*/
+create table "Singer" 
+(
+   "singer_id"          NUMBER(10)           not null,
+   "singer_first_name"  VARCHAR2(40),
+   "singer_last_name"   VARCHAR2(40),
+   "singer_age"         NUMBER(3),
+   "singer_genre"       VARCHAR2(40),
+   constraint PK_SINGER primary key ("singer_id")
 );
-ALTER TABLE  ACTION
-  ADD CONSTRAINT action_prk PRIMARY KEY (human_name);  
+/*--------------------------------------------------------------*/
 
--------------------------------------------------------
-CREATE TABLE SONG_NAME(
-  song_name_fk VARCHAR2(30) NOT NULL,
+drop table "Song" cascade constraints;
+
+/*==============================================================*/
+/* Table: "Song"                                                */
+/*==============================================================*/
+create table "Song" 
+(
+   "song_id"            NUMBER(10)           not null,
+   "song_name"          VARCHAR2(40),
+   "song_duration"      VARCHAR2(40),
+   "song_temp"          VARCHAR2(40),
+   "song_genre"         VARCHAR2(40),
+   constraint PK_SONG primary key ("song_id")
+);
+/*--------------------------------------------------------------*/
+
+alter table "Friend"
+   drop constraint FK_FRIEND_FIRST_FRI_SINGER;
+
+alter table "Friend"
+   drop constraint FK_FRIEND_SECOND_FR_SINGER;
+
+drop index "second_friend_FK";
+
+drop index "first_friend_FK";
+
+drop table "Friend" cascade constraints;
+
+/*==============================================================*/
+/* Table: "Friend"                                              */
+/*==============================================================*/
+create table "Friend" 
+(
+   "Sin_singer_id"      NUMBER(10)           not null,
+   "singer_id"          NUMBER(10)           not null,
+   "friend_id"          NUMBER(10)           not null,
+   "friend_first_name"  VARCHAR2(40),
+   "friend_last_name"   VARCHAR2(40),
+   constraint PK_FRIEND primary key ("Sin_singer_id", "singer_id", "friend_id")
 );
 
-ALTER TABLE  SONG_NAME
-  ADD CONSTRAINT song_prk PRIMARY KEY (human_name_fk, song_name_fk);  
-  
-ALTER TABLE  SONG_NAME
-  ADD CONSTRAINT song_fk FOREIGN KEY (human_name_fk) REFERENCES HUMAN (human_name);
-  
-ALTER TABLE  SONG_NAME
-  ADD CONSTRAINT song_fk FOREIGN KEY (human_name_fk) REFERENCES SONG (song_name);
+/*==============================================================*/
+/* Index: "first_friend_FK"                                     */
+/*==============================================================*/
+create index "first_friend_FK" on "Friend" (
+   "singer_id" ASC
+);
+
+/*==============================================================*/
+/* Index: "second_friend_FK"                                    */
+/*==============================================================*/
+create index "second_friend_FK" on "Friend" (
+   "Sin_singer_id" ASC
+);
+
+alter table "Friend"
+   add constraint FK_FRIEND_FIRST_FRI_SINGER foreign key ("singer_id")
+      references "Singer" ("singer_id");
+
+alter table "Friend"
+   add constraint FK_FRIEND_SECOND_FR_SINGER foreign key ("Sin_singer_id")
+      references "Singer" ("singer_id");
+
+/*--------------------------------------------------------------*/
+alter table "The singer sings the song"
+   drop constraint "FK_THE SING_THE SINGE_SONG";
+
+alter table "The singer sings the song"
+   drop constraint "FK_THE SING_THE SINGE_SINGER";
+
+drop index "The singer sings the song_FK";
+
+drop index "The singer sings the song2_FK";
+
+drop table "The singer sings the song" cascade constraints;
+
+/*==============================================================*/
+/* Table: "The singer sings the song"                           */
+/*==============================================================*/
+create table "The singer sings the song" 
+(
+   "song_id"            NUMBER(10)           not null,
+   "singer_id"          NUMBER(10)           not null,
+   constraint "PK_THE SINGER SINGS THE SONG" primary key ("song_id", "singer_id")
+);
+
+/*==============================================================*/
+/* Index: "The singer sings the song2_FK"                       */
+/*==============================================================*/
+create index "The singer sings the song2_FK" on "The singer sings the song" (
+   "singer_id" ASC
+);
+
+/*==============================================================*/
+/* Index: "The singer sings the song_FK"                        */
+/*==============================================================*/
+create index "The singer sings the song_FK" on "The singer sings the song" (
+   "song_id" ASC
+);
+
+alter table "The singer sings the song"
+   add constraint "FK_THE SING_THE SINGE_SONG" foreign key ("song_id")
+      references "Song" ("song_id");
+
+alter table "The singer sings the song"
+   add constraint "FK_THE SING_THE SINGE_SINGER" foreign key ("singer_id")
+      references "Singer" ("singer_id");
+
   
   
 /* —-------------------------------------------------------------------------
