@@ -79,7 +79,10 @@ CREATE DATABASE SomeName();
 4 бали
 ---------------------------------------------------------------------------*/
 
---Код відповідь:
+SELECT COUNT(DISTINCT CUST_ID)
+    FROM ORDERS, ORDERITEMS 
+        WHERE ORDERS.ORDER_NUM = ORDERITEMS.ORDER_NUM 
+            AND ORDERITEMS.ITEM_PRICE IN (SELECT MIN(ITEM_PRICE) FROM ORDERITEMS);
 
 
 /*---------------------------------------------------------------------------
@@ -89,10 +92,10 @@ CREATE DATABASE SomeName();
 4 бали
 
 ---------------------------------------------------------------------------*/
-
---Код відповідь:
-
-
+SELECT DISTINCT VEND_COUNTRY 
+    FROM VENDORS 
+        WHERE LENGTH(TRIM(VEND_NAME)) IN 
+            (SELECT MAX(LENGTH(TRIM(VEND_NAME))) FROM VENDORS);
 /*---------------------------------------------------------------------------
 c. 
 Вивести ім’я та країну покупця, як єдине поле client_name, для тих покупців, що мають не порожнє замовлення.
@@ -100,4 +103,5 @@ c.
 4 бали
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
+RENAME(PROJECT CUSTOMERS { DISTINCT TRIM(CUST_NAME) || " " || TRIM(CUST_COUNTRY) } 
+                    WHERE CUST_ID IN (PROJECT ORDERS {DISTINCT(CUST_ID)})) { TRIM(CUST_NAME) || " " || TRIM(CUST_COUNTRY)  => "client_name"};
