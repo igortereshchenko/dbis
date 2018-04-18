@@ -132,8 +132,10 @@ grant select any table to Samovilov
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-
-
+select prod_name
+  FROM PRODUCTS, ORDERITEMS
+  WHERE PRODUCTS.prod_id = ORDERITEMS.prod_id and
+ (SELECT length(TRIM(prod_name)) FROM PRODUCTS) = (SELECT max(length(TRIM(prod_name))) FROM PRODUCTS);
 
 
 
@@ -155,4 +157,8 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+SELECT 
+cust_name || ' ' ||cust_email as client_name
+FROM CUSTOMERS, ORDERS
+WHERE CUSTOMERS.cust_id=ORDERS.cust_id;
 -- BY Samovilov_Serhii
