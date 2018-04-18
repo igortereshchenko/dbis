@@ -20,24 +20,102 @@ GRANT CREATE ANY TABLE by kharchenko;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE TABLE student
-  student_name varchar2(30)
-  
-ALTER TABLE student ADD CONSTRAINT
-  student_name_pk Primary KEY (student_name)  
-  
-CREATE TABLE phoneNumber
-  country varchar2(30)
-  operators varchar2(30)
-  phone_number number(10)
+/*==============================================================*/
+/* Table: "Countries"                                           */
+/*==============================================================*/
+create table "Countries" 
+(
+   "country_name"       CHAR(30)             not null,
+   "country_phoneCode"  NUMBER(8)            not null,
+   constraint Country_name_chk check ("country_name" LIKE [A-Z][a-z]{1,8}[:blank:][a-z]{0,9}[:blank:][a-z]{0,9}),
+   constraint Country_phoneCode_chk check ("country_phoneCode" LIKE [0-9]{1,8})
+);
 
-ALTER TABLE student 
-  phone_pk Primary KEY (phone
-  
+/*==============================================================*/
+/* Table: "Countries has operators"                             */
+/*==============================================================*/
+create table "Countries has operators" 
+(
+   "Operator_name"      CHAR(30)             not null,
+   "country_name"       CHAR(30)             not null,
+   "operator_country_phoneCode" NUMBER(8)            not null,
+   constraint Operator_name_chk check ("Operator_name" LIKE [A-Z][a-z]{1,8}[:blank:][a-z]{0,9}[:blank:][a-z]{0,9}),
+   constraint country_name_chk check Country_name_chk check ("country_name" LIKE [A-Z][a-z]{1,8}[:blank:][a-z]{1,9}[:blank:][a-z]{1,9}),
+   constraint operator_country_phoneCode_chk ("perator_country_phoneCode" LIKE [0-9]{1,8})
+);
 
 
-ALTER TABLE know
-  fk_student CONSTENT student from student
+
+/*==============================================================*/
+/* Table: "Operators"                                           */
+/*==============================================================*/
+create table "Operators" 
+(
+   "Operator_name"      CHAR(30)             not null,
+   constraint Operator_name_chk check ("Operator_name" LIKE [A-Z][a-z]{1,8}[:blank:][a-z]{0,9}[:blank:][a-z]{0,9})
+);
+
+/*==============================================================*/
+/* Table: "Students"                                            */
+/*==============================================================*/
+create table "Students" 
+(
+   "student_name"       CHAR(50)             not null,
+   "student_IDCardNumber" CHAR(20)             not null,
+   constraint student_name_chk check ("student_name" LIKE [A-Z][a-z]{1,15}[:blank:][A-Z][a-z]{1,15}[:blank:][][A-Z,a-z]{0,15}),
+   constraint student_IDCardNumber_chk ("perator_country_phoneCode" LIKE [A-Z]{2}[0-9]{1,8})
+);
+
+/*==============================================================*/
+/* Table: "phoneNumbers"                                        */
+/*==============================================================*/
+create table "phoneNumbers" 
+(
+   "student_name"       CHAR(50)             not null,
+   "student_IDCardNumber" CHAR(20)             not null,
+   "Operator_name"      CHAR(30)             not null,
+   "country_name"       CHAR(30)             not null,
+   "phoneNumber"        NUMBER(20)           not null,
+   constraint student_name_chk check ("student_name" LIKE [A-Z][a-z]{1,15}[:blank:][A-Z][a-z]{1,15}[:blank:][][A-Z,a-z]{0,15}),
+   constraint student_IDCardNumber_chk ("perator_country_phoneCode" LIKE [A-Z]{2}[0-9]{1,8}),
+   constraint Operator_name_chk check ("Operator_name" LIKE [A-Z][a-z]{1,8}[:blank:][a-z]{0,9}[:blank:][a-z]{0,9}),
+   constraint country_name_chk check Country_name_chk check ("country_name" LIKE [A-Z][a-z]{1,8}[:blank:][a-z]{1,9}[:blank:][a-z]{1,9}),
+   constraint phoneNumber_chk check ("phoneNumber" LIKE [0-9]{1,20})
+
+
+   );
+
+alter table "Countries has operators"
+   add constraint FK_COUNTRIE_COUNTRIES_COUNTRIE foreign key ("country_name")
+      references "Countries" ("country_name");
+
+alter table "Countries has operators"
+   add constraint FK_COUNTRIE_OPERATORS_OPERATOR foreign key ("Operator_name")
+      references "Operators" ("Operator_name");
+
+alter table "phoneNumbers"
+   add constraint FK_PHONENUM_COUNTRIES_COUNTRIE foreign key ("Operator_name", "country_name")
+      references "Countries has operators" ("Operator_name", "country_name");
+
+alter table "phoneNumbers"
+   add constraint PK_PHONENUMBERS primary key ("student_name", "student_IDCardNumber", "Operator_name", "country_name", "phoneNumber")
+
+ constraint "FK_PHONENUM_STUDENT H_STUDENTS" foreign key ("student_name", "student_IDCardNumber")
+      references "Students" ("student_name", "student_IDCardNumber");
+
+alter table "Students"
+   add constraint PK_STUDENTS primary key ("student_name", "student_IDCardNumber")
+
+alter table "Operators"
+   add constraint PK_OPERATORS primary key ("Operator_name")
+
+alter table "Countries has operators"
+   add constraint "PK_COUNTRIES HAS OPERATORS" primary key ("Operator_name", "country_name")
+
+alter table "Countries"
+   add constraint PK_COUNTRIES primary key ("country_name")
+   
+   
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
