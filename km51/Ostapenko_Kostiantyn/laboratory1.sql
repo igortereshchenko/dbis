@@ -242,10 +242,19 @@ GRANT SELECT ANY TABLE TO ostapenko;
 
 --Код відповідь:
 
-PROJECT(
+PROJECT( CUSTOMERS TIMES ORDERS TIMES ORDERITEMS TIMES PRODUCTS
+	Where CUSTOMERS.cust_id = ORDERS.cust_id
+and orders.order_num = orderitems.order_num
+and orderitems.prod_id = products.prod_id
+and products.prod_price != max(products.prod_price) )
+{ cust_name};
 
 
-
+PROJECT(PROJECT( CUSTOMERS TIMES ORDERS TIMES ORDERITEMS 
+	Where CUSTOMERS.cust_id = ORDERS.cust_id
+and orders.order_num = orderitems.order_num
+and ORDERITEMS.ITEM_PRICE NOT IN (PROJECT (ORDERITEMS) {max(products.prod_price)} )
+{ distinct cust_id,cust_name} ){cust_name};
 
 
 
@@ -265,9 +274,14 @@ PROJECT(
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-select min(LENGTH((trim(cust_city)))) 
-from Customers;
-
+SELECT CUST_COUNTRY
+	FROM CUSTOMERS
+	WHERE  length(cust_country) != min(length(cust_country);
+				
+SELECT distinct CUST_COUNTRY
+	FROM CUSTOMERS
+	WHERE  length(cust_country) != (SELECT min(length(cust_country)
+						   FROM CUSTOMERS);
 
 
 
@@ -284,3 +298,23 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
+((SELECT customers.cust_country
+	FROM CUSTOMERS, ORDERS, ORDERITEMS, PRODUCTS
+	Where CUSTOMERS.cust_id = ORDERS.cust_id
+	and orders.order_num = orderitems.order_num
+	and orderitems.prod_id = products.prod_id
+	and products.prod_price != max(products.prod_price))
+CONCAT
+ (SELECT customers.cust_email
+	FROM CUSTOMERS, ORDERS, ORDERITEMS, PRODUCTS
+	Where CUSTOMERS.cust_id = ORDERS.cust_id
+	and orders.order_num = orderitems.order_num
+	and orderitems.prod_id = products.prod_id
+	and products.prod_price != max(products.prod_price)) )	AS client_name;
+					
+SELECT distinct	trim(cust_country)||' '|| trim(cust_email) AS "client_name"			
+	FROM CUSTOMERS, ORDERS, ORDERITEMS
+	Where CUSTOMERS.cust_id = ORDERS.cust_id
+	and orders.order_num = orderitems.order_num				
+	and ORDERITEMS.ITEM_PRICE NOT IN 	(SELECT MAX(ITEM_PRICE)
+	                                 FROM ORDERITEMS);
