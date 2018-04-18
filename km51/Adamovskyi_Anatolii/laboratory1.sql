@@ -105,6 +105,45 @@ ALTER TABLE computer
     ADD CONSTRAINT computer_owner_fk FOREIGN KEY ( owner_owner_passport )
         REFERENCES owner ( owner_passport );
 
+ALTER TABLE computer
+    ADD CONSTRAINT mac_address_check CHECK ( REGEXP_LIKE ( mac_address,
+    '^[A-Za-z]{2}[-]{1}[A-Za-z]{2}[-]{1}[A-Za-z]{2}[-]{1}[A-Za-z]{2}[-]{1}[A-Za-z]{2}$' ) );
+
+ALTER TABLE computer
+    ADD CONSTRAINT comp_name_check CHECK ( REGEXP_LIKE ( comp_name,
+    '^[A-Za-z]{30}$' ) );
+    
+ALTER TABLE owner
+    ADD CONSTRAINT owner_passport_check CHECK ( REGEXP_LIKE ( owner_passport,
+    '^[A-Z]{2}[0-9]{8}$' ) );
+
+ALTER TABLE owner
+    ADD CONSTRAINT owner_name_check CHECK ( REGEXP_LIKE ( owner_name,
+    '^[A-Za-z]{30}$' ) );
+
+ALTER TABLE hardware
+    ADD CONSTRAINT party_number_check CHECK ( REGEXP_LIKE ( party_number,
+    '^[0-9]{9}$' ) );
+
+ALTER TABLE hardware
+    ADD CONSTRAINT serial_number_check CHECK ( REGEXP_LIKE ( serial_number,
+    '^[0-9]{9}$' ) );
+
+ALTER TABLE hardware
+    ADD CONSTRAINT aparat_name_check CHECK ( REGEXP_LIKE ( aparat_name,
+    '^[-0-9A-Za-z]{30}$' ) );
+
+ALTER TABLE software
+    ADD CONSTRAINT soft_name_check CHECK ( REGEXP_LIKE ( soft_name,
+    '^[-0-9A-Za-z]{30}$' ) );
+
+ALTER TABLE software
+    ADD CONSTRAINT version_check CHECK ( REGEXP_LIKE ( version,
+    '^[-0-9A-Za-z]{30}$' ) );
+
+ALTER TABLE software
+    ADD CONSTRAINT description_check CHECK ( REGEXP_LIKE ( description,
+    '^[-0-9A-Za-z]{100}$' ) );
   
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
