@@ -15,7 +15,7 @@ ALTER USER Timofeev QUOTA 100M ON USERS;
 
 GRANT "CONNECT" TO Timofeev; 
 
-GRANT UPDATE TO Timofeev;
+GRANT UPDATE ANY TABLE TO Timofeev;
 
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
