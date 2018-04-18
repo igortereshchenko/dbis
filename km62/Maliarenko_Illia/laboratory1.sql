@@ -76,8 +76,11 @@ grant insert any table to ASIMER;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-
-
+Select disctinct Order_item
+from Orderitems
+where item_price in (
+  select max(item_price)
+  from orderitems)
 
 
 
@@ -97,7 +100,8 @@ grant insert any table to ASIMER;
 --Код відповідь:
 
 
-
+SELECT count(disctinct cust_name) as count_name
+from customers
 
 
 
@@ -114,4 +118,15 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+PROJECT
+Vendors TIMES ORDERITEMS TIMES PRODUCTS
+WHERE VENDORS.vend_id=PRODUCTS.vend_id
+{RENAME LOWER(vend_name) AS "vendor_name"}
 
+MINUS
+
+PROJECT
+Vendors TIMES ORDERITEMS TIMES PRODUCTS
+WHERE ORDERITEMS.prod_id=PRODUCTS.prod_id and
+VENDORS.vend_id=PRODUCTS.vend_id;
+{RENAME LOWER( vend_name) AS "vendor_name"}
