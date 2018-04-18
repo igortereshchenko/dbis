@@ -9,7 +9,7 @@
 CREATE user kharchenko
 IDENTIFIED users 
 
-GRANT ANY CREATE by kharchenko;
+GRANT CREATE ANY TABLE by kharchenko;
 
 /*---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі 
@@ -23,22 +23,18 @@ GRANT ANY CREATE by kharchenko;
 CREATE TABLE student
   student_name varchar2(30)
   
-ALTER TABLE student 
-  student_name_pk Praymery KEY student_name  
+ALTER TABLE student ADD CONSTRAINT
+  student_name_pk Primary KEY (student_name)  
   
-CREATE TABLE phone
-  cosntry varchar2(30)
+CREATE TABLE phoneNumber
+  country varchar2(30)
   operators varchar2(30)
-  phone nomber(10)
+  phone_number number(10)
 
 ALTER TABLE student 
-  phone_pk Pramery KEY phone
+  phone_pk Primary KEY (phone
   
-CREATE TABLE know
-  fk_student varchar2(30)
-  fk_costry varchar2(30)
-  fk_operators varchar2(30)
-  fk_phone nomber(10)
+
 
 ALTER TABLE know
   fk_student CONSTENT student from student
