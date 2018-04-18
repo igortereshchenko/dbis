@@ -38,17 +38,166 @@ GRANT CREATE ANY TABLE TO herasko;
 --Код відповідь:
 
 
-create table human(name VARCHAR2(30) NOT NULL);
+/*==============================================================*/
+/* Table: Author                                                */
+/*==============================================================*/
+create table Author 
+(
+   song_title           VARCHAR2(20)         not null,
+   song_release_year    INTEGER              not null,
+   person_id_number     INTEGER              not null,
+   constraint PK_AUTHOR primary key (song_title, song_release_year, person_id_number)
+);
 
-alter table human add CONSTRAINT human_pk primary key (name);
+alter table Author
+	add constraint author_id_number_check check(regexp_like(person_id_number,'^[0-9]{6,10}$'));
+alter table Author
+	add constraint author_song_title_check check(regexp_like(song_title,'^[A-Za-z0-9#@%$&!* ]+$'));
+alter table Author
+	add constraint author_song_release_year_check check(regexp_like(song_release_year,'^[012][0-9]{3}$'));
 
-create table sound(name VARCHAR2(30) NOT NULL);
 
-alter table sound add CONSTRAINT sound_pk primary key (name);
+/*==============================================================*/
+/* Index: author_wrote_song_FK                                  */
+/*==============================================================*/
+create index author_wrote_song_FK on Author (
+   person_id_number ASC
+);
 
-alter table sound add (human_name varchar2(30) NOT NULL);
+/*==============================================================*/
+/* Index: author_song_FK                                        */
+/*==============================================================*/
+create index author_song_FK on Author (
+   song_title ASC,
+   song_release_year ASC
+);
 
-alter table sound add CONSTRAINT human_name_pk FOREIGN key (human_name) REFERENCES sound(name);
+/*==============================================================*/
+/* Table: Person                                                */
+/*==============================================================*/
+create table Person 
+(
+   person_id_number     INTEGER              not null,
+   person_name          VARCHAR2(15),
+   person_surname       VARCHAR2(15),
+   constraint PK_PERSON primary key (person_id_number)
+);
+
+alter table Person
+	add constraint person_name_check check(regexp_like(person_name,'^[A-Za-z ]+$'));
+alter table Person
+	add constraint person_surname_check check(regexp_like(person_surname,'^[A-Za-z ]+$'));
+alter table Person
+	add constraint person_id_number_check check(regexp_like(person_id_number,'^[0-9]{6,10}$'));
+
+/*==============================================================*/
+/* Table: Singer                                                */
+/*==============================================================*/
+create table Singer 
+(
+   person_id_number     INTEGER              not null,
+   song_title           VARCHAR2(20)         not null,
+   song_release_year    INTEGER              not null,
+   constraint PK_SINGER primary key (person_id_number, song_title, song_release_year)
+);
+
+alter table Singer
+	add constraint singer_id_number_check check(regexp_like(person_id_number,'^[0-9]{6,10}$'));
+alter table Singer
+	add constraint singer_song_title_check check(regexp_like(song_title,'^[A-Za-z0-9#@%$&!* ]+$'));
+alter table Singer
+	add constraint singer_song_release_year_check check(regexp_like(song_release_year,'^[012][0-9]{3}$'));
+
+
+/*==============================================================*/
+/* Index: singer_song_FK                                        */
+/*==============================================================*/
+create index singer_song_FK on Singer (
+   song_title ASC,
+   song_release_year ASC
+);
+
+/*==============================================================*/
+/* Index: singer_sings_song_FK                                  */
+/*==============================================================*/
+create index singer_sings_song_FK on Singer (
+   person_id_number ASC
+);
+
+/*==============================================================*/
+/* Table: Song                                                  */
+/*==============================================================*/
+create table Song 
+(
+   song_title           VARCHAR2(20)         not null,
+   song_album           VARCHAR2(20),
+   song_release_year    INTEGER              not null,
+   constraint PK_SONG primary key (song_title, song_release_year)
+);
+
+alter table Song
+	add constraint song_title_check check(regexp_like(song_title,'^[A-Za-z0-9#@%$&!* ]+$'));
+alter table Song
+	add constraint song_album_check check(regexp_like(song_album,'^[A-Za-z0-9#@%$&!* ]+$'));
+alter table Song
+	add constraint song_release_year_check check(regexp_like(song_release_year,'^[012][0-9]{3}$'));
+
+alter table Author
+   add constraint FK_AUTHOR_SONG foreign key (song_title, song_release_year)
+      references Song (song_title, song_release_year)
+      on delete cascade;
+
+alter table Author
+   add constraint FK_AUTHOR_WROTE_SONG foreign key (person_id_number)
+      references Person (person_id_number)
+      on delete cascade;
+
+alter table Singer
+   add constraint FK_SINGER_SINGS_SONG foreign key (person_id_number)
+      references Person (person_id_number)
+      on delete cascade;
+
+alter table Singer
+   add constraint FK_SINGER_SONG foreign key (song_title, song_release_year)
+      references Song (song_title, song_release_year)
+      on delete cascade;
+
+INSERT INTO Person(person_id_number, person_name, person_surname)
+VALUES('67676767', 'John', 'Smith');
+
+INSERT INTO Person(person_id_number, person_name, person_surname)
+VALUES('67543637', 'Mary', 'Smith');
+
+INSERT INTO Person(person_id_number, person_name, person_surname)
+VALUES('35432555', 'Peter', 'Tramp');
+
+INSERT INTO Song(song_title, song_album, song_release_year)
+VALUES('Love', 'Back', '2007');
+
+INSERT INTO Song(song_title, song_album, song_release_year)
+VALUES('Kiss', 'Back', '2007');
+
+INSERT INTO Song(song_title, song_album, song_release_year)
+VALUES('Mercury', 'Ghoste', '2015');
+
+INSERT INTO Singer(person_id_number, song_title, song_release_year)
+VALUES('67543637','Mercury', '2015');
+
+INSERT INTO Singer(person_id_number, song_title, song_release_year)
+VALUES('67676767','Love', '2007');
+
+INSERT INTO Singer(person_id_number, song_title, song_release_year)
+VALUES('35432555','Love', '2007');
+
+INSERT INTO Author(person_id_number, song_title, song_release_year)
+VALUES('67543637','Mercury', '2015');
+
+INSERT INTO Author(person_id_number, song_title, song_release_year)
+VALUES('67676767','Love', '2007');
+
+INSERT INTO Author(person_id_number, song_title, song_release_year)
+VALUES('35432555','Love', '2007');
+
 
 
 
