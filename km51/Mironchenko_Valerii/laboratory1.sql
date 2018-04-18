@@ -8,15 +8,15 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE USER valerii IDENTIFIED BY valerii1
+CREATE USER mironchenko IDENTIFIED BY mironchenko
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
 
-ALTER USER valerii QUOTA 100M ON USERS;
+ALTER USER mironchenko QUOTA 100M ON USERS;
 
-GRANT "CONNECT" TO valerii;
+GRANT "CONNECT" TO mironchenko;
 
-GRANT CREATE ANY TABLE TO valerii;
+GRANT CREATE ANY TABLE TO mironchenko;
 
 
 
@@ -59,3 +59,56 @@ ALTER TABLE  SONG_NAME
   ADD CONSTRAINT song_fk FOREIGN KEY (human_name_fk) REFERENCES SONG (song_name);
   
   
+/* —-------------------------------------------------------------------------
+3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць,
+внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT.
+Згенерувати базу даних використовуючи код з теки OracleScript та виконати запити:
+—-------------------------------------------------------------------------*/
+—Код відповідь:
+
+GRANT INSERT ANY TABLE mironchenko
+GRANT SELECT ANY TABLE mironchenko
+/---------------------------------------------------------------------------
+3.a.
+Скільки проданого найдорожчого товару?
+Виконати завдання в SQL.
+4 бали
+—-------------------------------------------------------------------------/
+—Код відповідь:
+
+SELECT SUM(ORDERITEMS.QUANTITY) 
+FROM ORDERITEMS
+WHERE ORDERITEMS.ITEM_PRICE IN (
+                                 SELECT MAX(ORDERITEMS.ITEM_PRICE)
+                                 FROM ORDERITEMS
+                               );
+/---------------------------------------------------------------------------
+3.b.
+Який PROD_ID товару, з найкоротшою назвою?
+Виконати завдання в SQL.
+4 бали
+—-------------------------------------------------------------------------/
+—Код відповідь:
+
+SELECT PRODUCTS.PROD_ID    
+FROM PRODUCTS
+WHERE LENGTH(TRIM(PRODUCTS.PROD_NAME)) IN (
+                                             SELECT MIN(LENGTH(TRIM(PRODUCTS.PROD_NAME)))
+                                             FROM PRODUCTS
+                                          );
+/---------------------------------------------------------------------------
+c.
+Вивести імена постачальників у верхньому регістрі,назвавши це поле vendor_name, що не мають жодного товару.
+Виконати завдання в алгебрі Кодда.
+4 бали
+—-------------------------------------------------------------------------/
+—Код відповідь:
+
+A = PROJECT (
+             VENDORS TIMES PRODUCTS 
+             WHERE VENDORS.VEND_ID = PRODUCTS.VEND_ID
+            ) {vend_name}
+
+B = PROJECT (VENDORS) {vend_name}
+
+Answer = PROJECT (B MINUS A) {UPPER(RENAME(vend_name, "vendor_name"))}
