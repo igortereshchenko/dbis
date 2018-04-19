@@ -9,10 +9,10 @@
 --Код відповідь:
 
 CREATE USER DOVGOPOL IDENTIFIED  BY DOVGOPOL;
-DEFAULT TABLESPACE "SYSTEM";
+DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
 GRANT "CONNECT" to DOVGOPOL;
-ALTER USER "DOVGOPOL" QUOTA 300M ON USERS
+ALTER USER DOVGOPOL QUOTA 100M ON USERS
 GRANT SELECT ANY TABLE TO DOVGOPOL;
 
 /*---------------------------------------------------------------------------
@@ -24,37 +24,93 @@ GRANT SELECT ANY TABLE TO DOVGOPOL;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE TABLE computer(
-comp_name VARCHAR2(15) NOT NULL,
+CREATE TABLE assembly (
+    assembly_id             INTEGER NOT NULL,
+    power_block_serial_id   INTEGER NOT NULL,
+    processor_serial_id     INTEGER NOT NULL
 );
 
-CREATE TABLE hardware(
-comp_name_fk VARCHAR2(15) NOT NULL,
-core VARCHAR(30) NOT NULL,
-powerblock VARCHAR(20) NOT NULL
+ALTER TABLE assembly ADD CONSTRAINT assemblyv1_pk PRIMARY KEY ( assembly_id );
+
+CREATE TABLE computer (
+    computer_id              INTEGER
+        CONSTRAINT nnc_computer_uuid NOT NULL,
+    rating                   INTEGER,
+    assemblyv1_assembly_id   INTEGER NOT NULL
 );
 
-CREATE TABLE software(
-comp_name_fk VARCHAR2(15) NOT NULL,
-software_name VARCHAR2(25) NOT NULL
+ALTER TABLE computer ADD CONSTRAINT computer_pk PRIMARY KEY ( computer_id );
+
+CREATE TABLE detail (
+    serial_id11    INTEGER NOT NULL,
+    name           VARCHAR2(20 CHAR) NOT NULL,
+    manufacturer   VARCHAR2(20 CHAR)
 );
-----------------------------------------------------
+
+ALTER TABLE detail ADD CONSTRAINT detail_pk PRIMARY KEY ( serial_id11 );
+
+CREATE TABLE power_block (
+    serial_id                 INTEGER NOT NULL,
+    efficiency                INTEGER NOT NULL,
+    power                     INTEGER NOT NULL,
+    power_factor_correction   INTEGER
+);
+
+ALTER TABLE power_block ADD CONSTRAINT power_block_pk PRIMARY KEY ( serial_id );
+
+CREATE TABLE processor (
+    serial_id      INTEGER NOT NULL,
+    core_count     INTEGER NOT NULL,
+    frequency      INTEGER,
+    heat_release   INTEGER
+);
+
+ALTER TABLE processor ADD CONSTRAINT processor_pk PRIMARY KEY ( serial_id );
+
+CREATE TABLE program (
+    program_id        INTEGER NOT NULL,
+    program_type      VARCHAR2(20 CHAR),
+    program_name      VARCHAR2(20 CHAR) NOT NULL,
+    program_version   FLOAT NOT NULL
+);
+
+ALTER TABLE program ADD CONSTRAINT program_pk PRIMARY KEY ( program_id );
+
+CREATE TABLE relation_5 (
+    computer_computer_id   INTEGER NOT NULL,
+    program_program_id     INTEGER NOT NULL
+);
+
+ALTER TABLE relation_5 ADD CONSTRAINT relation_5_pk PRIMARY KEY ( computer_computer_id,
+                                                                  program_program_id );
+
+ALTER TABLE assembly
+    ADD CONSTRAINT assemblyv1_power_block_fk FOREIGN KEY ( power_block_serial_id )
+        REFERENCES power_block ( serial_id );
+
+ALTER TABLE assembly
+    ADD CONSTRAINT assemblyv1_processor_fk FOREIGN KEY ( processor_serial_id )
+        REFERENCES processor ( serial_id );
+
 ALTER TABLE computer
-ADD CONSTRAINT comp_pk PRIMARY KEY (comp_name);
+    ADD CONSTRAINT computer_assemblyv1_fk FOREIGN KEY ( assemblyv1_assembly_id )
+        REFERENCES assembly ( assembly_id );
 
-ALTER TABLE hardware 
-ADD CONSTRAINT hard_pk PRIMARY KEY (core, powerblock);
+ALTER TABLE detail
+    ADD CONSTRAINT detail_power_block_fk FOREIGN KEY ( serial_id11 )
+        REFERENCES power_block ( serial_id );
 
-ALTER TABLE software
-ADD CONSTRAINT soft_pk PRIMARY KEY(software_name);
+ALTER TABLE detail
+    ADD CONSTRAINT detail_processor_fk FOREIGN KEY ( serial_id11 )
+        REFERENCES processor ( serial_id );
 
------------------------------------------------------
+ALTER TABLE relation_5
+    ADD CONSTRAINT relation_5_computer_fk FOREIGN KEY ( computer_computer_id )
+        REFERENCES computer ( computer_id );
 
-ALTER TABLE hardware
-ADD CONSTRAINT hard_fk FOREIGN KEY (comp_name_fk) REFERENCES computer(comp_name);
-
-ALTER TABLE software
-ADD CONSTRAINT soft_fk FOREIGN KEY (comp_name_fk) REFERENCES computer(comp_name);
+ALTER TABLE relation_5
+    ADD CONSTRAINT relation_5_program_fk FOREIGN KEY ( program_program_id )
+        REFERENCES program ( program_id );
 
   
 /* --------------------------------------------------------------------------- 
@@ -79,9 +135,8 @@ GRANT ALTER ANY TABLE to DOVGOPOL;
 
 --Код відповідь:
 
-SELECT ORDER_NUM
-FROM ORDERS
-WHERE 
+select order_num from orderitems
+where item_price in (select max(item_price) from orderitems)
 
 
 
@@ -94,7 +149,13 @@ WHERE
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-
+select COUNT(distinct CUST_NAME) AS count_name
+from CUSTOMERS
+WHERE cust_id IN
+( select DISTINCT customers.cust_id
+from CUSTOMERS, ORDERS
+WHERE CUSTOMERS.CUST_ID = ORDERS.CUST_ID
+)
 
 
 
@@ -106,4 +167,11 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+SELECT lower(TRIM(VEND_NAME)) as "vendor_name" FROM VENDORS
+WHERE VEND_ID IN(
+SELECT VEND_ID FROM PRODUCTS
 
+MINUS
+
+SELECT VEND_ID FROM PRODUCTS
+WHERE PRODUCTS.PROD_ID IN (SELECT ORDERITEMS.PROD_ID FROM ORDERITEMS));
