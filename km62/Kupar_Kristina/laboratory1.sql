@@ -30,15 +30,73 @@ GRANT DROP TABLE TO "kupar";
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-
-CREATE TABLE STUDENT (
-    stName   char(20)  NOT NULL,
-    stid     int       NOT NULL,
-    rating   decimel(1,2) NULL
+CREATE TABLE Student
+(
+  name  CHAR(50) NOT NULL,
+  course NUMBER  NULL,
+  birthdate DATE NULL,
+  id  char(15) NOT NULL
 );
 
-ALTER STUDENT
-    ADD CONSTRAINT PK_STUDENT PRIMARY KEY (stName, stid);
+CREATE TABLE Teacher
+(
+  name  char(50)  NOT NULL,
+  rank  char(25)  NULL,
+  id  char(15)  NOT NULL
+);
+
+CREATE TABLE work
+(
+  work_id  char(15) NOT NULL,
+  subject  char (25)  NOT NULL,
+  task  char(100)  NOT NULL,
+  teacher_id  char(15) NOT NULL
+);
+
+
+CREATE TABLE studentYieldsWork
+(
+  student_id    char(10)      NOT NULL ,
+  work_id    char(10)      NOT NULL  
+);
+
+
+ALTER TABLE teacher ADD CONSTRAINT teach_name_check CHECK(REGEXP_LIKE(name,'[[:alpha:]] [[:space:]]'));
+ALTER TABLE student ADD CONSTRAINT st_name_check CHECK(REGEXP_LIKE(name, '[[:alpha:]] [[:space:]]'));
+ALTER TABLE student ADD CONSTRAINT courses_check CHECK (course < 7);
+
+ALTER TABLE student ADD CONSTRAINT PK_student PRIMARY KEY (id);
+ALTER TABLE teacher ADD CONSTRAINT PK_teacher PRIMARY KEY (id);
+ALTER TABLE work ADD CONSTRAINT PK_work PRIMARY KEY (work_id);
+ALTER TABLE studentYieldsWork ADD CONSTRAINT PK_yields PRIMARY KEY (student_id, work_id);
+
+INSERT INTO Student(name, course, birthdate, id)
+VALUES('Bogdan', 4, TO_DATE('1997-06-16', 'yyyy-mm-dd'), 'bo450');
+INSERT INTO Student(name, course, birthdate, id)
+VALUES('Alex', 2, TO_DATE('1999-06-25', 'yyyy-mm-dd'), 'ap328');
+INSERT INTO Student(name, course, birthdate, id)
+VALUES('Kate', 2, TO_DATE('1998-12-25', 'yyyy-mm-dd'), 'kb670');
+
+INSERT INTO Teacher(name, rank, id)
+VALUES('Elena', 'docent', 'et389');
+INSERT INTO teacher(name, rank, id)
+VALUES('Sergiy', 'sv', 'ss474');
+INSERT INTO teacher(name, rank, id)
+VALUES('Olga', 'kn', 'op642');
+
+INSERT INTO work(work_id, subject, task, teacher_id)
+VALUES('123h', 'bd', '...', 'et389');
+INSERT INTO work(work_id, subject, task, teacher_id)
+VALUES('123d', 'math', 'aaa', 'ss474');
+INSERT INTO work(work_id, subject, task, teacher_id)
+VALUES('645f', 'dm', 'bbb', 'km623');
+
+INSERT INTO studentYieldsWork(work_id, student_id)
+VALUES('645f', 'ap321');
+INSERT INTO studentYieldsWork(work_id, student_id)
+VALUES('123d', 'bo456');
+INSERT INTO studentYieldsWork(work_id, student_id)
+VALUES('123h', 'km903');
 
 
   
@@ -93,7 +151,9 @@ GRANT ALTER ANY TABLE TO "kupar";
 
 
 
-
+SELECT DISTINCT CUST_NAME, cust_email FROM customers, ORDERS
+  WHERE CUSTOMERS.CUST_ID = ORDERS.CUST_ID and cust_email is null;
+  
 
 
 
@@ -114,3 +174,6 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
+SELECT DISTINCT upper(CUST_NAME) AS CUSTOMER_NAME FROM customers, ORDERS
+  WHERE CUSTOMERS.CUST_ID = ORDERS.CUST_ID AND orders.order_num NOT IN(SELECT DISTINCT ORDER_NUM FROM orderitems);
+  
