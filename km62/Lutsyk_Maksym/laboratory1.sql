@@ -35,42 +35,35 @@ grant delete any table to Lutsyk;
 4 бали
 
 ---------------------------------------------------------------------------*/
---Код відповідь:
+--Код відповідь:    (додано 19.04.2018)
 
-Create table WORK
-WORK_NAME VARCHAR (20) NOT NULL;
-ALTER TABLE WORK
-ADD CONSTRAINT work_num PRIMARY KEY(WORK_NAME); 
+CREATE TABLE student( 
+gbook_num VARCHAR(20) NOT NULL
+); 
 
-Create table TEACHER
-TEACHER_NAME VARCHAR (20) NOT NULL;
+ALTER TABLE STUDENT
+ADD CONSTRAINT gbook_num_pk PRIMARY KEY(gbook_num); 
+
+Create table TEACHER(
+TEACHER_NAME VARCHAR (20) NOT NULL
+);
+
 ALTER TABLE TEACHER
-ADD CONSTRAINT teacher_num PRIMARY KEY(TEACHER_NAME); 
+ADD CONSTRAINT teacher_name_pk PRIMARY KEY(TEACHER_NAME); 
 
-Create table WORKtoTEACHER
-WORK_NAME VARCHAR (20) NOT NULL;
-TEACHER_NAME VARCHAR (20) NOT NULL;
-Worktoteach VARCHAR (20) NOT NULL;
+Create table WORKs (
+GBOOK_NUM VARCHAR (20) NOT NULL, 
+teacher_name VARCHAR(20) NOT NULL
+);
 
-ALTER TABLE WORKtoTEACHER
-ADD CONSTRAINT WORKtoTEACHER_Pk PRIMARY KEY(work_num,teacher_num); 
-
-Alter table WORKtoTEACHER
-ADD CONSTRAINT WORKtoTEACHER_fk FOREIGN KEY(work_fk) REFERENCES (WORK_NAME);
-Alter table WORKtoTEACHER
-ADD CONSTRAINT WORKtoTEACHER_fk FOREIGN KEY(teacher_fk) REFERENCES (TEACHER_NAME);
-
+ALTER TABLE works
+    ADD CONSTRAINT gbook_num_fk FOREIGN KEY ( gbook_num )
+        REFERENCES student ( gbook_num );
+ALTER TABLE works        
+    ADD CONSTRAINT teacher_name_fk FOREIGN KEY ( TEACHER_NAME )
+        REFERENCES TEACHER ( TEACHER_NAME );
 
 
-
-
-
-
-
-
-
-
-  
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
