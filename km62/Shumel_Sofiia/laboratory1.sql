@@ -97,7 +97,11 @@ GRANT SELECT ANE TABLE TO STUDENT;
 
 --Код відповідь:
 
-
+Project (customers
+		where cust_id in (Project(orders times orderitems times products 
+			where orders.order_num = orderitems.order_num
+                 and products.PROD_ID = orderitems.PROD_ID
+                 and products.PROD_price =(Project(products)min(prod_price))orders.cust_id))cust_name;
 
 
 
