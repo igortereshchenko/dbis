@@ -66,7 +66,7 @@ CREATE TABLE Phone
 ALTER TABLE Phone ADD CONSTRAINT PhonePK PRIMARY KEY(phone_serial);
 ALTER TABLE Phone ADD CONSTRAINT Check_Phone_Serial CHECK (REGEXP_LIKE(phone_serial, '^(\w|\d)+$'));
 ALTER TABLE Phone ADD CONSTRAINT Check_Phone_Brand CHECK (REGEXP_LIKE(brand_serial, '^(\w|\d)+$'));
-ALTER TABLE Phone ADD CONSTRAINT Check_Phone_Number CHECK (REGEXP_LIKE(reserved_phone_number, '^\+38\(0\d{2}\)\d{3}\-\d{2}\-\d{2}$'));
+ALTER TABLE Phone ADD CONSTRAINT Check_Phone_Number CHECK (REGEXP_LIKE(reserved_phone_number, '^\+\d{2}\(0\d{2}\)\d{3}\-\d{2}\-\d{2}$'));
 ALTER TABLE Phone ADD CONSTRAINT Check_Phone_Model CHECK (REGEXP_LIKE(phone_model, '^(\w|\s|\d)+$'));
 ALTER TABLE Phone ADD CONSTRAINT Check_Phone_Price CHECK (phone_price >= 0);
 ALTER TABLE Phone ADD CONSTRAINT Check_Phone_Vend_ID CHECK (REGEXP_LIKE(vend_id, '^(\w|\d)+$'));
