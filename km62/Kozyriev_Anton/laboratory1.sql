@@ -48,7 +48,7 @@ CREATE TABLE Customer
 
 ALTER TABLE Customer ADD CONSTRAINT CustomerPK PRIMARY KEY (reserved_phone_number);
 
-ALTER TABLE Customer ADD CONSTRAINT Check_Customers_Number CHECK (REGEXP_LIKE(reserved_phone_number, '^\+\[0-9]{2}\(0\d{2}\)\d{3}\-\d{2}\-\d{2}$'));
+ALTER TABLE Customer ADD CONSTRAINT Check_Customers_Number CHECK (REGEXP_LIKE(reserved_phone_number, '^\+\d{2}\(0\d{2}\)\d{3}\-\d{2}\-\d{2}$'));
 ALTER TABLE Customer ADD CONSTRAINT Check_Customers_Name CHECK (REGEXP_LIKE(cust_name, '^\w+\s\w+$'));
 ALTER TABLE Customer ADD CONSTRAINT Check_Customers_Email CHECK (REGEXP_LIKE(cust_email, '^((\w|\d)|\_)+\@(\w|\d)+\.(\w|\d)+$'));
 
