@@ -57,7 +57,7 @@ CREATE TABLE Phone
 (
     phone_serial VARCHAR(20) NOT NULL, 
     brand_serial VARCHAR(30) NOT NULL,
-    reserved_phone_number VARCHAR(12) NOT NULL,
+    reserved_phone_number VARCHAR(17) NOT NULL, -- ex. +xx(xxx)xxx-xx-xx
     phone_model VARCHAR(30) NOT NULL,
     phone_price NUMBER NOT NULL,
     vend_id VARCHAR(30) NOT NULL
