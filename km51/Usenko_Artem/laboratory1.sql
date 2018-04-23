@@ -4,6 +4,9 @@
 4 бали
 
 ---------------------------------------------------------------------------*/
+
+
+
 Create user usenko IDENTIFIED by usenko
 DEFAULT TABLESPACE "USERS"
 TEMPORARY TABLESPACE "TEMP";
@@ -133,8 +136,11 @@ CREATE TABLE Programist_Job
 programist_job_id NUMBER not null,
 programist_id NUMBER not null,
 project_name VARCHAR(30) not null,
-project_verison VARCHAR(10) not null
+project_verison VARCHAR(10) not null,
+start_working_date DATE not null,
+end_working_date DATE
 );
+
 
 CREATE SEQUENCE programist_job_seq
   START WITH 1
@@ -146,47 +152,53 @@ Alter Table Programist_Job ADD CONSTRAINT project_verison_check CHECK (REGEXP_LI
 Alter Table Programist_Job ADD CONSTRAINT project_name_check CHECK (REGEXP_LIKE(project_name, '^[A-Z|a-z]{0,39}$'));
 Alter Table Programist_Job ADD CONSTRAINT Programist_Job_unique UNIQUE(programist_id,project_name,project_verison);
 
-INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison,start_working_date)
 VALUES 
 (programist_job_seq.nextval,
 (Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='artem' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='usenko'),
 'Tetris',
-'2.0.0');
+'2.0.0',
+TO_DATE('2015/05/03', 'yyyy/mm/dd'));
 
-INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison,start_working_date)
 VALUES 
 (programist_job_seq.nextval,
 (Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='vadim' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='vadim'),
 'Campus',
-'0.0.1');
+'0.0.1',
+TO_DATE('2017/05/03', 'yyyy/mm/dd'));
 
 
-INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison,start_working_date)
 VALUES 
 (programist_job_seq.nextval,
 (Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='artur' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='artur'),
 'Campus',
-'0.0.1');
+'0.0.1',
+TO_DATE('2015/05/03', 'yyyy/mm/dd'));
 
 
-INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison,start_working_date)
 VALUES 
 (programist_job_seq.nextval,
 (Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='vadim' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='vadim'),
 'Site',
-'0.0.1');
+'0.0.1',
+TO_DATE('2010/08/03', 'yyyy/mm/dd'));
 
 
-INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison)
+INSERT INTO Programist_Job(programist_job_id,programist_id,project_name,project_verison,start_working_date)
 VALUES 
 (programist_job_seq.nextval,
 (Select PROGRAMIST.programist_id From PROGRAMIST Where lower(trim(PROGRAMIST.programist_first_name)) ='vadim' and lower(trim(PROGRAMIST.PROGRAMIST_LAST_NAME)) ='vadim'),
-'Site',
-'2.0.1');
+'SiteOracle',
+'2.0.1',
+TO_DATE('2014/05/03', 'yyyy/mm/dd'));
 
 
 /*----------------------------
-Нужно еще разбить таблицу Programist_Job на 2 таблицы
+Нужно еще разбить таблицу Programist_Job на 2 таблицы что бы они были не зависиммые 
+так как робота будет ознчать что он просто устроился на роботу а куда за это должна отвечать другая таблица
 -------------*/
 
   
