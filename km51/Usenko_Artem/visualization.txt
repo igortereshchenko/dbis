@@ -1,6 +1,6 @@
 
 ####################################
-Код для создания первого графика
+РљРѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РїРµСЂРІРѕРіРѕ РіСЂР°С„РёРєР°
 ####################################
 
 import cx_Oracle
@@ -64,7 +64,7 @@ fig = go.Figure(data=data, layout=layout)
 customers_orders_sum = py.plot(fig)
 
 #####################################
-Код для создания второго графика
+РљРѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РІС‚РѕСЂРѕРіРѕ РіСЂР°С„РёРєР°
 #####################################
 
 import cx_Oracle
@@ -107,7 +107,7 @@ py.plot([pie])
         
 
 #####################################
-Код для создания третьего графика
+РљРѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ С‚СЂРµС‚СЊРµРіРѕ РіСЂР°С„РёРєР°
 #####################################
 
 import cx_Oracle
@@ -115,43 +115,40 @@ import plotly.offline as py
 import plotly.graph_objs as go
  
  
-connection = cx_Oracle.connect("studentpma", "studentpma", "server-pc/xe")
+connection = cx_Oracle.connect("SYSTEM", "f4", "DESKTOP-5UL0E3G/xe")
  
 cursor = connection.cursor()
  
  
  
 cursor.execute("""
-SELECT
-    ORDERS.ORDER_DATE,
-    NVL(SUM(ORDERITEMS.QUANTITY*ORDERITEMS.ITEM_PRICE),0) as PRODUCTS_PRICE
- FROM
-    ORDERS LEFT JOIN ORDERITEMS
-        ON ORDERS.ORDER_NUM = ORDERITEMS.ORDER_NUM
-    GROUP BY ORDERS.ORDER_DATE
-    ORDER BY  ORDERS.ORDER_DATE
+SELECT start_working_date , count(*)
+FROM PROGRAMIST_JOB
+GROUP BY START_WORKING_DATE
+ORDER BY START_WORKING_DATE
 """)
-order_dates = []
-products_price = []
+
+start_work_dates = []
+people_start_work = []
  
  
 for row in cursor:
-    print("Date ",row[0]," sum: ",row[1])
-    order_dates += [row[0]]
-    products_price += [row[1]]
+    print("Date ",str(row[0])," people count: ",row[1])
+    start_work_dates += [row[0]]
+    people_start_work += [row[1]]
  
  
-order_date_prices = go.Scatter(
-    x=order_dates,
-    y=products_price,
+people_start_job = go.Scatter(
+    x=start_work_dates,
+    y=people_start_work,
     mode='lines+markers'
 )
-data = [order_date_prices]
-py.plot(data)
+data = [people_start_job]
+people_start_job_url=py.plot(data, filename='Amount of people who  started working this day')
 
 
 #####################################
-Код для создания dashboard
+РљРѕРґ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ dashboard
 #####################################
 
 
@@ -254,32 +251,30 @@ pupulation_language = py.plot([pie], auto_open=False)
 
  
 cursor.execute("""
-SELECT
-    ORDERS.ORDER_DATE,
-    NVL(SUM(ORDERITEMS.QUANTITY*ORDERITEMS.ITEM_PRICE),0) as PRODUCTS_PRICE
- FROM
-    ORDERS LEFT JOIN ORDERITEMS
-        ON ORDERS.ORDER_NUM = ORDERITEMS.ORDER_NUM
-    GROUP BY ORDERS.ORDER_DATE
-    ORDER BY  ORDERS.ORDER_DATE
+SELECT start_working_date , count(*)
+FROM PROGRAMIST_JOB
+GROUP BY START_WORKING_DATE
+ORDER BY START_WORKING_DATE
 """)
-order_dates = []
-products_price = []
+
+start_work_dates = []
+people_start_work = []
  
  
 for row in cursor:
-    print("Date ",row[0]," sum: ",row[1])
-    order_dates += [row[0]]
-    products_price += [row[1]]
+    print("Date ",str(row[0])," people count: ",row[1])
+    start_work_dates += [row[0]]
+    people_start_work += [row[1]]
  
  
-order_date_prices = go.Scatter(
-    x=order_dates,
-    y=products_price,
+people_start_job = go.Scatter(
+    x=start_work_dates,
+    y=people_start_work,
     mode='lines+markers'
 )
-data = [order_date_prices]
-order_date_prices_url=py.plot(data, filename='Orders price by date', auto_open=False)
+data = [people_start_job]
+people_start_job_url=py.plot(data, filename='Amount of people who  started working this day', auto_open=False)
+
  
  
 """--------CREATE DASHBOARD------------------ """
@@ -289,7 +284,7 @@ my_dboard = dashboard.Dashboard()
  
 pogramist_exp_url_id = fileId_from_url(pogramist_exp_url)
 pupulation_language_id = fileId_from_url(pupulation_language)
-order_date_prices_id = fileId_from_url(order_date_prices_url)
+people_start_job_id= fileId_from_url(people_start_job_url)
 
  
 box_1 = {
@@ -309,8 +304,8 @@ box_2 = {
 box_3 = {
     'type': 'box',
     'boxType': 'plot',
-    'fileId': order_date_prices_id,
-    'title': 'Orders price by date'
+    'fileId': people_start_job_id,
+    'title': 'Amount of people who  started working this day'
 }
  
  
@@ -324,5 +319,5 @@ py.dashboard_ops.upload(my_dboard, 'My First Dashboard with Python')
 
 
 ########################
-Ссылка для просмотра dashboard https://plot.ly/dashboard/usenko.job:20/view
+РЎСЃС‹Р»РєР° РґР»СЏ РїСЂРѕСЃРјРѕС‚СЂР° dashboard https://plot.ly/dashboard/usenko.job:20/view
 ########################
