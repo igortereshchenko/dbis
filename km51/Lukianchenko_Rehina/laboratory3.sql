@@ -136,6 +136,4 @@ FROM
             vend_name
     )
 WHERE
-    count_order_num > 3
-GROUP BY
-    vend_name;
+    count_order_num > 3;
