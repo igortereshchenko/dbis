@@ -33,7 +33,7 @@ FOR i IN vend_count..10 loop
         vend_zip,
         vend_country
     ) VALUES (
-        'Vendor'
+        'Vvv'
         || i,
         vendor_name,
         vendor_adress,
