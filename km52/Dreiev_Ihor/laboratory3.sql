@@ -40,19 +40,29 @@ END;
 
 DECLARE
   vendor_pk varchar2(10) := ' ';
+  vendor_status1 varchar2(10) := ' ';
   vendor_status varchar2(10) := ' ';
   vendor_name varchar2(10) := ' ';
-  
+
   
 BEGIN
-    select DISTINCT Products.VEND_ID 
+    select distinct Products.VEND_ID into vendor_status1
     from Products JOIN ORDERITEMS on Products.PROD_ID = ORDERITEMS.PROD_ID
-    where ORDERITEMS.ITEM_PRICE = min(ORDERITEMS.ITEM_PRICE);
+    where ORDERITEMS.ITEM_PRICE = (select min(orderitems.item_price) from orderitems)
+    and rownum = 1;
     
+    if vendor_pk = vendor_status1 then
+     vendor_status := "yes";
+	else
+     vendor_status := "no";
+  end if;
+        
     
     
  
 END;
+
+
 
 
 
