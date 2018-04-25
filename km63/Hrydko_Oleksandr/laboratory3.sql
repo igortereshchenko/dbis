@@ -16,7 +16,7 @@ count_ INTEGER(5):=0;
 min_ INTEGER(5);
 
 begin
-vendors_id :='BRS01';
+vendors_id :='DDL01';
 
 
 select min(products.prod_price) into min_
