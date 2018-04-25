@@ -31,7 +31,7 @@ grant select any table TO patrushev;
 
 create table human (
     ident_code number(6), 
-    name varchar2(30) not null, 
+    firstname varchar2(30) not null, 
     surname varchar2(30) not null, 
     mail varchar2(50)
 );
@@ -51,14 +51,18 @@ create table registration_address (
     house_id_fk number(20),
     apartment_number number(3),
     ident_code_fk number(6),
-    floor_number number(3)
+    floor_number number(3),
+    registration_start_date date not null,
+    registration_end_date date
 );
 
 create table personal_auto(
     auto_number varchar(10), 
     mark varchar2(10) not null, 
     model varchar2(15) not null, 
-    ident_code_fk number(6)
+    ident_code_fk number(6),
+    registration_start_date date not null,
+    registration_end_date date
 );
 
 alter table human
@@ -81,23 +85,27 @@ add constraint pers_auto_fk FOREIGN KEY (ident_code_fk) REFERENCES human (ident_
 alter table house
 add constraint unique_house unique (country,city,street,house_number);
 alter table human
-add constraint check_human CHECK (REGEXP_LIKE(mail, '^\w+@\w+\.[a-z]{2,4}$') and REGEXP_LIKE(name, '^\w+$') and REGEXP_LIKE(surname, '^\w+$'));
+add constraint check_human CHECK (REGEXP_LIKE(mail, '^\w+@\w+\.[a-z]{2,4}$') and REGEXP_LIKE(firstname, '^\w+$') and REGEXP_LIKE(surname, '^\w+$'));
+alter table registration_address
+add constraint check_registration_address check(registration_start_date < registration_end_date);
+alter table personal_auto
+add constraint check_personal_auto check(registration_start_date < registration_end_date);
 
-insert all(
+insert all
     into human values (1,'Peter','Vradiy','pet@gmail.com')
     into human values (2,'Den','Semenov','vald@gmail.com')
     into human values (3,'Vlad','Kopich','sam@mail.com')
     into house values (1,'Ukr','Kiev','Obolon',1,25)
     into house values (2,'Ukr','Kiev','Obolon',25,null)
     into house values (3,'USA','New-York','Kolon',3,4)
-    into registration_address values (2,37,3,null)
-    into registration_address values (1,5,1,14)
-    into registration_address values (1,60,2,10)
-    into personal_auto values (4562,'ep54','BMW',2)
-    into personal_auto values (1732,'fs23','acura',1)
-    into personal_auto values (2415,'fs52','acura',1)
-)
+    into registration_address values (2,37,3,null,date '1999-01-20',null)
+    into registration_address values (1,5,1,null,date '2002-01-20',null)
+    into registration_address values (1,60,2,10,date '2001-03-01',null)
+    into personal_auto values (4562,'ep54','BMW',2,date '1999-01-09',null)
+    into personal_auto values (1732,'fs23','acura',1,date '1996-03-16',null)
+    into personal_auto values (2415,'fs52','acura',1,date '2005-06-03',null)
 SELECT * FROM dual;
+
 
 
 /* --------------------------------------------------------------------------- 
