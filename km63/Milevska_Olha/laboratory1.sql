@@ -25,43 +25,44 @@ GRANT DROP ANY TABLE TO milevska;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE TABLE user(
-    user_name VARCHAR2(20) NOT NULL
-);
+CREATE TABLE USERS(
+        user_name VARCHAR2(20) NOT NULL,
+	model VARCHAR2(30),
+	memory NUMBER(10),
+	productivity NUMBER(10)
+	);
 
-
-ALTER TABLE user
+ALTER TABLE USERS
 ADD CONSTRAINT user_name_pk PRIMARY KEY (user_name);
 
 CREATE TABLE os(
-    os_name VARCHAR2(20)
-); 
+        os_name VARCHAR2(20) NOT NULL,
+	numberupdate VARCHAR2(20),
+	year NUMBER(4),
+	bitwidth NUMBER(2)
+	);
 
 ALTER TABLE os
 ADD CONSTRAINT os_name_pk PRIMARY KEY (os_name);    
 
 CREATE TABLE user_os(
-    user_name_fk VARCHAR(20) NOT NULL
-    os_name_fk VARCHAR2(20) NOT NULL
-);
+    	user_name_fk VARCHAR2(20) NOT NULL,
+    	os_name_fk VARCHAR2(20) NOT NULL,
+	emailmicrosoft VARCHAR2(20),
+	count_of_rum NUMBER(2)
+	);
 
 ALTER TABLE user_os
-ADD CONSTRAINT user_os_pk PRIMARY KEY (user_name_fk,os_name_fk );    
+ADD CONSTRAINT user_os_pk PRIMARY KEY (user_name_fk,os_name_fk );  
 
 ALTER TABLE user_os
-ADD CONSTRAINT user_name_fk FOREIGN KEY (user_name_fk) REFERENCES (user_name);
+ADD CONSTRAINT user_name_fk FOREIGN KEY (user_name_fk) REFERENCES user (user_name);
 
-ALTER TABLE user_os
-ADD CONSTRAINT os_name_fk FOREIGN KEY (os_name_fk) REFERENCES (os_name);
+ALTER TABLE user_os  
+ADD CONSTRAINT os_name_fk FOREIGN KEY (os_name_fk) REFERENCES os (os_name);
 
-
-
-
-
-
-
-
-  
+	
+ 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
@@ -74,8 +75,6 @@ GRANT INSERT ANY TABLE TO milevska;
 GRANT SELECT ANY TABLE TO milevska;
 
 
-
-
 /*---------------------------------------------------------------------------
 3.a. 
 Як звуть покупців, що не купляли найдешевший товар.
@@ -85,11 +84,11 @@ GRANT SELECT ANY TABLE TO milevska;
 
 --Код відповідь:
 
-SELECT CUST_NAME
-FROM CUSTOMERS, ORDERITEMS, ORDERS
-WHERE ITEM_PRICE NOT IN(
-SELECT MIN(ITEM_PRICE)
-FROM ORDERITEMS);
+PROJECT CUSTOMERS TIMES (ORDERS TIMES ORDERITEMS)
+(WHERE (CUSTOMERS.CUST_ID = ORDERS.CUST_ID)
+AND(ORDERS.ORDER_NUM=ORDERITEMS.ORDER_NUM)
+AND(ORDERITEMS.ITEM_PRICE> PROJECT ORDERITEMS {MIN(ORDERITEMS.ITEM_PRICE)}))
+{CUSTOMERS.CUST_NAME};
 
 
 
@@ -103,18 +102,10 @@ FROM ORDERITEMS);
 
 --Код відповідь:
 
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT CUSTOMERS.CUST_NAME
+FROM CUSTOMERS,ORDERS
+WHERE CUSTOMERS.CUST_ID = ORDERS.CUST_ID
+AND CUSTOMERS.CUST_EMAIL IS NULL;
 
 
 /*---------------------------------------------------------------------------
@@ -125,3 +116,10 @@ c.
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+
+SELECT UPPER(VENDORS.VEND_NAME) AS "vendor_name"
+FROM VENDORS,PRODUCTS
+WHERE VENDORS.VEND_ID=PRODUCTS.VEND_ID
+AND LENGTH(Products.PROD_DESC) = (SELECT MAX(length(PRODUCTS.PROD_DESC))
+FROM PRODUCTS)
+;
