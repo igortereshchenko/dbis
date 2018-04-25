@@ -2,11 +2,7 @@ import cx_Oracle
 import plotly.plotly as py
 import plotly.graph_objs as go
 import re
-import numpy
-import dateparser
 import plotly.dashboard_objs as dashboard
- 
- 
  
 def fileId_from_url(url):
     """Return fileId from a url."""
