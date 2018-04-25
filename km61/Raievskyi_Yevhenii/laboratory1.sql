@@ -23,12 +23,6 @@ GRANT CREATE ANY TABLE TO raevskiy;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-
-DROP TABLE students cascade constraints PURGE;
-DROP TABLE operators cascade constraints PURGE;
-DROP TABLE numbers cascade constraints PURGE;
-DROP TABLE students_numbers cascade constraints PURGE;
-
 CREATE TABLE students
 (
     stud_id NUMBER(15) NOT NULL,
@@ -84,8 +78,7 @@ INSERT INTO students VALUES (666, 'Eugen', 'R', 'M');
 INSERT INTO students VALUES (85612, 'Anna', 'C', 'F');
 INSERT INTO students VALUES (50, 'Ortem', 'M', 'M');
 
-ALTER TABLE students ADD CONSTRAINT students_gender_ch CHECK (gender = 'M' OR gender = 'F' OR gender = NULL);
-ALTER TABLE students ADD CONSTRAINT students_gender_ch CHECK (gender = 'M' OR gender = 'F' OR gender = NULL);
+ALTER TABLE students ADD CONSTRAINT students_gender_ch CHECK (stud_gender = 'M' OR stud_gender = 'F' OR stud_gender = NULL);
 
 INSERT INTO operators VALUES (1, 'Valw', 'http://valw.com', 'WIawiduhawiudh st.');
 INSERT INTO operators VALUES (2, 'Qkfg', NULL, NULL);
@@ -94,7 +87,7 @@ INSERT INTO operators VALUES (3, 'Olkaw', NULL, NULL);
 INSERT INTO numbers VALUES (380504289133, 'USA', NULL);
 
 INSERT INTO students_numbers VALUES (666, 380504289133, 1);
-  
+ 
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
