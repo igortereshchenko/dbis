@@ -70,9 +70,9 @@ add constraint human_key primary key (ident_code);
 alter table house
 add constraint house_key primary key (house_id);
 alter table registration_address
-add constraint reg_address_key primary key (house_id_fk, apartment_number);
+add constraint reg_address_key primary key (house_id_fk, apartment_number, registration_start_date);
 alter table personal_auto
-add constraint pers_auto_key primary key (auto_number);
+add constraint pers_auto_key primary key (auto_number,registration_start_date);
 
 alter table registration_address
 add constraint reg_address_human_fk FOREIGN KEY (ident_code_fk) REFERENCES human (ident_code);
@@ -98,13 +98,18 @@ insert all
     into house values (1,'Ukr','Kiev','Obolon',1,25)
     into house values (2,'Ukr','Kiev','Obolon',25,null)
     into house values (3,'USA','New-York','Kolon',3,4)
-    into registration_address values (2,37,3,null,date '1999-01-20',null)
+    into registration_address values (2,37,2,null,date '1999-01-20',null)
     into registration_address values (1,5,1,null,date '2002-01-20',null)
-    into registration_address values (1,60,2,10,date '2001-03-01',null)
+    into registration_address values (1,60,2,20,date '2001-03-01',null)
+    into registration_address values (3,55,2,3,date '2000-04-12',date '2001-06-03')
+    into registration_address values (2,20,2,10,date '2002-05-12',null)
     into personal_auto values (4562,'ep54','BMW',2,date '1999-01-09',null)
     into personal_auto values (1732,'fs23','acura',1,date '1996-03-16',null)
     into personal_auto values (2415,'fs52','acura',1,date '2005-06-03',null)
+    into personal_auto values (5462,'kw83','audi',1,date '2003-02-19',null)
+    into personal_auto values (4455,'fs52','acura',3,date '2005-06-03',date '2006-07-01')
 SELECT * FROM dual;
+
 
 
 
