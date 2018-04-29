@@ -19,7 +19,7 @@ def fileId_from_url(url):
     return raw_fileId.replace('/', ':')
  
  
-connection = cx_Oracle.connect("ada", "killmyself13", "xe")
+connection = cx_Oracle.connect("", "killmyself13", "xe")
  
 cursor = connection.cursor()
  
@@ -37,7 +37,7 @@ avg_square = []
  
  
 for row in cursor:
-    print("People: ",row[0]," and his order sum: ",row[1])
+    print("People: ",row[0]," andavarage meter per person:",row[1])
     people += [row[0]]
     avg_square += [row[1]]
  
