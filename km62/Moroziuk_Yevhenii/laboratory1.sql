@@ -28,185 +28,174 @@ GRANT INSERT ANY TABLE TO student;
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
+-- human
+CREATE TABLE Human (
+    human_id     NUMBER(5) NOT NULL,
+    human_name   VARCHAR(24) NOT NULL,
+    birthday        DATE NULL
+);
+ALTER TABLE Human
+
+ADD CONSTRAINT human_id_pk PRIMARY KEY ( human_id);
+
+ALTER TABLE Human
+    ADD CONSTRAINT Check_Human_Id CHECK( length(human_id) = 5 );
+ALTER TABLE Human 
+    ADD CONSTRAINT Check_Human_Name CHECK (REGEXP_LIKE(human_name, '^\w+\s\w+$')); 
+ALTER TABLE Human 
+    ADD CONSTRAINT Check_Human_Birth_Date CHECK (REGEXP_LIKE(birthday, '^([0-9]{2}\.){2}([0-9]{4})$')); 
+
+-- mobile
+CREATE TABLE mobile (
+    imei NUMBER(15) NOT NULL
+);
+
+ALTER TABLE mobile
+    ADD CONSTRAINT mobile_pk PRIMARY KEY (imei);
+ALTER TABLE mobile
+    ADD CONSTRAINT Cheak_Mobile_Imei CHECK ( REGEXP_LIKE(imei, '^([0-9]{15})$') );
+
+-- numan bought mobile
+CREATE TABLE Humans_mobile(
+    human_fk NUMBER(5) NOT NULL,
+    imei_fk NUMBER(15) NOT NULL
+);
+
+ALTER TABLE  Humans_Mobile
+    ADD CONSTRAINT humans_mobile_pk PRIMARY KEY (human_fk, imei_fk);  
+ALTER TABLE   Humans_Mobile
+    ADD CONSTRAINT human_mobile_fk FOREIGN KEY (human_fk) REFERENCES Human (human_id);
+ALTER TABLE   Humans_Mobile
+    ADD CONSTRAINT imei_mobile_fk FOREIGN KEY (imei_fk) REFERENCES Mobile (imei);
+
+-- mobile_spec
+CREATE TABLE mobile_ch (
+    imei_sp_fk   NUMBER(15) NOT NULL,
+    mobile_brand      VARCHAR2(16) NOT NULL,
+    mobile_camera     NUMBER(2) NOT NULL,
+    mobile_price      NUMBER(5) NOT NULL
+);
+
+ALTER TABLE mobile_ch
+    ADD CONSTRAINT imei_mob_pk PRIMARY KEY (imei_sp_fk);
+ALTER TABLE mobile_ch
+    ADD CONSTRAINT mobile_spec_fk FOREIGN KEY (imei_sp_fk) REFERENCES Mobile (imei);
 
 
-CREATE TABLE mobile ( 
-        mobile_brand            VARCHAR2(12) NOT NULL,  
-        mobile_camera           NUMBER(2) NOT NULL, 
-        mobile_processor        VARCHAR(200) NOT NULL, 
-        CONSTRAINT mobile_phone_pk PRIMARY KEY ( mobile_brand) 
-    ); 
-   
-    ALTER TABLE mobile 
-        ADD CONSTRAINT mobile_price_ch CHECK ( length(mobile_brand) >= 3 ); 
-         
-     
-    CREATE TABLE Human (
-        human_id   NUMBER(8) NOT NULL, 
-        human_name VARCHAR(24) NOT NULL, 
-        birth      DATE,  
-        CONSTRAINT human_id_pk PRIMARY KEY ( human_id ) 
-    ); 
 
-    ALTER TABLE human 
-        ADD CONSTRAINT human_name_ch CHECK ( length(human_name) >= 2 ); 
+-----
+INSERT INTO Human (
+    human_id,
+    human_name,
+    birthday
+) VALUES (
+    10001,
+    'Yevhenii',
+    TO_DATE('1999-03-10','YYYY-MM-DD')
+);
 
-     
-    CREATE TABLE Humans_phone ( 
-        human_id_fk          NUMBER(8) NOT NULL, 
-        mobile_brand_fk      VARCHAR2(12) NOT NULL  
-    ); 
-     
-    ALTER TABLE Humans_phone 
-        ADD CONSTRAINT human_with_mobile_pk PRIMARY KEY ( human_id_fk, 
-        mobile_brand_fk ); 
-     
-    ALTER TABLE Humans_phone 
-        ADD CONSTRAINT mobile_fk FOREIGN KEY ( mobile_brand_fk ) 
-            REFERENCES mobile ( mobile_brand ); 
-     
-    ALTER TABLE Humans_phone 
-        ADD CONSTRAINT human_fk FOREIGN KEY ( human_id_number_fk ) 
-            REFERENCES human ( human_id_number ); 
-          
-     
-    CREATE TABLE shop ( 
-        mobile_phone_fk VARCHAR2(14) NOT NULL,
-        mobile_price    NUMBER(5) NOT NULL,  
-        packages_p      NUMBER(4) NOT NULL,  
-        accessories_p   NUMBER(4) NOT NULL 
-    ); 
-     
-    ALTER TABLE shop 
-        ADD CONSTRAINT mobile_from_shop_pk PRIMARY KEY ( mobile_phone_fk, 
-        mobile_price ); 
-     
-    ALTER TABLE shop 
-        ADD CONSTRAINT mob_phone_fk FOREIGN KEY ( mobile_phone_fk ) 
-            REFERENCES mobile ( mobile_brand ); 
-        
- 
-    
-    INSERT INTO mobile ( 
-        mobile_brand,              
-        mobile_camera,            
-        mobile_processor  
-    ) VALUES ( 
-        'iPhone 8', 
-        12, 
-        'A11 bionic'
-        ); 
-     
-      INSERT INTO mobile ( 
-        mobile_brand,              
-        mobile_camera,            
-        mobile_processor  
-    ) VALUES ( 
-        'SG S7', 
-        12, 
-        'Exynos 8'
-        ); 
-        
-    INSERT INTO mobile ( 
-        mobile_brand,              
-        mobile_camera,            
-        mobile_processor  
-    ) VALUES ( 
-        'Mi Mix 2s', 
-        12, 
-        'SD 845'
-        ); 
-    
-     INSERT INTO human ( 
-        human_id, 
-        human_name, 
-        birth  
-    ) VALUES ( 
-        777777, 
-        'Yevhenii', 
-        TO_DATE('1999-03-10','YYYY-MM-DD') 
-    ); 
-    
-    INSERT INTO human ( 
-        human_id, 
-        human_name, 
-        birth  
-    ) VALUES ( 
-        888888, 
-        'Yevhenii8', 
-        TO_DATE('1999-03-10','YYYY-MM-DD') 
-    );
-    
-    INSERT INTO human ( 
-        human_id, 
-        human_name, 
-        birth  
-    ) VALUES ( 
-        999999, 
-        'Yevhenii9', 
-        TO_DATE('1999-03-10','YYYY-MM-DD') 
-    );
-    
-    
-    INSERT INTO Humans_phone ( 
-        human_id_fk, 
-        mobile_brand_fk
-    ) VALUES ( 
-        777777, 
-        'iPhone 8' 
-    ); 
-     
-    INSERT INTO Humans_phone ( 
-        human_id_fk, 
-        mobile_brand_fk
-    ) VALUES ( 
-        888888, 
-        'SG S7' 
-    );
-    
-    INSERT INTO Humans_phone ( 
-        human_id_fk, 
-        mobile_brand_fk
-    ) VALUES ( 
-        999999, 
-        'Mi Mix 2s' 
-    );  
-     
-    INSERT INTO mobile_shop ( 
-        mobile_phone_fk,
-        mobile_price,  
-        packages_p,  
-        accessories_p
-    ) VALUES ( 
-        'iPhone 8', 
-        '25000', 
-        999, 
-        500 
-    ); 
-     
-    INSERT INTO mobile_shop ( 
-        mobile_phone_fk,
-        mobile_price,  
-        packages_p,  
-        accessories_p
-    ) VALUES ( 
-        'SG S7', 
-        '15000', 
-        799, 
-        600 
-    );
-    
-    INSERT INTO mobile_shop ( 
-        mobile_phone_fk,
-        mobile_price,  
-        packages_p,  
-        accessories_p
-    ) VALUES ( 
-        'Mi Mix 2s', 
-        '22000', 
-        900, 
-        600 
-    );
+INSERT INTO Human (
+    human_id,
+    human_name,
+    birthday
+) VALUES (
+    10002,
+    'Petro',
+    TO_DATE('1989-06-10','YYYY-MM-DD')
+);
+
+INSERT INTO Human (
+    human_id,
+    human_name,
+    birthday
+) VALUES (
+    10003,
+    'Lucius',
+    TO_DATE('1982-05-01','YYYY-MM-DD')
+);
+
+INSERT INTO Human (
+    human_id,
+    human_name,
+    birthday
+) VALUES (
+    10004,
+    'Lucius',
+    TO_DATE('1982-01-05','YYYY-MM-DD')
+);
+
+INSERT INTO Mobile (
+    imei
+) VALUES (
+    100016789010001
+);
+INSERT INTO Mobile (
+    imei
+) VALUES (
+    100026789010002
+);
+INSERT INTO Mobile (
+    imei
+) VALUES (
+    100036789010003
+);
+---
+INSERT INTO Humans_Mobile (
+    human_fk,
+    imei_fk
+) VALUES (
+    10001,
+    100016789010001
+);
+INSERT INTO Humans_Mobile (
+    human_fk,
+    imei_fk
+) VALUES (
+    10002,
+    100026789010002
+);
+INSERT INTO Humans_Mobile (
+    human_fk,
+    imei_fk
+) VALUES (
+    10003,
+    100036789010003
+);
+--
+
+INSERT INTO mobile_ch (
+    imei_sp_fk,
+    mobile_brand,
+    mobile_camera,
+    mobile_price
+) VALUES (
+    100016789010001,
+    'Samsung',
+    12,
+    32000
+);
+INSERT INTO mobile_ch (
+    imei_sp_fk,
+    mobile_brand,
+    mobile_camera,
+    mobile_price
+) VALUES (
+    100026789010002,
+    'Xiaomi',
+    12,
+    22000
+);
+INSERT INTO mobile_ch (
+    imei_sp_fk,
+    mobile_brand,
+    mobile_camera,
+    mobile_price
+) VALUES (
+    100036789010003,
+    'Apple',
+    12,
+    36000
+);
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
