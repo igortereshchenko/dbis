@@ -23,7 +23,7 @@ grant Create any table to kollehina;
 /*==============================================================*/
 /* Table: human                                                 */
 /*==============================================================*/
-create table  
+create table human 
 (
    human_id             NUMBER(10)           not null,
    human_name           VARCHAR2(40)         not null,
