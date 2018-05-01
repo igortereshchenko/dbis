@@ -34,7 +34,8 @@ CREATE TABLE students_numbers
 (
     stud_id_fk NUMBER(15) NOT NULL,
     phone_number_fk NUMBER(15, 0) NOT NULL,
-    operator_id_fk NUMBER(10) NOT NULL
+    operator_id_fk NUMBER(10) NOT NULL,
+    register_date DATE NOT NULL
 );
 
 ALTER TABLE students_numbers
