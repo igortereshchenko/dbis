@@ -1,8 +1,4 @@
 
-# coding: utf-8
-
-# In[22]:
-
 
 import plotly
 plotly.tools.set_credentials_file(username='Katya_Kollehina', api_key='tVeOqtxhhASLcb9FSv5B')
