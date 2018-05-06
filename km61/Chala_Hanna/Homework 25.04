@@ -1,0 +1,154 @@
+CREATE TABLE STUD (ST_NAME VARCHAR(30) NOT NULL,
+ST_GROUP varchar(5) NOT NULL,
+ST_ID INT NOT NULL,
+ST_FACULTY VARCHAR(20) NOT NULL);
+
+CREATE TABLE MARK(M_ID INT NOT NULL,
+M_NAME INT NOT NULL);
+
+CREATE TABLE ZALIK(SBJ_ID INT NOT NULL,
+M_ID INT NOT NULL,
+EXAM DATE NOT NULL,
+SEMESTR INT NOT NULL);
+
+CREATE TABLE SUBJ(SBJ_NAME VARCHAR(10) NOT NULL,
+ST_ID NUMBER(8,2) NULL,
+SBJ_ID INT NOT NULL);
+
+ALTER TABLE STUD
+ADD CONSTRAINT PK1 PRIMARY KEY (ST_ID);
+ALTER TABLE ZALIK
+ADD CONSTRAINT PK2 PRIMARY KEY (SBJ_ID, SEMESTR);
+ALTER TABLE SUBJ
+ADD CONSTRAINT PK3 PRIMARY KEY (SBJ_ID);
+ALTER TABLE MARK
+ADD CONSTRAINT PK4 PRIMARY KEY (M_ID);
+
+ALTER TABLE ZALIK
+ADD CONSTRAINT FK1 FOREIGN KEY (SBJ_ID) REFERENCES SUBJ (SBJ_ID);
+ALTER TABLE ZALIK
+ADD CONSTRAINT FK2 FOREIGN KEY (M_ID) REFERENCES MARK (M_ID);
+ALTER TABLE SUBJ
+ADD CONSTRAINT FK3 FOREIGN KEY (ST_ID) REFERENCES STUD (ST_ID);
+
+INSERT INTO "FURRR"."STUD" (ST_NAME, ST_GROUP, ST_ID, ST_FACULTY) VALUES ('MUR', '61', '1', 'A')
+INSERT INTO "FURRR"."STUD" (ST_NAME, ST_GROUP, ST_ID, ST_FACULTY) VALUES ('FUR', '62', '2', 'A')
+INSERT INTO "FURRR"."STUD" (ST_NAME, ST_GROUP, ST_ID, ST_FACULTY) VALUES ('KRYA', '51', '3', 'B')
+INSERT INTO "FURRR"."STUD" (ST_NAME, ST_GROUP, ST_ID, ST_FACULTY) VALUES ('GAV', '52', '4', 'C')
+
+INSERT INTO "FURRR"."SUBJ" (SBJ_NAME, ST_ID, SBJ_ID) VALUES ('MATHS', '1', '11')
+INSERT INTO "FURRR"."SUBJ" (SBJ_NAME, ST_ID, SBJ_ID) VALUES ('DB', '3', '22')
+INSERT INTO "FURRR"."SUBJ" (SBJ_NAME, ST_ID, SBJ_ID) VALUES ('OOP', '2', '33')
+
+INSERT INTO "FURRR"."MARK" (M_ID, M_NAME) VALUES ('111', '100')
+INSERT INTO "FURRR"."MARK" (M_ID, M_NAME) VALUES ('222', '90')
+INSERT INTO "FURRR"."MARK" (M_ID, M_NAME) VALUES ('333', '80')
+INSERT INTO "FURRR"."MARK" (M_ID, M_NAME) VALUES ('444', '70')
+INSERT INTO "FURRR"."MARK" (M_ID, M_NAME) VALUES ('555', '60')
+
+INSERT INTO "FURRR"."ZALIK" (SBJ_ID, M_ID, SEMESTR) VALUES ('22', '111', '4')
+INSERT INTO "FURRR"."ZALIK" (SBJ_ID, M_ID, SEMESTR) VALUES ('11', '111', '4')
+INSERT INTO "FURRR"."ZALIK" (SBJ_ID, M_ID, SEMESTR) VALUES ('33', '222', '4')
+
+import cx_Oracle
+connection = cx_Oracle.connect("furrr", "furrr", "Test")
+cursor = connection.cursor()
+cursor.execute("""
+SELECT
+STUD_ST_ID,
+STUD.ST_NAME,
+NVL(SUM(ZALIK.M_ID),0) as MARK_SUM
+FROM
+STUD LEFT JOIN SUBJ
+ON STUD.ST_ID = SUBJ.ST_ID
+LEFT JOIN ZALIK
+ON SUBJ.SBJ_ID = ZALIK.SBJ_ID
+GROUP BY STUD.ST_ID, STUD.ST_NAME) """)
+students = []
+marks_sum = []
+for row in cursor:
+print("Student name: ",row[1]," and his mark sum: ",row[2])
+students += [row[0]+" "+row[1]]
+marks_sum += [row[2]]
+data = [go.Bar(
+x=customers,
+y=orders_sum
+)]
+layout = go.Layout(
+title='Students and Markss sum',
+xaxis=dict(
+title='Students',
+titlefont=dict(
+family='Courier New, monospace',
+size=18,
+color='#7f7f7f'
+)
+),
+yaxis=dict(
+title='Subjects sum',
+rangemode='nonnegative',
+autorange=True,
+titlefont=dict(
+family='Courier New, monospace',
+size=18,
+color='#7f7f7f'
+)
+)
+)
+fig = go.Figure(data=data, layout=layout)
+students_marks_sum = py.plot(fig)
+
+import cx_Oracle
+  import plotly.offline as py
+  import plotly.graph_objs as go 
+  connection = cx_Oracle.connect("studentpma", "studentpma", "server-pc/xe")   
+  cursor = connection.cursor()   
+  cursor.execute("""
+  SELECT
+  STUD.ST_ID),
+  STUD.ST_NAME),
+  NVL(SUM(ZALIK.M_ID),0) as M
+  FROM
+  STUDS LEFT JOIN SUBJ
+  ON STUD.ST_ID = STUD.ST_ID
+  LEFT JOIN ZALIK
+  ON SUBJ.SBJ_ID = ZALIK.SBJ_ID
+  GROUP BY STUD.ST_ID,STUD.ST_NAME
+  """);
+  STUDENTS = []
+  M = []  
+  for row in cursor:
+  print("Student name ",row[1]+" id: ("+row[0],") and his mark sum: ",row[2])
+  vendors += [row[1]+" "+row[0]]
+  products_sum += [row[2]]  
+  pie = go.Pie(labels=vendors, values=products_sum)
+  py.plot([pie])
+  
+  import cx_Oracle
+  import plotly.offline as py
+  import plotly.graph_objs as go 
+  connection = cx_Oracle.connect("furrr", "furrr", "Test")
+  cursor = connection.cursor()   
+  cursor.execute("""
+  SELECT
+  SUBJ.SEMESTR,
+  NVL(SUM(ZALIK.MARK),0) as M
+  FROM
+  SUBJ LEFT JOIN ZALIK
+  ON SUBJ.SBJ_ID = ZALIK.SBJ_ID
+  GROUP BY SUBJ.SBJ_ID
+  ORDER BY SUBJ.SEMESTR
+  """)
+  SUBJ_SEMESTR = []
+  M = []  
+  for row in cursor:
+  print("Date ",row[0]," sum: ",row[1])
+  Subj_semestr += [row[0]]
+  mark += [row[1]]   
+  subject_date_marks = go.Scatter(
+  x=subj_semestr,
+  y=mark,
+  mode='lines+markers'
+  )
+  data = [subject date mark]
+  py.plot(data)
