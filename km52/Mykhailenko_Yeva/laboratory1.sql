@@ -25,74 +25,167 @@ GRANT INSERT ANY TABLE TO mykhaylenko;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-CREATE TABLE CLASSROOM 
-(ROOM_ID NUMBER(3) PRIMARY KEY,
- ROOM_SIZE NUMBER(4),
- NUMBER_CHAIRS NUMBER(2),
- NUMBER_DESKS NUMBER (2))
- 
- CREATE TABLE CHAIRS
-(CHAIR_ID NUMBER(6) PRIMARY KEY,
- CHAIR_MODEL VARCHAR2(4),
- ROOM_ID NUMBER(3))
- 
- CREATE TABLE DESKS
-(DESK_ID NUMBER(6) PRIMARY KEY,
- DESK_MODEL VARCHAR2(4),
- ROOM_ID NUMBER(3))
- 
- ALTER TABLE CHAIRS
- ADD CONSTRAINT CHAIR_FK FOREIGN KEY (ROOM_ID)
- REFERENCES CLASSROOM (ROOM_ID)
-  
- ALTER TABLE DESKS
- ADD CONSTRAINT DESK_FK FOREIGN KEY (ROOM_ID)
- REFERENCES CLASSROOM (ROOM_ID)
- 
- CREATE TABLE RECONDITIONING
-(RECONDITIONING_DATE DATE PRIMARY KEY,
- ROOM_ID NUMBER(3))
- 
- ALTER TABLE RECONDITIONING
- ADD CONSTRAINT RR_FK FOREIGN KEY (ROOM_ID)
- REFERENCES CLASSROOM (ROOM_ID)
- 
- 
- INSERT INTO CLASSROOM (ROOM_ID,ROOM_SIZE,NUMBER_CHAIRS,NUMBER_DESKS)
- VALUES (101, 42, 30, 15);
+CREATE TABLE classroom (
+    room_id         NUMBER(3) PRIMARY KEY,
+    room_size       NUMBER(4),
+    number_chairs   NUMBER(2),
+    number_desks    NUMBER(2)
+);
 
- INSERT INTO CLASSROOM (ROOM_ID,ROOM_SIZE,NUMBER_CHAIRS,NUMBER_DESKS)
- VALUES (102, 42, 29, 15);
+CREATE TABLE chairs (
+    chair_id      NUMBER(6) PRIMARY KEY,
+    chair_model   VARCHAR2(4),
+    room_id       NUMBER(3)
+);
 
- INSERT INTO CLASSROOM (ROOM_ID,ROOM_SIZE,NUMBER_CHAIRS,NUMBER_DESKS)
- VALUES (103, 65, 44, 20);
+CREATE TABLE desks (
+    desk_id      NUMBER(6) PRIMARY KEY,
+    desk_model   VARCHAR2(4),
+    room_id      NUMBER(3)
+);
 
- INSERT INTO CHAIRS (CHAIR_ID,CHAIR_MODEL,ROOM_ID)
- VALUES (000001, 'AE01', 101 );
+ALTER TABLE chairs
+    ADD CONSTRAINT chair_fk FOREIGN KEY ( room_id )
+        REFERENCES classroom ( room_id );
 
- INSERT INTO CHAIRS (CHAIR_ID,CHAIR_MODEL,ROOM_ID)
- VALUES (000002, 'AE01', 101 );
+ALTER TABLE desks
+    ADD CONSTRAINT desk_fk FOREIGN KEY ( room_id )
+        REFERENCES classroom ( room_id );
 
- INSERT INTO CHAIRS (CHAIR_ID,CHAIR_MODEL,ROOM_ID)
- VALUES (000003, 'LT81', 103 );
- 
- INSERT INTO DESKS (DESK_ID,DESK_MODEL,ROOM_ID)
- VALUES (000001, 'TB54', 101 );
- 
- INSERT INTO DESKS (DESK_ID,DESK_MODEL,ROOM_ID)
- VALUES (000002, 'WR16', 102 );
- 
- INSERT INTO DESKS (DESK_ID,DESK_MODEL,ROOM_ID)
- VALUES (000003, 'TB45', 102 );
- 
- INSERT INTO RECONDITIONING (RECONDITIONING_DATE, ROOM_ID)
- VALUES ('11.10.2001', 101 );
- 
- INSERT INTO RECONDITIONING (RECONDITIONING_DATE, ROOM_ID)
- VALUES ('12.02.2014', 102 );
- 
- INSERT INTO RECONDITIONING (RECONDITIONING_DATE, ROOM_ID)
- VALUES ('23.03.2018', 103 );
+CREATE TABLE reconditioning (
+    reconditioning_date   DATE PRIMARY KEY,
+    room_id               NUMBER(3)
+);
+
+ALTER TABLE reconditioning
+    ADD CONSTRAINT rr_fk FOREIGN KEY ( room_id )
+        REFERENCES classroom ( room_id );
+
+INSERT INTO classroom (
+    room_id,
+    room_size,
+    number_chairs,
+    number_desks
+) VALUES (
+    101,
+    42,
+    30,
+    15
+);
+
+INSERT INTO classroom (
+    room_id,
+    room_size,
+    number_chairs,
+    number_desks
+) VALUES (
+    102,
+    42,
+    29,
+    15
+);
+
+INSERT INTO classroom (
+    room_id,
+    room_size,
+    number_chairs,
+    number_desks
+) VALUES (
+    103,
+    65,
+    44,
+    20
+);
+
+INSERT INTO chairs (
+    chair_id,
+    chair_model,
+    room_id
+) VALUES (
+    000001,
+    'AE01',
+    101
+);
+
+INSERT INTO chairs (
+    chair_id,
+    chair_model,
+    room_id
+) VALUES (
+    000002,
+    'AE01',
+    101
+);
+
+INSERT INTO chairs (
+    chair_id,
+    chair_model,
+    room_id
+) VALUES (
+    000003,
+    'LT81',
+    103
+);
+
+INSERT INTO desks (
+    desk_id,
+    desk_model,
+    room_id
+) VALUES (
+    000001,
+    'TB54',
+    101
+);
+
+INSERT INTO desks (
+    desk_id,
+    desk_model,
+    room_id
+) VALUES (
+    000002,
+    'WR16',
+    102
+);
+
+INSERT INTO desks (
+    desk_id,
+    desk_model,
+    room_id
+) VALUES (
+    000003,
+    'TB45',
+    102
+);
+
+INSERT INTO reconditioning (
+    reconditioning_date,
+    room_id
+) VALUES (
+    TO_DATE('2014/05/03 00:00:00','yyyy/mm/dd hh24:mi:ss'),
+    101
+);
+
+INSERT INTO reconditioning (
+    reconditioning_date,
+    room_id
+) VALUES (
+    TO_DATE('2014/05/04 00:00:00','yyyy/mm/dd hh24:mi:ss'),
+    102
+);
+
+INSERT INTO reconditioning (
+    reconditioning_date,
+    room_id
+) VALUES (
+    TO_DATE('2014/05/05 00:00:00','yyyy/mm/dd hh24:mi:ss'),
+    103
+);
+
+--drop table RECONDITIONING;
+--drop table DESKS;
+--drop table CHAIRS;
+--drop table CLASSROOM;
+
   
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
