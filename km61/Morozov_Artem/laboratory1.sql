@@ -16,18 +16,84 @@ Alter User student QUOTA 100M on Users;
 4 бали
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABlE student(
-  student_name varchar(10) not null
- );
- 
- CREATE TABLE telephon_number (
-   number varchar (10) not null
- );
- AlTER TABLE student
- add constraint student_pk PRIMARY KEY(student_name);
- 
- ALTER telephon_number
- add constraint telephon_number_pk PRIMARY KEY(number);
+CREATE Table student (
+    student_id integer not null,
+    student_name varchar( 20 ) not null,
+    student_surname varchar (20) not null
+);
+
+alter table student
+add CONSTRAINT student_id primary key ( student_id )
+;
+
+CREATE TABLE telephon_number(
+ telephon_number number(20,0)
+);
+
+
+alter table telephon_number
+add CONSTRAINT number_id primary key (telephon_number)
+;
+
+/*alter table telephon_number
+modify telephon_number number (20,0);*/
+
+
+create table inter_operator (
+operator_name varchar(30),
+/*country varchar(30)*/
+);
+
+/*alter table inter_operator drop column operator_name;*/
+
+alter table inter_operator
+add CONSTRAINT operator_id PRIMARY key (country);
+
+
+CREATE TABLE direct (
+student_fk integer,
+number_fk number(20,0),
+operator_fk varchar(30)
+);
+
+/*alter table direct
+modify number_fk number( 20, 0);*/
+
+alter table direct
+add CONSTRAINT direct_id1 PRIMARY key ( number_fk, student_fk ,operator_fk);
+
+alter table direct
+add CONSTRAINT number_fk1 FOREIGN key (number_fk)references telephon_number (telephon_number);
+
+alter table direct
+add CONSTRAINT student_fk1 FOREIGN key  (student_fk) REFERENCES student (student_id);
+
+alter table direct
+add CONSTRAINT operator_fk1 FOREIGN key ( operator_fk ) references inter_operator ( country );
+
+insert into student values ( 1, 'Artem' , 'Morozov' );
+insert into student values ( 2, 'Yuhnya' , 'Raevskiy' );
+insert into student values ( 3, 'Sasha' , 'Marchenko' );
+insert into student values ( 4, 'Artem' , 'Nemorozov' );
+
+insert into TELEPHON_NUMBER values ( 0932678722 );
+insert into TELEPHON_NUMBER values ( 0504190523 );
+insert into TELEPHON_NUMBER values ( 0453265661 );
+insert into TELEPHON_NUMBER values ( 0932418722 );
+
+
+insert into inter_operator values ( 'ukraine');
+insert into inter_operator values (  'usa');
+insert into inter_operator values (  'israel');
+insert into inter_operator values (  'korea');
+
+
+
+
+insert into direct values ( 1, 0932678722, 'ukraine' );
+insert into direct values ( 2, 0504190523, 'usa' );
+insert into direct values ( 3, 0453265661, 'korea' );
+insert into direct values ( 4, 0932418722, 'israel' );
 /* --------------------------------------------------------------------------- 
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць, 
 внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT. 
