@@ -35,33 +35,83 @@ grant delete any table to Lutsyk;
 4 бали
 
 ---------------------------------------------------------------------------*/
---Код відповідь:    (додано 19.04.2018)
+--Код відповідь:    (додано 09.05.2018)
 
 CREATE TABLE student( 
-gbook_num VARCHAR(20) NOT NULL
+Gbook_num VARCHAR(20) NOT NULL,
+SFirst_name CHAR(25),
+SLast_name CHAR(25)
 ); 
+ 
+Create table TEACHER(
+Contract_num VARCHAR (20) NOT NULL PRIMARY KEY,
+TFirst_name CHAR(25),
+TLast_name CHAR(25)
+);
+ 
+Create table Tasks (
+Gbook_num VARCHAR(20) NOT NULL, 
+Contract_num VARCHAR (20) NOT NULL,
+Task_num INT not null
+);
+
+Create table TASK_INFO(
+Task_num INT NOT NULL ,
+Count_ex int,
+PRIMARY KEY (Task_num)
+);
 
 ALTER TABLE STUDENT
 ADD CONSTRAINT gbook_num_pk PRIMARY KEY(gbook_num); 
-
-Create table TEACHER(
-TEACHER_NAME VARCHAR (20) NOT NULL
-);
-
 ALTER TABLE TEACHER
-ADD CONSTRAINT teacher_name_pk PRIMARY KEY(TEACHER_NAME); 
+ADD CONSTRAINT conract_num_pk PRIMARY KEY(Contract_num); 
 
-Create table WORKs (
-GBOOK_NUM VARCHAR (20) NOT NULL, 
-teacher_name VARCHAR(20) NOT NULL
-);
-
-ALTER TABLE works
+ALTER TABLE Tasks
     ADD CONSTRAINT gbook_num_fk FOREIGN KEY ( gbook_num )
         REFERENCES student ( gbook_num );
-ALTER TABLE works        
-    ADD CONSTRAINT teacher_name_fk FOREIGN KEY ( TEACHER_NAME )
-        REFERENCES TEACHER ( TEACHER_NAME );
+ALTER TABLE Tasks        
+    ADD CONSTRAINT conract_num_fk FOREIGN KEY ( Contract_num )
+		REFERENCES TEACHER ( Contract_num );
+ALTER TABLE Tasks 
+	ADD CONSTRAINT Task_num_pk PRIMARY KEY(Task_num);
+ALTER TABLE TASK_INFO
+    ADD CONSTRAINT Task_num_fk FOREIGN KEY ( Task_num )
+        REFERENCES TASK_INFO ( Task_num );
+
+		
+ALTER TABLE student ADD CONSTRAINT st_num_check CHECK (LENGTH(Gbook_num)=8);
+ALTER TABLE Tasks ADD CONSTRAINT task_num_check CHECK (Task_num>=1 and Task_num<=18);
+
+
+INSERT INTO Student(Gbook_num, SFirst_name, SLast_name)
+VALUES('KB123456', 'Maxim', 'Maximov');
+INSERT INTO Student(Gbook_num, SFirst_name, SLast_name)
+VALUES('KB123457', 'Anastasia', 'Anastasieva');
+INSERT INTO Student(Gbook_num, SFirst_name, SLast_name)
+VALUES('KB123458', 'Ivan', 'Ivanov');
+
+INSERT INTO Teacher(Contract_num, TFirst_name, TLast_name)
+VALUES('q1234567', 'Smith', 'Smithov');
+INSERT INTO teacher(name, rank, id)
+VALUES('w1234567', 'Charly', 'Charlovsky');
+INSERT INTO teacher(name, rank, id)
+VALUES('e1234567', 'Toby', 'Tobyovich');
+
+INSERT INTO Tasks(Gbook_num, Contract_num, task, Task_num)
+VALUES('KB123456', 'q1234567', 1);
+INSERT INTO work(work_id, subject, task, teacher_id)
+VALUES('KB123457','w1234567', 2);
+INSERT INTO work(work_id, subject, task, teacher_id)
+VALUES('KB123458', 'e1234567', 3);
+
+INSERT INTO TASK_INFO(Task_num, Count_ex )
+VALUES(1, 5);
+INSERT INTO studentYieldsWork(work_id, student_id)
+VALUES(2, 10);
+INSERT INTO studentYieldsWork(work_id, student_id)
+VALUES(3, 15);
+
+				
 
 
 /* --------------------------------------------------------------------------- 
