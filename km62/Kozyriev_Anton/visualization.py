@@ -4,7 +4,6 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 import re
 import plotly.dashboard_objs as dashboard
- 
 def fileId_from_url(url):
     """Return fileId from a url."""
     raw_fileId = re.findall("~[A-z.]+/[0-9]+", url)[0][1: ]
@@ -15,13 +14,10 @@ plotly.tools.set_config_file(world_readable=True, sharing='public')
 try:
     connection = cx_Oracle.connect("antonacer", "antonace", "xe")
     print("Connecting to DB")
-except:
+except cx_Oracle.DatabaseError:
     print("Connection failed!")
  
 cursor = connection.cursor()
-
-''' Task 1: Create bar chart 'Count of vendors for each brand' '''
-
 cursor.execute("SELECT PHONEBRAND.BRAND_NAME, VENDOR_COUNT.VCOUNT FROM PHONEBRAND JOIN (SELECT BRAND_SERIAL, COUNT(DISTINCT VEND_ID) AS VCOUNT FROM PHONE GROUP BY BRAND_SERIAL) VENDOR_COUNT ON PHONEBRAND.BRAND_SERIAL = VENDOR_COUNT.BRAND_SERIAL ORDER BY VENDOR_COUNT.VCOUNT DESC")
 
 brand_names = []
@@ -61,12 +57,8 @@ layout = go.Layout(
 
 fig = go.Figure(data=data, layout=layout)
 brand_count_of_vendors = py.plot(fig, filename='brand_name_and_count_of_vendors', auto_open=True)
-print(brand_count_of_vendors) 
-
-''' Task 2: Create pie chart 'Total sells for each brand' '''
-
-print("Create pie chart: 'Total sells for each brand'\n") 
- 
+print(brand_count_of_vendors)
+print("Create pie chart: 'Total sells for each brand'\n")
 cursor.execute("SELECT PHONEBRAND.BRAND_NAME, PHONEBRAND.BRAND_COMPANY, SUMTABLE.TOTAL FROM PHONEBRAND JOIN (SELECT BRAND_SERIAL, SUM(PHONE.PHONE_PRICE) as TOTAL FROM PHONE GROUP BY BRAND_SERIAL ORDER BY TOTAL ASC) SUMTABLE ON PHONEBRAND.BRAND_SERIAL = SUMTABLE.BRAND_SERIAL");
  
 phonebrands = []
@@ -81,9 +73,6 @@ for row in cursor:
 pie = go.Pie(labels=phonebrands, values=products_sum)
 phone_brand_sum = py.plot([pie], filename='phone_brand_total_sum')
 print(phone_brand_sum)
-
-''' Task 3: Create scatter 'MIN, AVG, MAX rating of vendors for each brand' '''
-
 print("Create scatter: 'MIN, AVG, MAX rating of vendors for each brand'\n")
 
 cursor.execute("SELECT PHONEBRAND.BRAND_NAME, ESTIMATES.minimal_rating, ESTIMATES.average_rating, ESTIMATES.maximal_rating FROM PHONEBRAND JOIN (SELECT PHONE.BRAND_SERIAL, MIN(VENDOR.VEND_RATING) as minimal_rating, AVG(VENDOR.VEND_RATING) as average_rating, MAX(VENDOR.VEND_RATING) as maximal_rating FROM PHONE JOIN VENDOR ON PHONE.VEND_ID = VENDOR.VEND_ID GROUP BY PHONE.BRAND_SERIAL) ESTIMATES ON PHONEBRAND.BRAND_SERIAL = ESTIMATES.BRAND_SERIAL")
