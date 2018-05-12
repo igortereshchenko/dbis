@@ -25,6 +25,11 @@ GRANT DROP any TABLE to usenko;
 
 ---------------------------------------------------------------------------*/
 
+--Drop Table Programist;
+--Drop Table Programist_Job;
+--Drop Table Language;
+--Drop Table Programist_Language;
+
 CREATE TABLE Programist
 (
   programist_id NUMBER not null,
@@ -46,11 +51,11 @@ Alter Table Programist ADD CONSTRAINT programist_last_check CHECK (REGEXP_LIKE(p
 Alter Table Programist ADD CONSTRAINT constraint_programist_unique UNIQUE (programist_first_name,programist_last_name);
 
 
-INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'artem','usenko','junior');
-INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'vadim','vadim','junior');
-INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'petya','petya','middle');
-INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'vasya','vasya','middle');
-INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'artur','artur','senior');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'Artem','Usenko','junior');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'Vadim','Vadim','junior');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'Petya','Petya','middle');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'Vasya','Vasya','middle');
+INSERT INTO Programist(programist_id,programist_first_name,programist_last_name,programist_level) VALUES (programist_seq.nextval,'Artur','Artur','senior');
 
 CREATE TABLE Language
 (
@@ -272,5 +277,3 @@ SELECT
   A = PROJECT (OrderItems) {OrderItem.prod_id};
   B = PROJECT (Products WHERE Products.prod_id IN A) {Products.vend_id};
   ANS = PROJECT (Vendors WHERE Vendors.vend_id IN B) {RENAME ((LOWER (Trim(Vendors.vend_name))), vendor_name)};
-  
-  
