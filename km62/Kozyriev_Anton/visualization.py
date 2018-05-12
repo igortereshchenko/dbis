@@ -60,7 +60,7 @@ layout = go.Layout(
 
 fig = go.Figure(data=data, layout=layout)
 brand_count_of_vendors = py.plot(fig, filename='brand_name_and_count_of_vendors', auto_open=True)
-print(brand_count_of_vendors) 
+print(brand_count_of_vendors)
 print("Create pie chart: 'Total sells for each brand'\n") 
 cursor.execute("SELECT PHONEBRAND.BRAND_NAME, PHONEBRAND.BRAND_COMPANY, SUMTABLE.TOTAL FROM PHONEBRAND JOIN (SELECT BRAND_SERIAL, SUM(PHONE.PHONE_PRICE) as TOTAL FROM PHONE GROUP BY BRAND_SERIAL ORDER BY TOTAL ASC) SUMTABLE ON PHONEBRAND.BRAND_SERIAL = SUMTABLE.BRAND_SERIAL");
  
