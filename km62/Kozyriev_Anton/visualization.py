@@ -21,7 +21,6 @@ cursor.execute("SELECT PHONEBRAND.BRAND_NAME, VENDOR_COUNT.VCOUNT FROM PHONEBRAN
 
 brand_names = []
 count_of_vendors = []
-
 print("Create bar chart: 'Count of vendors for each brand'\n")
  
 for row in cursor:
