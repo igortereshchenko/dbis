@@ -21,7 +21,6 @@ with open(filename, newline='') as file:
     cursor_brand = connection.cursor()
     cursor_brand.execute(insert_query, brand_serial = b_serial, brand_name = b_name, brand_company = b_company, brand_rating = b_rating)
     cursor_brand.close()
- 
     connection.commit()
     next(reader, None)
     next(reader, None)
