@@ -13,7 +13,6 @@ inner_query = "INSERT INTO VENDOR(VEND_ID, VEND_NAME, VEND_RATING, VEND_ADDRESS)
 
 with open(filename, newline='') as file:
     reader = csv.reader(file)
- 
     b_serial = next(reader)[1]
     b_name = next(reader)[1]
     b_company = next(reader)[1]
