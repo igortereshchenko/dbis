@@ -1,0 +1,54 @@
+import csv
+
+import cx_Oracle
+
+connection = cx_Oracle.connect("ann", "ann", "xe")
+
+cursor_book = connection.cursor()
+
+cursor_book.execute("""
+SELECT
+    TRIM(BOOK_ID) as BOOK_ID,
+    TRIM(BOOK_NAME) as BOOK_NAME,
+    TRIM(BOOK__AUTHOR) as BOOK__AUTHOR,
+    TRIM(BOOK_YEAR) as BOOK_YEAR
+FROM
+    books""")
+
+for BOOK_ID, BOOK_NAME, BOOK__AUTHOR, BOOK_YEAR in cursor_book:
+
+    with open("book_" + BOOK_ID + ".csv", "w", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow(["ID", BOOK_ID])
+        writer.writerow(["Name", BOOK_NAME])
+        writer.writerow(["Author", BOOK__AUTHOR])
+        writer.writerow(["Year", BOOK_YEAR])
+        cursor_order = connection.cursor()
+
+        query = """SELECT
+    books.book_id,
+    books.book_name,
+    PAGES.PAGE_ID,
+    PAGES.PAGE_NUMBER,
+    COUNT(PAGES_HAVE_ROWS.ROW_ID)
+FROM
+    books JOIN BOOKS_HAVE_PAGES
+    on books.book_id = :id and BOOKS_HAVE_PAGES.book_id =:id
+
+    LEFT JOIN PAGES_HAVE_ROWS
+    ON BOOKS_HAVE_PAGES.PAGE_ID = PAGES_HAVE_ROWS.PAGE_ID
+
+    LEFT JOIN PAGES
+    ON PAGES_HAVE_ROWS.PAGE_ID = PAGES.PAGE_ID
+
+ GROUP BY books.book_id, books.book_name, PAGES.PAGE_ID, PAGES.PAGE_NUMBER
+    """
+
+        cursor_order.execute(query, id=BOOK_ID)
+        writer.writerow([])
+        writer.writerow(["BOOK_ID", "BOOK_NAME", "PAGE_ID", "PAGE_NUMBER", "COUNT(PAGES_HAVE_ROWS.ROW_ID)"])
+        for order_row in cursor_order:
+            writer.writerow(order_row)
+
+cursor_book.close()
