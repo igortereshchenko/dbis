@@ -1,0 +1,44 @@
+import csv
+
+import cx_Oracle
+
+username = 'eugene'
+password = 'qwerty'
+databaseName = 'localhost/xe'
+
+connection = cx_Oracle.connect(username, password, databaseName)
+
+filename = "human_1.csv"
+
+with open(filename, newline='') as file:
+    reader = csv.reader(file)
+
+    id = next(reader)[1]
+    first_name = next(reader)[1]
+    surname = next(reader)[1]
+    email = next(reader)[1]
+
+    insert_query = "insert into human(ident_code, firstname, surname, mail) values (:ident_code, :firstname, :surname, :mail )"
+    cursor_human = connection.cursor()
+    cursor_human.execute(insert_query, ident_code=id, firstname=first_name, surname=surname, mail=email)
+    cursor_human.close()
+
+    connection.commit()
+    next(reader, None)
+
+    next(reader, None)
+
+    insert_query = """ INSERT INTO personal_auto(auto_number, mark, model, registration_start_date, registration_end_date, ident_code_fk) 
+                    VALUES (:auto_number, :mark, :model, TO_DATE(:registration_start_date,'yyyy-mm-dd'), TO_DATE(:registration_end_date,'yyyy-mm-dd'), :ident_code_fk)"""
+    humans_car = connection.cursor()
+
+    humans_car.prepare(insert_query)
+
+    rows = []
+    for row in reader:
+        rows.append(row + [id])
+
+    humans_car.executemany(None, rows)
+
+    humans_car.close()
+    connection.commit()
