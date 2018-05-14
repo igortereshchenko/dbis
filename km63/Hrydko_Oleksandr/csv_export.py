@@ -2,10 +2,6 @@ import csv
  
 import cx_Oracle
  
-username = 'System'
-password = 'Meizu123'
-databaseName = "192.168.0.103"
- 
 connection = cx_Oracle.connect ('System','Meizu123',"192.168.0.103")
  
 cursor_people = connection.cursor()
