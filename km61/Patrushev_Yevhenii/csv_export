@@ -1,0 +1,53 @@
+import csv
+
+import cx_Oracle
+
+username = 'eugene'
+password = 'qwerty'
+databaseName = 'localhost/xe'
+
+connection = cx_Oracle.connect(username, password, databaseName)
+
+cursor_human = connection.cursor()
+
+cursor_human.execute("""
+SELECT
+    ident_code,
+    TRIM(firstname) as first_name,
+    TRIM(surname) as surname,
+    TRIM(mail) as email
+FROM
+    HUMAN""")
+
+for ident_code, first_name, surname, email in cursor_human:
+
+    with open("human_" + str(ident_code) + ".csv", "w", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow(["ID", ident_code])
+        writer.writerow(["Firstname", first_name])
+        writer.writerow(["Surname", surname])
+        writer.writerow(["Email", email])
+
+        humans_car = connection.cursor()
+
+        query = """
+                    SELECT
+                        TRIM(auto_number) as auto_number,
+                        TRIM(mark) as mark,
+                        TRIM(model) as model,
+                        TO_CHAR(registration_start_date,'yyyy-mm-dd'),
+                        TO_CHAR(registration_end_date,'yyyy-mm-dd')
+                    FROM
+                        HUMAN JOIN PERSONAL_AUTO
+                        on human.ident_code = personal_auto.ident_code_fk
+                    WHERE ident_code_fk = :id """
+
+        humans_car.execute(query, id=ident_code)
+        writer.writerow([])
+        writer.writerow(["Auto number", "Mark", "Model", "Reg start date", "Reg end date"])
+        for cars_row in humans_car:
+            writer.writerow(cars_row)
+
+humans_car.close()
+cursor_human.close()
