@@ -1,0 +1,42 @@
+import csv
+
+import cx_Oracle
+
+connection = cx_Oracle.connect("my_test", "pass", "localhost:1521/xe")
+filename = "students_1.csv"
+
+with open(filename, newline='') as file:
+    reader = csv.reader(file)
+
+    id = int(next(reader)[1])
+    name = next(reader)[1]
+    surname = next(reader)[1]
+
+    insert_query = """insert into STUDENTS(stud_id, stud_name, stud_surname) 
+    values (:stud_id, :stud_name, :stud_surname )"""
+    cursor_student = connection.cursor()
+    cursor_student.execute(insert_query, stud_id=id, stud_name=name, stud_surname=surname)
+    cursor_student.close()
+
+    connection.commit() #save changes in db
+    next(reader, None)  #skip empty line
+    next(reader, None)  #skiporder  header
+
+    insert_query = """INSERT INTO STUDENTS_HAS_PHONES (PHONE_ID_FK, STUD_PHONE_DATE, STUD_ID_FK)
+     VALUES (:PHONE_ID_FK, TO_DATE(:STUD_PHONE_DATE,'dd.mm.yy'), :STUD_ID_FK)"""
+    cursor_studphone = connection.cursor()
+    cursor_studphone.prepare(insert_query)
+
+    rows = []
+    for row in reader:
+        rows.append(row+[id])
+
+    cursor_studphone.executemany(None, rows)
+
+    cursor_studphone.close()
+
+    connection.commit() #save changes in db
+
+
+
+
