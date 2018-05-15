@@ -1,0 +1,44 @@
+import csv
+
+import cx_Oracle
+
+connection = cx_Oracle.connect("my_test", "pass", "localhost:1521/xe")
+
+cursor_student = connection.cursor()
+
+cursor_student.execute("""
+SELECT
+    TRIM(stud_id) AS stud_id,
+    TRIM(stud_name) AS stud_name,
+    TRIM(stud_surname) AS stud_surname
+FROM
+    students """)
+
+for stud_id, stud_name, stud_surname in cursor_student:
+
+    with open("students_"+stud_id+".csv", "w", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow(["ID",stud_id])
+        writer.writerow(["Name",stud_name])
+        writer.writerow(["Surname",stud_surname])
+
+        cursor_studphone =  connection.cursor()
+
+        query = """ 
+            SELECT
+                phone_id_fk,
+                TO_CHAR(stud_phone_date,'dd.mm.yy')
+            FROM
+                STUDENTS_HAS_PHONES
+                right JOIN STUDENTS on STUDENTS.STUD_ID =STUDENTS_HAS_PHONES.STUD_ID_FK
+            WHERE
+                 TRIM(students.stud_id) =:id
+        """
+        cursor_studphone.execute(query, id=stud_id)
+        writer.writerow([])
+        writer.writerow(["Phone_id", "Stud_phone_date"])
+        for stus_row in cursor_studphone:
+            writer.writerow(stus_row)
+
+cursor_student.close()
