@@ -116,5 +116,3 @@ if __name__ == '__main__':
 		"values": y
 	}
 	vizualizator.pie(**data)
-
-
