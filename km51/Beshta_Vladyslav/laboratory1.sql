@@ -36,6 +36,7 @@ CREATE TABLE book (
     book_id       NUMBER(6) NOT NULL,
     book_name     VARCHAR2(20) NOT NULL,
     book_author   VARCHAR2(20) NOT NULL,
+    book_year     NUMBER(6) NOT NULL,
     CONSTRAINT pk_book PRIMARY KEY ( book_id )
 );
 
@@ -118,6 +119,8 @@ ALTER TABLE book
 ALTER TABLE book
     ADD CONSTRAINT book_name_chek CHECK ( REGEXP_LIKE (book_name,
     '(\s?\w+)+' ) );
+ALTER TABLE book
+    ADD CONSTRAINT book_year_chek CHECK ( book_year>0);
 
 ALTER TABLE book
     ADD CONSTRAINT book_author_chek CHECK ( REGEXP_LIKE ( book_author,
@@ -148,14 +151,14 @@ ALTER TABLE cover_book
 /*==============================================================*/
 /*               INSERT to TABLE                                */
 /*==============================================================*/
-INSERT INTO book(book_id, book_name, book_author)
-VALUES('100001', 'Harry Potter', 'J.K. Rowling');
-INSERT INTO book(book_id, book_name, book_author)
-VALUES('100002', 'The Long Goodbye', 'Raymond Chandler');
-INSERT INTO book(book_id, book_name, book_author)
-VALUES('100003', 'The Sun Also Rises', 'Ernest Hemingway');
-INSERT INTO book(book_id, book_name, book_author)
-VALUES('100004', 'Things Fall Apart', 'Chinua Achebe');
+INSERT INTO book(book_id, book_name, book_author, book_year)
+VALUES('100001', 'Harry Potter', 'J.K. Rowling', '1998');
+INSERT INTO book(book_id, book_name, book_author, book_year)
+VALUES('100002', 'The Long Goodbye', 'Raymond Chandler', '1705');
+INSERT INTO book(book_id, book_name, book_author, book_year)
+VALUES('100003', 'The Sun Also Rises', 'Ernest Hemingway', '1954');
+INSERT INTO book(book_id, book_name, book_author, book_year)
+VALUES('100004', 'Things Fall Apart', 'Chinua Achebe', '2001');
 
 INSERT INTO book_page (page_id,book_id,page_number)
 VALUES('1111','100001', '0001');
@@ -182,7 +185,7 @@ VALUES('3000','100002', 'Blue','8');
 INSERT INTO cover_book (cover_id, book_id,cover_color,cover_hardness)
 VALUES('5000','100003', 'Yellow','25');
 INSERT INTO cover_book (cover_id, book_id,cover_color,cover_hardness)
-VALUES('7000','100004', 'White','15');
+VALUES('7000','100004', 
   
 /* ---------------------------------------------------------------------------
 3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць,
