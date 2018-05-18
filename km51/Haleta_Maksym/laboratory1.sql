@@ -29,42 +29,65 @@ GRANT SELECT ANY TABLE TO galeta;
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 CREATE TABLE Hardware (
-  part VARCHAR2(20) NOT NULL;
-  
-ALTER TABLE Hardware
-ADD (
-part_name  VARCHAR2(30),
-model  VARCHAR2(30),
-type VARCHAR2(30)
-);
+    part VARCHAR2(20) NOT NULL,
+    part_name  VARCHAR2(30) NOT NULL,
+    model_  VARCHAR2(30),
+    type_ VARCHAR2(30)
+    );
 
 CREATE TABLE Software (
-  programs VARCHAR2(30) NOT NULL);
-  
- ALTER TABLE Software
-ADD (
-img  VARCHAR2(30),
-size  NUMBER(10,2),
-name1 VARCHAR2(30)
-);
+    programs VARCHAR2(30) NOT NULL,
+    img  VARCHAR2(30),
+    size_  NUMBER(10,2),
+    name_ VARCHAR2(30) NOT NULL
+    );
   
 CREATE TABLE Computer (
-  part_fk VARCHAR2(20) NOT NULL,
-  programs_fk VARCHAR2(30) NOT NULL,
-  name VARCHAR2(30));
-  
- ALTER TABLE Computer
-ADD (
-color VARCHAR2(10)
-);
+    part_fk VARCHAR2(20) NOT NULL,
+    programs_fk VARCHAR2(30) NOT NULL,
+    name_ VARCHAR2(30),
+    color VARCHAR2(10)
+    );
+ 
+CREATE TABLE Programmer (
+  programmer_id INTEGER NOT NULL,
+  name_ VARCHAR2(30) NOT NULL
+  );
 
 ALTER TABLE Hardware ADD CONSTRAINT part_pk PRIMARY KEY (part);
 ALTER TABLE Software ADD CONSTRAINT programs_pk PRIMARY KEY (programs);
 ALTER TABLE Computer ADD CONSTRAINT pk PRIMARY KEY (part_fk, programs_fk);
 ALTER TABLE Computer ADD CONSTRAINT fk1 FOREIGN KEY (part_fk) REFERENCES Hardware(part);
 ALTER TABLE Computer ADD CONSTRAINT fk2 FOREIGN KEY (programs_fk) REFERENCES Software(programs);
+ALTER TABLE Programmer ADD CONSTRAINT id_pk PRIMARY KEY (id);
 
+INSERT INTO Hardware (part, part_name, model_, type_)
+VALUES('processor', 'Intel', 'model_1', 'type_1');
+INSERT INTO Hardware (part, part_name, model_, type_)
+VALUES('motherboard', 'jsnh_2', 'model_2', 'type_2');
+INSERT INTO Hardware (part, part_name, model_, type_)
+VALUES('keyboard', 'sdki_3', 'model_3', 'type_3');
 
+INSERT INTO Software (programs, img, size_, name_)
+VALUES('program_1', 'img_1', 20, 'name_1');
+INSERT INTO Software (programs, img, size_, name_)
+VALUES('program_2', 'img_2', 30, 'name_2');
+INSERT INTO Software (programs, img, size_, name_)
+VALUES('program_3', 'img_3', 100, 'name_3');
+
+INSERT INTO Computer(part_fk, programs_fk, name_, color)
+VALUES('processor', 'program_1', 'HP', 'black');
+INSERT INTO Computer(part_fk, programs_fk, name_, color)
+VALUES('motherboard', 'program_2', 'Dell', 'red');
+INSERT INTO Computer(part_fk, programs_fk, name_, color)
+VALUES('processor', 'program_3', 'Dell', 'black');
+
+INSERT INTO Programmer(programmer_id, name_)
+VALUES(1, 'David');
+INSERT INTO Programmer(programmer_id, name_)
+VALUES(2, 'John');
+INSERT INTO Programmer(programmer_id, name_)
+VALUES(3, 'Max');
 
 
   
