@@ -98,7 +98,7 @@ SELECT
 FROM
     Info
 WHERE
-    cust_country = 'USA';
+    cust_country = 'Germany';
     
 SELECT
     prod_name,
