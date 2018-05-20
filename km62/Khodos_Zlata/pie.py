@@ -1,12 +1,8 @@
 import cx_Oracle
 import plotly.offline as py
 import plotly.graph_objs as go
- 
- 
 connection = cx_Oracle.connect("studentpma", "studentpma", "77.47.134.131/xe")
- 
 cursor = connection.cursor()
- 
 cursor.execute("""
 SELECT
     person.person_id,
@@ -25,14 +21,9 @@ GROUP BY
  
 people = []
 lectures_count = []
- 
- 
 for row in cursor:
     print("Person id ",row[0]," and his amount of outlined lectures: ",row[1])
     people += [row[0]]
     lectures_count += [row[1]]
- 
- 
- 
 pie = go.Pie(labels=people, values=lectures_count)
 py.plot([pie])
