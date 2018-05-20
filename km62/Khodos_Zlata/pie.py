@@ -18,7 +18,6 @@ FROM
 GROUP BY
     person.person_id
 """);
- 
 people = []
 lectures_count = []
 for row in cursor:
