@@ -1,12 +1,8 @@
 import cx_Oracle
 import plotly.offline as py
 import plotly.graph_objs as go
- 
- 
 connection = cx_Oracle.connect("studentpma", "studentpma", "77.47.134.131/xe")
- 
 cursor = connection.cursor()
- 
 cursor.execute("""
 SELECT
     person.person_id AS "person id",
@@ -19,21 +15,16 @@ FROM
                         AND marker.person_id = note_marker.person_id
 GROUP BY
     person.person_id """)
-   
 person = []
 note = []
- 
- 
 for row in cursor:
     print("Person id: ",row[0]," and his amount of notes: ",row[1])
     person += [row[0]]
     note += [row[1]]
-
 data = [go.Bar(
             x=person,
             y=note
     )]
- 
 layout = go.Layout(
     title='People and notes',
     xaxis=dict(
@@ -56,5 +47,4 @@ layout = go.Layout(
     )
 )
 fig = go.Figure(data=data, layout=layout)
- 
 person_note =py.plot(fig)
