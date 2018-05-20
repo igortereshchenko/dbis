@@ -53,7 +53,6 @@ person.person_id, note_name
 )info
 group by info.person_id, info.markers_date;
 
-    
 CREATE OR REPLACE VIEW user_notes AS
     SELECT
         info."personid",
