@@ -40,103 +40,86 @@
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE books
- ( 
--   type_of char(30) NOT NULL,
-+   name_of varchar2(30) NOT NULL,
-    release_of numeric(4),
-    library_adress varchar2(40)
- );
--ALTER TABLE books ADD CONSTRAINT books_pk PRIMARY KEY (type_of);
-+ALTER TABLE books ADD CONSTRAINT books_pk PRIMARY KEY (name_of);
-+
-+ALTER TABLE  books
-+    ADD CONSTRAINT  books_sn_check CHECK (REGEXP_LIKE(name_of, '^[A-Za-z0-9`\.\-\s\,]'));
-+ALTER TABLE  books
-+    ADD CONSTRAINT  books_cn_check CHECK (1950<release_of numeric and release_of numeric<2018);
-+ALTER TABLE books 
-+    ADD CONSTRAINT books_ba_check CHECK (REGEXP_LIKE(library_adress, '^[A-Za-z0-9`\.\-\s\,]'));
-+    
-+insert into books(name_of, release_of, library_adress) values ('Franz Kafka','2000','Shevchenkivsky district, 10');
-+insert into books(name_of, release_of, library_adress) values ('Hamlet','1996','Голосіївський район , 56');
-+insert into books(name_of, release_of, library_adress) values ('The Picture of Dorian Gray','1995','Печерський район, 41');
- 
- CREATE TABLE coffe shops
- (
--   type_of char(30) NOT NULL,
-+   name_of char(30) NOT NULL,
-    release_of numeric(4),
-    shops_adress varchar2(40)
+
+
+CREATE TABLE viewers
+(
+	viewer_id NUMBER(10) NOT NULL,
+	viewer_name VARCHAR(10),
+	viewer_surname VARCHAR(10),
+	viewer_watched NUMBER(10)
+);
+
+ALTER TABLE viewers
+    ADD CONSTRAINT viewers_pk PRIMARY KEY (viewer_id);
+
+CREATE TABLE movies
+(
+    movie_id NUMBER(10) NOT NULL,
+    movie_name VARCHAR(20) NOT NULL,
+    movie_director VARCHAR(50) NULL,
+    movie_rating NUMBER(3) NULL
+);
+
+ALTER TABLE movies
+    ADD CONSTRAINT movies_pk PRIMARY KEY (movie_id);
     
- );
--ALTER TABLE coffe shops ADD CONSTRAINT coffe shops_pk PRIMARY KEY (type_of);
-+ALTER TABLE coffe shops ADD CONSTRAINT coffe shops_pk PRIMARY KEY (name_of);
-+
-+ALTER TABLE  coffe shops
-+    ADD CONSTRAINT  coffe shops_sn_check CHECK (REGEXP_LIKE(name_of, '^[A-Za-z0-9`\.\-\s\,]'));
-+ALTER TABLE  coffe shops
-+    ADD CONSTRAINT  coffe shops_cn_check CHECK (1950<release_of numeric and release_of numeric<2018);
-+ALTER TABLE coffe shops
-+    ADD CONSTRAINT coffe shops_ba_check CHECK (REGEXP_LIKE(shops_adress, '^[A-Za-z0-9`\.\-\s\,]'));
-+    
-+insert into coffe shops(name_of, release_of, shops_adress) values ('Kavova Shafa','2015','Vyborg Street, 19');
-+insert into coffe shops(name_of, release_of, shops_adress) values ('WOG Cafe','2010','Velyka Vasilkovskaya, 63,');
-+insert into coffe shops(name_of, release_of, shops_adress) values ('LCoffeelaktika','2016','Bolshaya Okrugnaya, 110 ');
+CREATE TABLE tickets
+(
+    ticket_number NUMBER(10) NOT NULL,
+	ticket_hall VARCHAR(10) NOT NULL,
+    ticket_row NUMBER(5) NOT NULL,
+	ticket_seat NUMBER(5) NOT NULL
+);
 
- CREATE TABLE music shops
- (
--   type_of char(30) NOT NULL,
-+   name_of char(30) NOT NULL,
-    release_of numeric(4),
-    shops_adress varchar2(40)
+ALTER TABLE tickets
+    ADD CONSTRAINT tickets_pk PRIMARY KEY (ticket_number);
     
- );
--ALTER TABLE music shops ADD CONSTRAINT music shops_pk PRIMARY KEY (type_of);
-+ALTER TABLE coffe shops ADD CONSTRAINT music shops_pk PRIMARY KEY (name_of);
-+
-+ALTER TABLE  music shops
-+    ADD CONSTRAINT  music shops_sn_check CHECK (REGEXP_LIKE(name_of, '^[A-Za-z0-9`\.\-\s\,]'));
-+ALTER TABLE  music shops
-+    ADD CONSTRAINT  coffe shops_cn_check CHECK (1950<release_of numeric and release_of numeric<2018);
-+ALTER TABLE music shops
-+    ADD CONSTRAINT music shops_ba_check CHECK (REGEXP_LIKE(shops_adress, '^[A-Za-z0-9`\.\-\s\,]'));
-+    
-+insert into music shops(name_of, release_of, shops_adress) values ('Dva Melomany','2010','Mikhail Dragomanov, 31D');
-+insert into music shops(name_of, release_of, shops_adress) values ('JAM','2010','street Verbova, 16');
-+insert into music shops(name_of, release_of, shops_adress) values ('House of music','2007','Shchekavitska, 46B ');                                                                    
+CREATE TABLE cinema_session
+(
+    viewer_id_fk NUMBER(10) NOT NULL,
+    movie_id_fk NUMBER(10) NOT NULL,
+    ticket_number_fk NUMBER(10) NOT NULL,
+    buy_date DATE
+);
 
- CREATE TABLE zoo
- (
--   type_of char(30) NOT NULL,
-+   name_of char(30) NOT NULL,
-    release_of numeric(4),
-    zoo_adress varchar2(40)
+ALTER TABLE cinema_session
+    ADD CONSTRAINT cinema_session_pk PRIMARY KEY (ticket_number_fk);
     
- );
--ALTER TABLE zoo ADD CONSTRAINT music  zoo_pk PRIMARY KEY (type_of);
-+ALTER TABLE zoo ADD CONSTRAINT music zoo_pk PRIMARY KEY (name_of);
-+
-+ALTER TABLE  zoo
-+    ADD CONSTRAINT  zoo_sn_check CHECK (REGEXP_LIKE(name_of, '^[A-Za-z0-9`\.\-\s\,]'));
-+ALTER TABLE  zoo
-+    ADD CONSTRAINT  zoo_cn_check CHECK (1950<release_of numeric and release_of numeric<2018);
-+    
-+insert into zoo(name_of, release_of, zoo_adress) values ('Enotida country','1995','Academician Zabolotny, 37');
-+insert into zoo(name_of, release_of, zoo_adress) values ('Kiev Zoo','1970','Prospekt Peremogy, 32');
-                                                                  
+ALTER TABLE cinema_session
+    ADD CONSTRAINT viewer_id_fk FOREIGN KEY (viewer_id_fk) REFERENCES viewers (viewer_id);
+    
+ALTER TABLE cinema_session
+    ADD CONSTRAINT movie_id_fk FOREIGN KEY (movie_id_fk) REFERENCES movies (movie_id);
+    
+ALTER TABLE cinema_session
+    ADD CONSTRAINT ticket_number_fk FOREIGN KEY (ticket_number_fk) REFERENCES tickets (ticket_number);
 
 
+INSERT INTO viewers VALUES (1, 'Katia', 'K', 2);
+INSERT INTO viewers VALUES (2, 'Katia', 'M', 0);
+INSERT INTO viewers VALUES (3, 'Vlad', 'G', 40);
 
+ALTER TABLE viewers ADD CONSTRAINT viewers_watched_ch CHECK (viewer_watched >= 0);
+ALTER TABLE movies ADD CONSTRAINT movies_rating_ch CHECK (movie_rating >= 0 AND movie_rating <= 100);
 
+INSERT INTO movies VALUES (10124, 'Lego movie', 'Tarantino', 20);
+INSERT INTO movies VALUES (2342, 'Titanic', 'Tarantino', 100);
+INSERT INTO movies VALUES (3526, 'Movie', 'Tarantino', 1);
 
+INSERT INTO tickets VALUES (234786, 'A', 1, 2);
+INSERT INTO tickets VALUES (236314, 'C', 4, 1);
+INSERT INTO tickets VALUES (135234, 'D', 1, 1);
+INSERT INTO tickets VALUES (123463, 'F', 1, 8);
+INSERT INTO tickets VALUES (342346, 'A', 7, 3);
+INSERT INTO tickets VALUES (234634, 'A', 3, 2);
 
-
-
-
-
-
-
-
+INSERT INTO cinema_session VALUES (3, 3526, 234786, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (3, 3526, 236314, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (3, 3526, 135234, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (3, 2342, 123463, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (1, 3526, 342346, TO_DATE('2012-06-19 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (2, 3526, 234634, TO_DATE('2012-06-20 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 
   
 /* --------------------------------------------------------------------------- 
