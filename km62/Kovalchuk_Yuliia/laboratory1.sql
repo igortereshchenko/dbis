@@ -39,7 +39,6 @@ CREATE TABLE phone (
     phone_id )
  );
 
-
  CREATE TABLE human (
     human_name        VARCHAR(15) NOT NULL,
     human_id   NUMBER(20) NOT NULL,
