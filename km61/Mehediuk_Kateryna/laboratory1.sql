@@ -99,6 +99,7 @@ ALTER TABLE cinema_session
 INSERT INTO viewers VALUES (1, 'Katia', 'K', 2);
 INSERT INTO viewers VALUES (2, 'Katia', 'M', 0);
 INSERT INTO viewers VALUES (3, 'Vlad', 'G', 40);
+INSERT INTO viewers VALUES (4, 'Vlad', 'H', 3);
 
 ALTER TABLE viewers ADD CONSTRAINT viewers_watched_ch CHECK (viewer_watched >= 0);
 ALTER TABLE movies ADD CONSTRAINT movies_rating_ch CHECK (movie_rating >= 0 AND movie_rating <= 100);
@@ -106,6 +107,7 @@ ALTER TABLE movies ADD CONSTRAINT movies_rating_ch CHECK (movie_rating >= 0 AND 
 INSERT INTO movies VALUES (10124, 'Lego movie', 'Tarantino', 20);
 INSERT INTO movies VALUES (2342, 'Titanic', 'Tarantino', 100);
 INSERT INTO movies VALUES (3526, 'Movie', 'Tarantino', 1);
+INSERT INTO movies VALUES (3527, 'Movie 2', 'Tarantino', 2);
 
 INSERT INTO tickets VALUES (234786, 'A', 1, 2);
 INSERT INTO tickets VALUES (236314, 'C', 4, 1);
@@ -113,13 +115,24 @@ INSERT INTO tickets VALUES (135234, 'D', 1, 1);
 INSERT INTO tickets VALUES (123463, 'F', 1, 8);
 INSERT INTO tickets VALUES (342346, 'A', 7, 3);
 INSERT INTO tickets VALUES (234634, 'A', 3, 2);
+INSERT INTO tickets VALUES (234635, 'A+', 4, 2);
+INSERT INTO tickets VALUES (234636, 'D', 5, 2);
+INSERT INTO tickets VALUES (234637, 'D', 6, 2);
+INSERT INTO tickets VALUES (234638, 'D', 7, 2);
+INSERT INTO tickets VALUES (234639, 'D', 8, 2);
 
-INSERT INTO cinema_session VALUES (3, 3526, 234786, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
-INSERT INTO cinema_session VALUES (3, 3526, 236314, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (3, 10124, 234786, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (3, 10124, 236314, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 INSERT INTO cinema_session VALUES (3, 3526, 135234, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 INSERT INTO cinema_session VALUES (3, 2342, 123463, TO_DATE('2012-06-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 INSERT INTO cinema_session VALUES (1, 3526, 342346, TO_DATE('2012-06-19 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 INSERT INTO cinema_session VALUES (2, 3526, 234634, TO_DATE('2012-06-20 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO cinema_session VALUES (2, 3527, 234635, TO_DATE('2012-06-21 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (4, 3527, 234636, TO_DATE('2012-06-21 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (2, 3526, 234637, TO_DATE('2012-06-21 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (2, 3527, 234638, TO_DATE('2012-06-22 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO cinema_session VALUES (2, 3526, 234639, TO_DATE('2012-06-22 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 
   
 /* --------------------------------------------------------------------------- 
