@@ -29,93 +29,87 @@ GRAND UPDATE ANY TABLES To kolobaieva
 
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-CREATE TABLE films
-( 
-   name_of varchar2(30) NOT NULL,
-   release_of numeric(4),
-   building_adress varchar2(40)
-);
-ALTER TABLE films ADD CONSTRAINT films_pk PRIMARY KEY (name_of);
 
-ALTER TABLE  films
-    ADD CONSTRAINT  films_sn_check CHECK (REGEXP_LIKE(name_of, '^[A-Za-z0-9`\.\-\s\,]'));
-ALTER TABLE  films
-    ADD CONSTRAINT  films_cn_check CHECK (1950<release_of numeric and release_of numeric<2018);
-ALTER TABLE films 
-    ADD CONSTRAINT films_ba_check CHECK (REGEXP_LIKE(building_adress, '^[A-Za-z0-9`\.\-\s\,]'));
-    
-insert into films(name_of, release_of, building_adress) values ('	Three Billboards Outside Ebbing, Missouri ','2017','Politekhnichna Street, 10');
-insert into films(name_of, release_of, building_adress) values ('Guardians of the Galaxy','2014','Khreshchatyk , 33');
-insert into films(name_of, release_of, building_adress) values ('Love, Simon','2018','Politekhnichna Street, 41');
 
-CREATE TABLE serials
+CREATE TABLE profiles
 (
-   name_of char(30) NOT NULL,
-   release_of numeric(4),
-   building_adress varchar2(40)
-   
+	profile_id NUMBER(10) NOT NULL,
+	profile_username VARCHAR(10) NOT NULL,
+	profile_info VARCHAR(200),
+	profile_watched NUMBER(15)
 );
-ALTER TABLE serials ADD CONSTRAINT serials_pk PRIMARY KEY (name_of);
 
-ALTER TABLE  serials
-    ADD CONSTRAINT  serials_sn_check CHECK (REGEXP_LIKE(name_of, '^[A-Za-z0-9`\.\-\s\,]'));
-ALTER TABLE  serials
-    ADD CONSTRAINT  serials_cn_check CHECK (1950<release_of numeric and release_of numeric<2018);
-ALTER TABLE serials 
-    ADD CONSTRAINT serials_ba_check CHECK (REGEXP_LIKE(building_adress, '^[A-Za-z0-9`\.\-\s\,]'));
-    
-insert into serials(name_of, release_of, building_adress) values (' Game of Thrones ','2011','Academician Gorbunova , 19');
-insert into serials(name_of, release_of, building_adress) values (' Grey's Anatomy','2005','Bastion Lane , 3');
-insert into serials(name_of, release_of, building_adress) values (' Legends of Tomorrow','2016','Chekhov, 1');
+ALTER TABLE profiles
+    ADD CONSTRAINT profiles_pk PRIMARY KEY (profile_id);
 
-CREATE TABLE buildings
+CREATE TABLE movies
 (
-   building_adress varchar2(40) NOT NULL,
-   number_of_floors numeric(10),
-);
-ALTER TABLE buildings ADD CONSTRAINT buildings_pk PRIMARY KEY (building_adress);
-   
-ALTER TABLE buildings ADD CONSTRAINT buildings_building_adress_check CHECK (REGEXP_LIKE(building_adress, '^[A-Za-z0-9`\.\-\s\,]'));
-ALTER TABLE buildings ADD CONSTRAINT number_of_floors_check CHECK (0<number_of_floors and number_of_floors<100);
-
-
-insert into buildings(building_adress, number_of_floors) values ('Academician Gorbunova , 19','2');
-insert into buildings(building_adress, number_of_floors) values ('Bastion Lane , 3','3');
-insert into buildings(building_adress, number_of_floors) values ('Khreshchatyk , 33','5');
-insert into buildings(building_adress, number_of_floors) values ('Politekhnichna street, 41','5');
-
-CREATE TABLE place(
-    place_type varchar2(40) not null,
-    building_adress varchar2(40) not null
+    movie_id NUMBER(10) NOT NULL,
+    movie_name VARCHAR(20) NOT NULL,
+    movie_description VARCHAR(2000) NULL,
+    movie_rating NUMBER(3) NULL
 );
 
-ALTER TABLE  place
-  ADD CONSTRAINT place_pk PRIMARY KEY ( place_type, building_adress);  
-  
-ALTER TABLE  place
-  ADD CONSTRAINT films_fk FOREIGN KEY (films_fk) REFERENCES films (place_type, building_adress);
-  
-ALTER TABLE  place
-  ADD CONSTRAINT serials_fk FOREIGN KEY (serials_fk) REFERENCES serials (place_type, building_adress);
-  
-ALTER TABLE place 
-    ADD CONSTRAINT place_building_adress_check CHECK (REGEXP_LIKE(building_adress, '^[A-Za-z0-9`\.\-\s\,]'));
-ALTER TABLE place 
-    ADD CONSTRAINT place_cn_check CHECK (REGEXP_LIKE(place_type, '^[A-Za-z0-9`\.\-\s\,]'));
-   
-insert into classrooms(place_type, building_adress) values ('cinema', 'Academician Gorbunova , 19');
-insert into classrooms(place_type, building_adress) values ('cinema','Khreshchatyk , 33');
-insert into classrooms(place_type, building_adress) values ('flat','Politekhnichna street, 41');
-  
+ALTER TABLE movies
+    ADD CONSTRAINT movies_pk PRIMARY KEY (movie_id);
+    
+CREATE TABLE reviews
+(
+	review_id NUMBER(10) NOT NULL,
+    review_text VARCHAR(2000) NOT NULL,
+	review_rating NUMBER(2) NOT NULL,
+	review_date DATE NOT NULL
+);
+
+ALTER TABLE reviews
+    ADD CONSTRAINT reviews_pk PRIMARY KEY (review_id);
+    
+CREATE TABLE watched_movies
+(
+    profile_id_fk NUMBER(10) NOT NULL,
+    movie_id_fk NUMBER(10) NOT NULL,
+    review_id_fk NUMBER(10) NOT NULL
+);
+
+ALTER TABLE watched_movies
+    ADD CONSTRAINT watched_movies_pk PRIMARY KEY (review_id_fk);
+    
+ALTER TABLE watched_movies
+    ADD CONSTRAINT profile_id_fk FOREIGN KEY (profile_id_fk) REFERENCES profiles (profile_id);
+    
+ALTER TABLE watched_movies
+    ADD CONSTRAINT movie_id_fk FOREIGN KEY (movie_id_fk) REFERENCES movies (movie_id);
+    
+ALTER TABLE watched_movies
+    ADD CONSTRAINT review_id_fk FOREIGN KEY (review_id_fk) REFERENCES reviews (review_id);
 
 
+INSERT INTO profiles VALUES (1, 'kate', 'I am a student', 1);
+INSERT INTO profiles VALUES (2, 'katia', 'I like bats', 2);
+INSERT INTO profiles VALUES (3, 'quw', 'Hi', 3);
+INSERT INTO profiles VALUES (4, 'asdf', '', 3);
 
+ALTER TABLE profiles ADD CONSTRAINT profile_watched_ch CHECK (profile_watched >= 0);
+ALTER TABLE movies ADD CONSTRAINT movies_rating_ch CHECK (movie_rating >= 0 AND movie_rating <= 10);
 
+INSERT INTO movies VALUES (1, 'Interstellar', 'Steve', 1);
+INSERT INTO movies VALUES (2, 'Interstellar 2', 'Steve', 1);
+INSERT INTO movies VALUES (3, 'Interstellar 3', 'Steve', 1);
+INSERT INTO movies VALUES (4, 'Interstellar 4', 'Steve', 2);
 
+INSERT INTO reviews VALUES (1, 'Good', 10, TO_DATE('2018-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO reviews VALUES (2, 'Bad', 1, TO_DATE('2018-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO reviews VALUES (3, 'Awfull', 1, TO_DATE('2018-01-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO reviews VALUES (4, 'Terrible', 1, TO_DATE('2018-01-03 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO reviews VALUES (5, 'Terrible', 1, TO_DATE('2018-01-03 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO reviews VALUES (6, 'Terrible', 1, TO_DATE('2018-01-03 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 
-
-
-
+INSERT INTO watched_movies VALUES (1, 1, 1);
+INSERT INTO watched_movies VALUES (1, 2, 2);
+INSERT INTO watched_movies VALUES (3, 1, 3);
+INSERT INTO watched_movies VALUES (2, 1, 4);
+INSERT INTO watched_movies VALUES (2, 3, 5);
+INSERT INTO watched_movies VALUES (4, 4, 6);
 
   
 /* --------------------------------------------------------------------------- 
