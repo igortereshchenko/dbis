@@ -114,3 +114,40 @@ for shop_id, shop_name, shopt_location in cursor_shop:
             writer.writerow(phone_row)
  
 cursor_shop.close()
+
+import csv
+import cx_Oracle
+ 
+connection = cx_Oracle.connect("system", "uuuliakov1607199por", "xe")
+filename = "shop_1132.csv"
+ 
+with open(filename, newline='') as file:
+    reader = csv.reader(file)
+ 
+    id = next(reader)[1]
+    name = next(reader)[1]
+    Location = next(reader)[1]
+ 
+    insert_query = "insert into shop(shop_id, shop_name, shop_location) values (:shop_id, :shop_name, :shop_location )"
+    cursor_shopomer = connection.cursor()
+    cursor_shopomer.execute(insert_query, shop_id = id, shop_name = name, shop_location = location)
+    cursor_shopomer.close()
+ 
+    connection.commit()
+ 
+    next(reader, None) 
+    next(reader, None) 
+ 
+    insert_query = "INSERT INTO phone (phone_name,  phone_id, phone_marka, phone_price) VALUES (:phone_name,  :phone_id, :phone_marka, :phone_price)"
+    cursor_order = connection.cursor()
+ 
+    cursor_order.prepare (insert_query)
+ 
+    rows = []
+    for row in reader:
+        rows.append(row[id])
+ 
+    cursor_order.executemany(None, rows)
+ 
+    cursor_order.close()
+    connection.commit() 
