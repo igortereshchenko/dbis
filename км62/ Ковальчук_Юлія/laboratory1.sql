@@ -236,3 +236,48 @@ WHERE VENDORS.VEND_ID = PRODUCTS.VEND_ID
 
 
  
+csv_export.py
+
+import csv
+
+import cx_Oracle
+
+connection = cx_Oracle.connect("system", "uuuliakov1607199por", "xe")
+ 
+cursor_shop= connection.cursor()
+ 
+cursor_shop.execute("""
+SELECT
+    TRIM(shop_id) as shop_id,
+    TRIM(shop_name) as shop_name,
+    TRIM (shopt_location) як shopt_location
+FROM
+    магазин "" ")
+ 
+ 
+ 
+для shop_id, shop_name, shopt_location в cursor_shop:
+ 
+    з відкритим ("магазин _" + shop_id + ". csv", "w", newline = "") як файл:
+        письменник = csv.writer (файл)
+ 
+        writer.writerow (["ID", shop_id])
+        writer.writerow (["Ім'я", shop_name])
+        writer.writerow (["Location", shop_locatione])
+ 
+        cursor_phone = connection.cursor ()
+ 
+        запит = "" "
+                    SELECT
+                        *
+                    FROM
+                         телефон
+                    WHERE TRIM (shop_id) =: id "" "
+ 
+        cursor_phone.execute (запит, id = shop_id)
+        writer.writerow ([])
+        writer.writerow (["phone_id", "номер телефону", "ціна телефону", "phone_marka"])
+        для phone_row в cursor_phone:
+            writer.writerow (phone_row)
+ 
+cursor_shop.close ()
