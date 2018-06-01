@@ -1,4 +1,3 @@
- 
 import cx_Oracle
 import plotly.plotly as py
 import plotly.graph_objs as go
@@ -18,11 +17,9 @@ cursor = connection.cursor()
  
 
  
- 
- 
 """ create plot 1   Вивести лікарів та кількість прийомів хворих"""
 
-cursor.execute(""" 
+cursor.execute("""
  SELECT
     TRIM(doctors.lisence),
 	TRIM(doctors.surname),
