@@ -1,4 +1,4 @@
- CREATE OR REPLACE PROCEDURE chcol(
+create or replace PROCEDURE chcol(
   tovar IN product.prod_id%type,
   zamov IN orders.order_id%type,
   newcolvo IN orderitems.quantity%type,
@@ -16,8 +16,8 @@
   prod_id=tovar;
   IF(prov!=0) THEN
       BEGIN
-        UPDATE orderitems
-        SET(quantity) VALUES (newkolvo)
+        UPDATE  ORDERITEMS
+        SET QUANTITY=newcolvo
         WHERE 
         order_num=zamov AND prod_id=tovar;
         forut:=1;
@@ -26,7 +26,6 @@
         forut:=0;
         END IF;
   END;
- 
  
  
  
