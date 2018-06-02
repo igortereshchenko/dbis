@@ -1,2 +1,55 @@
 -- LABORATORY WORK 5
 -- BY Kurshakov_Mykhailo
+CREATE OR REPLACE FUNCTION CoutVoidOrders ( id CUSTOMERS.CUST_ID%TYPE)
+RETURN NUMBER AS
+ result NUMBER;
+BEGIN
+SELECT COUNT(Orderitems.Prod_id) into result
+FROM customers Join Orders 
+ on customers.cust_id = Orders.CUST_ID
+ join ORDERITEMS 
+ on Orders.ORDER_NUM=ORDERITEMS.ORDER_NUM
+where customers.CUST_ID=id;
+ GROUP by (ORDERITEMS.ORDER_NUM)
+ HAVING COUNT(ORDERITEMS.ORDER_ITEM)=0;
+ RETURN result;
+END;
+
+
+CREATE OR REPLACE PROCEDURE FindCustomer ( email CUSTOMERS.CUST_EMAIL%TYPE, 
+id OUT CUSTOMERS.CUST_ID%TYPE) AS
+BEGIN
+SELECT customers.CUST_ID INTO id 
+FROM customers 
+ WHERE customers.CUST_EMAIL=email;
+ EXCEPTION
+ WHEN NO_DATA_FOUND THEN
+  DBMS_OUTPUT.PUT_LINE("No such customer");
+END;
+
+
+CREATE OR REPLACE PROCEDURE UpdateCustomer (id IN CUSTOMERS.CUST_ID%TYPE,
+name IN CUSTOMERS.CUST_NAME%TYPE) AS
+ my_excep EXCEPTION;
+ counter NUMBER;
+BEGIN
+ SELECT COUNT(*) INTO counter
+ FROM CUSTOMERS
+ WHERE CUSTOMERS.CUST_ID=id;
+ if(counter=0) then
+ RAISE my_excep;
+ endif;
+ SELECT COUNT(Orders.CUST_ID) into counter
+FROM customers Join Orders 
+ on customers.cust_id = Orders.CUST_ID
+ WHERE CUSTOMERS.CUST_ID=id;
+ if(counter=0) then
+ RAISE my_excep;
+ endif;
+ UPDATE CUSTOMERS
+   SET CUSTOMERS.CUST_NAME = name
+   WHERE CUSTOMERS.CUST_ID=id;
+  EXCEPTION
+ WHEN my_excep THEN
+  DBMS_OUTPUT.PUT_LINE("EXCEPTION");
+END;
