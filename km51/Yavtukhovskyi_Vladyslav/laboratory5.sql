@@ -85,27 +85,6 @@ CREATE OR REPLACE FUNCTION funczamov(
   END;
   
   
-  CREATE OR REPLACE PROCEDURE komentar(
-    tutwtuka IN products.prod_desc%type,
-    keyorkolvo OUT products.prod_id%type
-  )
-  IS
-  prov number;
-  BEGIN
-  SELECT COUNT(*)
-  INTO prov
-  FROM products
-  WHERE tutwtuka= prod_desc;
-  IF prov!=0 
-    THEN
-      SELECT prod_id
-      INTO keyorkolvo
-      FROM products
-      WHERE tutwtuka=prod_desc;
-    ELSE
-      keyorkolvo:='exception';
-      
-  END;
   
   
   
