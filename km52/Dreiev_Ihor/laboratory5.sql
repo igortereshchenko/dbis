@@ -16,8 +16,6 @@ End Prods_by_vend_id;
 
 
 
-
-
 create or replace procedure Vend_name_by_id(v_id out Vendors.Vend_Id%TYPE, v_name in Vendors.Vend_Name%TYPE)
 is
 NO_VENDOR Exception;
