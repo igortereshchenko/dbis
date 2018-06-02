@@ -7,13 +7,15 @@
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-select distinct ORDER_NUM, VEND_ID from
+select ORDER_NUM, VEND_ID from
 OrderItems full outer join Products
-on  OrderItems.PROD_ID = Products.PROD_ID
+on  OrderItems.PROD_ID = Products.PROD_ID 
+full outer join Vendors on Products.vend_id = Vendors.vend_id
 minus
-select distinct ORDER_NUM, VEND_ID from
+select ORDER_NUM, VEND_ID from
 OrderItems join Products
-on  OrderItems.PROD_ID = Products.PROD_ID;
+on  OrderItems.PROD_ID = Products.PROD_ID 
+join Vendors on Products.vend_id = Vendors.vend_id;
 
 
 
@@ -28,12 +30,16 @@ on  OrderItems.PROD_ID = Products.PROD_ID;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
+select cust_id from (select vend_id from (
+    select vendors.vend_id, count(*) as count_prod
+    from vendors join products
+    on vendors.vend_id = products.vend_id
+    group by vendors.vend_id)
+        where count_prod = (select min(count(*)) from vendors join products
+       on vendors.vend_id = products.vend_id
+       group by vendors.vend_id))
+  tab1 join Products on tab1.vend_id = Products.vend_id
+  join Orderitems on Products.prod_id = Orderitems.prod_id
+  join Orders on Orderitems.order_num = orders.order_num;
 
-select CUST_ID, min(QUANTITY) from(
-SELECT VEND_ID, sum(QUANTITY) QUANTITY, CUST_ID
-FROM (((Vendors join Products
-on Vendors.VEND_ID = Products.VEND_ID) join OrderItems 
-on Products.PROD_ID = OrderItems.PROD_ID) join Orders
-on OrderItems.ORDER_NUM = Orders.ORDER_NUM)
-group by VEND_ID, CUST_ID);
 
