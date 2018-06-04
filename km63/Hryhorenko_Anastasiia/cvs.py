@@ -36,6 +36,7 @@ having (student.student_id = :id)"""
 
         cursor_student_mark.execute(query, id=stud_id)
         writer.writerow([])
+        writer.writerow(["Answer", "Student's answer", "Max Mark", "Student's mark"])
         for stud_row in cursor_student_mark:
             writer.writerow(stud_row)
 
