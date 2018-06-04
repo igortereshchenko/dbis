@@ -14,23 +14,6 @@ CREATE ANY TABLE TO chernetskyi;
   GRANT ALTER ANY TABLE TO chernetskyi;
   GRANT
   SELECT ANY TABLE TO chernetskyi;
-  /*---------------------------------------------------------------------------
-2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі
-створювати окремо від таблиць використовуючи команди ALTER TABLE.
-Турист забронював готель.
-4 бали
----------------------------------------------------------------------------*/
---Код відповідь:
-
-  CREATE TABLE HOTELS
-    (
-      hotel_name VARCHAR2(30) NOT NULL
-    );
-  ALTER TABLE HOTELS ADD CONSTRAINT hotel_pk PRIMARY KEY (hotel_name);
-  CREATE TABLE CLIENTS
-    ( client_name VARCHAR2(30) NOT NULL
-    );
-  ALTER TABLE CLIENTS ADD CONSTRAINT client_pk PRIMARY KEY (client_name);
   /* ---------------------------------------------------------------------------
 2. Створити таблиці, у яких визначити поля та типи. Головні та зовнішні ключі
 створювати окремо від таблиць використовуючи команди ALTER TABLE.
@@ -66,6 +49,17 @@ CREATE TABLE reconditioning (
 ALTER TABLE reconditioning
     ADD CONSTRAINT rr_fk FOREIGN KEY ( hotel_id )
         REFERENCES hotels ( hotel_id );
+        
+3. Надати додаткові права користувачеві (створеному у пункті № 1) для створення таблиць,
+внесення даних у таблиці та виконання вибірок використовуючи команду ALTER/GRANT.
+Згенерувати базу даних використовуючи код з теки OracleScript та виконати запити:
+---------------------------------------------------------------------------*/
+ --Код відповідь
+
+GRANT CREATE ANY TABLE TO chernetskyi;
+GRANT INSERT ANY TABLE TO chernetskyi;
+GRANT ALTER ANY TABLE TO chernetskyi;
+GRANT SELECT ANY TABLE TO chernetskyi;
   /*---------------------------------------------------------------------------
 3.a.
 Як звуть покупця, що не купив найдорожчий продукт.
