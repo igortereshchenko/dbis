@@ -2,7 +2,7 @@
 -- BY Kovalchuk_Yuliia
 Create or REPLACE PROCEDURE delete_vend ( v_id IN Vendors.vend_id)  IS
 p_id product.prod_id%type
-v_id Vendor_vend_id%type;
+v_id Vendor_vend_id%type
 
 BEGIN
 vend_id varchar2;
