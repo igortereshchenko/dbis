@@ -23,7 +23,7 @@
           WHERE prod_id=product_id
           
           RETURN prod_id
-          
+           
           EXCEPTION 
           WHEN NO_DATA_FOUND THEN
           dbms_output.put_line('A SELECT PROD_ID INTO did not return any rown')
