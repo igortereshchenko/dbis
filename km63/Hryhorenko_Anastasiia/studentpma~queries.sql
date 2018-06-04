@@ -1,9 +1,15 @@
-create view stud_answer as
-select DISTINCT student.student_id, exercise_answer_id, DBMS_LOB.substr(exercise_solution, 1000), max(exercise_mark), exercise_mark
+create view student_exercise_mark as
+select DISTINCT student.student_id as student_id, 
+                TO_CHAR(exercise.exercise_solution) as answer, 
+                TO_CHAR(exercise_answer.student_solution) as student_answer,
+                max(exercise.exercise_mark) as max_mark,
+                exercise_answer.student_solution_mark as student_mark
 from student join exercise_answer on student.student_id = exercise_answer.student_id
-             join exercise on exercise_answer.exercise_id = exercise.exercise_id
-group by student.student_id, exercise_answer_id, exercise_solution, exercise_mark
-order by student.student_id, exercise_answer.exercise_answer_id;
+             join exercise on exercise_answer.exercise_number = exercise.exercise_number
+group by student.student_id, 
+         TO_CHAR(exercise.exercise_solution), 
+         TO_CHAR(exercise_answer.student_solution), 
+         exercise_answer.student_solution_mark;
 
 
 
