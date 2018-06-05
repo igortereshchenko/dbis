@@ -4,7 +4,7 @@ import plotly.graph_objs as go
 from plotly.tools import set_credentials_file
 
 
-connstr = '{0}/{1}@127.0.0.1:1521/{2}'.format('SYSTEM', 'josephlouis', 'xe')
+connstr = '{0}/{1}@127.0.0.1:1521/{2}'.format('SYSTEM', 'pn', 'xe')
 connection = cx_Oracle.connect(connstr)
 set_credentials_file(username='Vasilisa_Ushatska', api_key='BVHvo8AzqmBNIIq9rwTW')
 cursor = connection.cursor()
