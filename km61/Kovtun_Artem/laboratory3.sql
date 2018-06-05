@@ -4,6 +4,23 @@
 /*1. Ќаписати PL/SQL код, що по вказаному ключу замовленнЯ дода№ в його будь-Який продукт 10 разґв, змґнюючи order_item у циклґ.
 ЋперацґЯ викону№тьсЯ, Якщо у даному замовленнґ вже № хочаб один товар. 10 балґв*/
 
+DECLARE 
+    order_key ORDERS.ORDER_NUM%TYPE := 20005;
+    product_key PRODUCTS.PROD_ID%TYPE := 'RYL02';
+    products_quantity int;
+    iterator int := 1;
+BEGIN
+    SELECT MAX(order_item) INTO products_quantity FROM orderitems WHERE ORDER_NUM = order_key ;
+    
+    IF (products_quantity > 0) THEN
+        WHILE(iterator <= 10) 
+            LOOP                 
+                INSERT INTO orderitems (order_num, order_item, prod_id,quantity, item_price) VALUES (order_key, products_quantity + iterator, product_key, 0, 0); 
+                iterator := iterator + 1;
+            END LOOP;
+    END IF;
+END;
+
 
 
 
@@ -22,16 +39,16 @@ BEGIN
 
   ORDER_ID := 20005;
 
-  SELECT ORDERS.ORDER_DATE, ORDERS.ORDER_NUM, COUNT(ORDERITEMS.ORDER_ITEM)
+  SELECT  COUNT(ORDERITEMS.ORDER_ITEM)
     INTO PRODUCTS_QUANTITY
       FROM ORDERS JOIN ORDERITEMS ON ORDERS.ORDER_NUM = ORDERITEMS.ORDER_NUM
         WHERE ORDERS.ORDER_NUM = ORDER_ID 
-          GROUP BY ORDERS.ORDER_DATE, ORDERS.ORDER_NUM;
+          GROUP BY  ORDERS.ORDER_NUM;
      
       
-  IF PRODUCTS_QUANTITY = 0 
-    THEN STATUS := 'POOR';
-  ELSE IF PRODUCTS_QUANTITY > 0 AND PRODUCTS_QUANTITY <=2 
+  IF (PRODUCTS_QUANTITY = 0)  THEN 
+        STATUS := 'POOR';
+  ELSIF (PRODUCTS_QUANTITY > 0 AND PRODUCTS_QUANTITY <=2) 
     THEN STATUS := 'COMMON';
   ELSE 
     STATUS := 'RICH';
@@ -40,6 +57,7 @@ BEGIN
   DBMS_OUTPUT.put_line(STATUS);
 
 END;
+
 
 /*3. ‘творити предсавленнЯ та використати його у двох запитах:
 3.1. ‚ивести ключ постачальника та номер замовленнЯ, куди прода№ постачальник сво» продукти.
