@@ -1,0 +1,65 @@
+
+
+
+-------------------------
+-- Create Students table
+-------------------------
+CREATE TABLE Students
+(
+  stud_id      char(10)  NOT NULL ,
+  stud_name    char(50)  NOT NULL ,
+  stud_group   char(50)  NOT NULL ,
+  stud_faculty char(50)  NOT NULL 
+);
+
+--------------------------
+-- Create Notebooks table
+--------------------------
+CREATE TABLE Notebooks 
+(
+  stud_id     char(10)  NOT NULL ,
+  notebook_id       char(10)  NOT NULL ,
+  subject_id    char(10)  NOT NULL ,
+  notebook_name     char(50)  NOT NULL 
+);
+
+----------------------
+-- Create Notes table
+----------------------
+CREATE TABLE Notes
+( notebook_id       char(10)  NOT NULL ,
+  note_num           char(10)  NOT NULL,
+  note_date         date      NOT NULL,
+  page_quantity     number(3)    NOT NULL
+);
+
+------------------------
+-- Create Subject table
+------------------------
+CREATE TABLE Subject
+(
+  subject_id      char(10)      NOT NULL ,
+  professor_name  char(10)      NOT NULL ,
+  subject_name    char(100)     NOT NULL ,
+  hour_quintity    number(3)       NOT NULL 
+);
+
+
+----------------------
+-- Define primary keys
+----------------------
+ALTER TABLE Students ADD CONSTRAINT PK_Students PRIMARY KEY (stud_id);
+ALTER TABLE Notebooks ADD CONSTRAINT PK_Notebooks PRIMARY KEY (notebook_id);
+ALTER TABLE Notes ADD CONSTRAINT PK_Notes PRIMARY KEY (note_num);
+ALTER TABLE Subject ADD CONSTRAINT PK_Subject PRIMARY KEY (subject_id);
+
+
+----------------------
+-- Define foreign keys
+----------------------
+ALTER TABLE Notebooks
+ADD CONSTRAINT FK_Notebooks_Student FOREIGN KEY (stud_id) REFERENCES Students (stud_id);
+ALTER TABLE Notebooks
+ADD CONSTRAINT FK_Notebooks_Subject FOREIGN KEY (subject_id ) REFERENCES Subject (subject_id );
+ALTER TABLE Notes
+ADD CONSTRAINT FK_Notes_Notebooks FOREIGN KEY (notebook_id) REFERENCES Notebooks (notebook_id);
