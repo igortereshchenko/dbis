@@ -1,2 +1,72 @@
 -- LABORATORY WORK 4
 -- BY Kizim_Yevhenii
+--- 1 ---
+/*Створити тригер, який при зміні назви університету видаляє усі його факультети*/
+CREATE OR REPLACE TRIGGER change_uni_name AFTER 
+UPDATE OF UNIVER_NAME
+ON UNIVERSITIES
+FOR EACH ROW
+DECLARE
+CURSOR fac_cur (uni UNIVERSITIES.UNIVER_ID%TYPE)
+IS
+SELECT FACULTY_ID FROM FACULTIES WHERE UNIVER_ID_FK = uni;
+fac_rec FACULTIES%ROWTYPE;
+dean_id DEANERIES.DEANERY_ID%TYPE;
+Begin
+    FOR fac_rec IN fac_cur(:OLD.UNIVER_ID)
+    LOOP
+        DELETE FROM DEPARTMENTS
+            WHERE FACULTY_ID_FK = fac_rec.FACULTY_ID;
+        SELECT DEANERY_ID_FK INTO dean_id 
+            FROM FACULTY_DEAN
+            WHERE FACULTY_ID_FK = fac_rec.FACULTY_ID;
+        DELETE FROM FACULTY_DEAN
+            WHERE FACULTY_ID_FK = fac_rec.FACULTY_ID;
+        DELETE FROM DEANERIES 
+            WHERE DEANERY_ID = dean_id;
+    END LOOP;
+    DELETE FROM FACULTIES
+        WHERE UNIVER_ID_FK = :OLD.UNIVER_ID;
+End;
+
+--- 2 ---
+/*Створити тригер, який при видаленні деканату перейменовує його*/
+CREATE OR REPLACE VIEW dean_view
+AS 
+SELECT * FROM DEANERIES;
+
+CREATE OR REPLACE TRIGGER dean_delete INSTEAD OF DELETE
+ON dean_view
+FOR EACH ROW
+Begin
+UPDATE DEANERIES
+    SET DEAN = 'Was Trying Delete'
+    WHERE DEANERY_ID = :OLD.DEANERY_ID;
+End;
+
+--- 3 ---
+/*Створити курсор, який по назві факультету виводить університети, в яких він є та інформацію про його деканат*/
+DECLARE
+CURSOR fac_info_cur (fac_name FACULTIES.FACULTY_NAME%TYPE)
+IS
+SELECT UNIVERSITIES.UNIVER_ID, UNIVERSITIES.UNIVER_NAME, DEANERIES.*
+FROM UNIVERSITIES JOIN FACULTIES ON UNIVERSITIES.UNIVER_ID = FACULTIES.UNIVER_ID_FK
+    JOIN FACULTY_DEAN ON FACULTIES.FACULTY_ID = FACULTY_DEAN.FACULTY_ID_FK
+    JOIN DEANERIES ON FACULTY_DEAN.DEANERY_ID_FK = DEANERIES.DEANERY_ID
+    WHERE FACULTIES.FACULTY_NAME = fac_name;
+TYPE fac_info IS RECORD
+    (
+        UNIVER_ID UNIVERSITIES.UNIVER_ID%TYPE,
+        UNIVER_NAME UNIVERSITIES.UNIVER_NAME%TYPE,
+        DEANERY_ID DEANERIES.DEANERY_ID%TYPE,
+        DEAN DEANERIES.DEAN%TYPE,
+        DEANERY_PHONE DEANERIES.DEANERY_PHONE%TYPE,
+        DEANERY_ADDR DEANERIES.DEANERY_ADDR%TYPE
+    );
+fac_info_rec fac_info;
+BEGIN
+    FOR fac_info_rec IN fac_info_cur('Faculty of IT')
+    LOOP
+        DBMS_OUTPUT.PUT_LINE(fac_info_rec.UNIVER_NAME);
+    END LOOP;
+END;
