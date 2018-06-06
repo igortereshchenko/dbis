@@ -108,13 +108,11 @@ GRANT SELECT ANY TABLE TO bedukhin;
 
 --Код відповідь:
 
-
-
-
-
-
-
-
+PROJECT(
+products, orderitems
+WHERE orderitems.prod_id = products.prod_id
+AND orderitems.item_price = (PROJECT orderitems
+WHERE MIN(item_price)) {products_prod_name};
 
 
 /*---------------------------------------------------------------------------
@@ -127,14 +125,9 @@ GRANT SELECT ANY TABLE TO bedukhin;
 
 --Код відповідь:
   
-  
-
-
-
-
-
-
-
+SELECT products.prod_id
+FROM products
+WHERE max(len(trim(products.prod_name)));
 
 
 /*---------------------------------------------------------------------------
@@ -146,5 +139,8 @@ c.
 ---------------------------------------------------------------------------*/
 --Код відповідь:
 
-
+SELECT concat (trim(customers.cust_name) , ' ' , trim(customers.cust_country)) AS "client_name"
+FROM customers
+WHERE customers.cust_id IN ( SELECT orders.cust_id
+FROM orders);
 
