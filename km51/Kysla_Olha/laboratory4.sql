@@ -1,75 +1,130 @@
 -- LABORATORY WORK 4
 -- BY Kysla_Olha
-set serveroutput on 
-
-CREATE OR REPLACE FUNCTION f_name (
-    v_cust_id customers.cust_id%TYPE
-) RETURN number  AS
-    v_count_ord  number(20);
+-------------------------------------------------------------------------
+-- при зміні ім'я студента видаляються сві його телефони
+-------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER del_ph_aft_update AFTER
+    UPDATE OF stud_name ON students
+    FOR EACH ROW
 BEGIN
-     SELECT count(orders.order_num) INTO v_count_ord 
-            
-        FROM
-            customers
-            JOIN orders ON customers.cust_id = orders.cust_id
-            right join ORDERITEMS on orders.order_num = ORDERITEMS.order_num
-            
-        WHERE
-            ORDERITEMS.ORDER_NUM is null;
-        return v_count_ord;
+    DELETE FROM students_has_phones
+    WHERE
+        stud_id_fk =:new.stud_id; -- в даному випадку немає різниці new чи old так як  id не змінюється 
 
-END f_name;
+END del_ph_aft_update;
 
-------------------------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE proc_by_email ( email  IN customers.cust_email%TYPE, c_id  OUT customers.cust_id%type)
-    IS
-    BEGIN
-        SELECT
-         customers.cust_id
-        INTO
-         c_id
-        FROM
-         customers
-        WHERE
-         customers.cust_email = email;
-         dbms_output.put_line(c_id);
-    EXCEPTION when NO_DATA_FOUND THEN 
- dbms_output.put_line ('this customer does not exist '); 
-END proc_by_email;
+UPDATE students
+    SET
+        stud_name = 'new_stud_name'
+WHERE
+    students.stud_id = '2';
+-------------------------------------------------------------------------
+--при додаванні нового студента додається дефолтний номер телефону 
+-------------------------------------------------------------------------
 
+CREATE SEQUENCE seq_phone_id START WITH 10 INCREMENT BY 1
+/
+
+CREATE SEQUENCE p_number START WITH 1111111 INCREMENT BY 1
+/
+
+CREATE OR REPLACE TRIGGER add_defphone AFTER
+    INSERT ON students
+    FOR EACH ROW
+DECLARE
+    v_oper_code   operators.oper_code%TYPE;
+BEGIN
+    SELECT
+        operators.oper_code
+    INTO
+        v_oper_code
+    FROM
+        operators
+    WHERE
+        oper_code = '057'; -- вважаємо дефолтним оператором
+
+    INSERT INTO phones (
+        phone_id,
+        phone_type
+    ) VALUES (
+        seq_phone_id.NEXTVAL,
+        'new123'
+    );
+
+    INSERT INTO students_has_phones (
+        phone_id_fk,
+        stud_id_fk,
+        stud_phone_date
+    ) VALUES (
+        seq_phone_id.CURRVAL,
+        :new.stud_id,
+        SYSDATE
+    );
+
+    INSERT INTO phone_number (
+        oper_code_fk,
+        phone_id_fk,
+        phone_number_date,
+        phone_number
+    ) VALUES (
+        v_oper_code,
+        seq_phone_id.CURRVAL,
+        SYSDATE,
+        p_number.NEXTVAL
+    );
+
+END add_defphone;
+
+INSERT INTO students (
+    stud_id,
+    stud_name,
+    stud_surname
+) VALUES (
+    '11',
+    'new_stud_with_phone',
+    'surname'
+);
+
+-----------------------------------------------------------------------------
+--використати курсор з параметром = назва оператору 
+--виводить імена студентів та їх номера телефонів 
+-----------------------------------------------------------------------------
+
+SET SERVEROUTPUT ON
 
 DECLARE
-    email         customers.cust_email%TYPE;
-    c_id   customers.cust_id%type;
+    CURSOR stud_and_phone_numbers (
+        v_oper_name operators.oper_name%TYPE
+    ) IS SELECT
+        students.stud_name,
+        concat(operators.oper_code,phone_number.phone_number) AS full_number
+         FROM
+        operators
+        JOIN phone_number ON phone_number.oper_code_fk = operators.oper_code
+        JOIN phones ON phone_number.phone_id_fk = phones.phone_id
+        JOIN students_has_phones ON students_has_phones.phone_id_fk = phones.phone_id
+        JOIN students ON students.stud_id = students_has_phones.stud_id_fk
+         WHERE
+        operators.oper_name = v_oper_name;
+
+    v_row   stud_and_phone_numbers%rowtype;
 BEGIN
-     email := 'jjones@fun4all.com';
-    proc_by_email(email => email,c_id => c_id);
-    dbms_output.put_line(c_id);
+    OPEN stud_and_phone_numbers('life');
+    LOOP
+        FETCH stud_and_phone_numbers INTO v_row;
+        IF
+            ( stud_and_phone_numbers%found )
+        THEN
+            dbms_output.put_line(v_row.stud_name
+            || ' '
+            || v_row.full_number);
+        END IF;
+
+        EXIT WHEN stud_and_phone_numbers%notfound;
+    END LOOP;
+
+    CLOSE stud_and_phone_numbers;
+EXCEPTION
+    WHEN no_data_found THEN
+        dbms_output.put_line('student does not have phone number with this operators');
 END;
-
-------------------------------------------------------------------
-CREATE OR REPLACE PROCEDURE f_cust_name ( name in customers.cust_name )
-is 
-v_count number ;
-v_id customers.cust_id% type ; 
-v_order orders.order_num%type ;
-begin 
-select count (customers.cust_name)into v_count from customers
-where customers.cust_name = name ;
-
-if (v_count = 1) then 
-    select customers.cust_id into v_id from customers
-    where customers.cust_name = name ;
-    
-    select orders.order_num into v_order 
-    from CUSTOMERS join orders on 
-    orders.cust_id = v_id;
-    
-    if (v_order is null) then 
-        update customers 
-        set customers.cust_id = 'new name';
-    end if;
-
-end if;
-
-end f_cust_name;
