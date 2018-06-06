@@ -1,6 +1,6 @@
 -- LABORATORY WORK 4
 -- BY Lukianchenko_Rehina
--- При изминении MAC адресса, удалять hardware со всех таблиц
+-- При изменении MAC адресса, удалять hardware со всех таблиц
 
 create or replace trigger changeMACadress
 AFTER UPDATE of computer_mac_adress on computer
@@ -34,7 +34,7 @@ from computer_has_hardware
 END;
 
 
----При изминении версии ОС, удалять ОС с ПК
+---При изменении версии ОС, удалять ОС с ПК
 create or replace trigger changeOSversion
 BEFORE UPDATE of os_version on software
 FOR EACH ROW
