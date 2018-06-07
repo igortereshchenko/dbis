@@ -2,13 +2,14 @@
 -- BY Chechel_Dmytrii
 
 CREATE OR REPLACE TRIGGER authorDelete
-  INSTEAD OF DELETE ON Authors
+  BEFORE DELETE ON Authors
 DECLARE
   authorsCount Number;
+  tooLessAuthorsException Exception;
 BEGIN
   SELECT count(*) INTO authorsCount FROM Authors;
-  IF authorsCount > 1 THEN
-    DELETE FROM Authors WHERE id = :new.id;
+  IF authorsCount <= 1 THEN
+    raise tooLessAuthors Exception;
   END IF;
 END authorDelete;
 
