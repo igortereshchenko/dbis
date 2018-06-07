@@ -33,6 +33,7 @@ create table human (
     ident_code number(6), 
     firstname varchar2(30) not null, 
     surname varchar2(30) not null, 
+    birthday date,
     mail varchar2(50)
 );
 
