@@ -16,7 +16,7 @@ SELECT
 FROM
     HUMAN""")
 
-for human_id, human_name, human_sex, human_age, human_country in cursor_human:    
+for human_id, human_name, human_sex, human_age, human_country in cursor_human:
     with open("human_"+human_id+".csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["ID", human_id])
