@@ -30,6 +30,6 @@ with open(filename, newline='') as file:
         rows.append(row+[h_id])
 
     cursor_phone_type.executemany(None, rows)
-
+    
     cursor_phone_type.close()
     connection.commit() 
