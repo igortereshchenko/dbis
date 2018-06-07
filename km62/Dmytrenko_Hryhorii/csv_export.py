@@ -30,7 +30,7 @@ for human_id, human_name, human_sex, human_age, human_country in cursor_human:
                     SELECT PHONE_ID, PHONE_TYPE_NAME, PHONE_ORDER_DATE
                     FROM HUMAN NATURAL JOIN HUMAN_HAS_PHONE NATURAL JOIN PHONE_TYPE 
                     WHERE TRIM(HUMAN_ID) = :id"""
-
+        
         cursor_phone_type.execute(query, id = human_id)
         writer.writerow([])
         writer.writerow(["Phone id", "Phone name", "Phone order date"])
