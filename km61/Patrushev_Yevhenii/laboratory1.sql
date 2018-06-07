@@ -58,9 +58,9 @@ create table registration_address (
 );
 
 create table personal_auto(
-    auto_number varchar(10), 
+    auto_number number(3), 
+    model varchar2(15) not null,
     mark varchar2(10) not null, 
-    model varchar2(15) not null, 
     ident_code_fk number(6),
     registration_start_date date not null,
     registration_end_date date
