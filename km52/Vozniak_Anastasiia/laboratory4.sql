@@ -2,21 +2,26 @@
 -- BY Vozniak_Anastasiia
 
 CREATE SEQUENCE num_id START WITH 1007 INCREMENT BY 1;
+CREATE OR REPLACE TRIGGER new_card AFTER
+    INSERT ON patient
+DECLARE
+    new_name      patient.patient_name%TYPE;
+    new_surname   patient.patient_surname%TYPE;
+    new_phone     patient.patient_phone%TYPE;
+BEGIN
+    SELECT
+        patient_name,
+        patient_surname,
+        patient_phone
+    INTO
+        new_name,new_surname,new_phone
+    FROM
+        patient
+    WHERE
+        patient_name =:new.patient_name
+        AND   patient_surname =:new.patient_surname
+        AND   patient_phone =:new.patient_phone;
 
-CREATE or replace TRIGGER new_card AFTER INSERT into Patient
-
-Declare
-new_name patient.patient_name%type;
-new_surname patient.patient_surname%type;
-new_phone patient.patient_phone%type;
-
-Begin
-
-SELECT :new.patient_name into new_name,
-:new.patient_surname into new_surname,
-                                                                                                                                                                                                                                           :new.patient_phone into new_phone
-FROM
-        patient;
     INSERT INTO patientcard (
         card_id,
         doctor_license,
@@ -31,8 +36,8 @@ FROM
         new_phone
     );
 
-end
-new_card;
+END new_card;
+
 
 CREATE OR REPLACE TRIGGER delete_symptom AFTER
     UPDATE OF name ON ill
