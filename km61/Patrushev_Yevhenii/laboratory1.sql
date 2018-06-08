@@ -93,9 +93,9 @@ alter table personal_auto
 add constraint check_personal_auto check(registration_start_date < registration_end_date);
 
 insert all
-    into human values (1,'Peter','Vradiy','pet@gmail.com')
-    into human values (2,'Den','Semenov','vald@gmail.com')
-    into human values (3,'Vlad','Kopich','sam@mail.com')
+    into human values (1,'Peter','Vradiy', null,'pet@gmail.com')
+    into human values (2,'Den','Semenov', date '1979-01-20', 'vald@gmail.com')
+    into human values (3,'Vlad','Kopich', null, 'sam@mail.com')
     into house values (1,'Ukr','Kiev','Obolon',1,25)
     into house values (2,'Ukr','Kiev','Obolon',25,null)
     into house values (3,'USA','New-York','Kolon',3,4)
