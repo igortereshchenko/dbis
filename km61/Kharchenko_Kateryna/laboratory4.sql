@@ -20,4 +20,23 @@ IF phoneNumbers.country_name = old.Countries.country_name then
 phoneNumbers.country_name := new.Countries.country_name
 end if;
 
-end num1;
+end num2;
+/*При додаванні нового студента йому додаеться дефолтній оператор*/
+CREATE OR REPLACE TRIGGER num2 
+BEFORE UPDATE ON Students.student_name
+FOR EACH ROW
+DECLARE 
+newphon NUMBER(20);
+cod CHAR(20);
+BEGIN 
+SELECT MaX(phoneNumber) + 1 into newphon
+FROM phoneNumbers;
+SELECT student_IDCardNumber into cod
+FROM phoneNumbers
+WHERE Students.student_name = old.Students.student_name;
+Insert into phoneNumbers
+Values (new.Students.student_name, cod, 'Oper ', 'Cuba', newphon , '2010');
+IF phoneNumbers.student_name = old.Students.student_name then 
+phoneNumbers.student_name := new.Students.student_name
+end if;
+end num2;
