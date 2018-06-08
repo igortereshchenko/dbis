@@ -15,7 +15,7 @@ from student join exercise_answer on student.student_id = exercise_answer.studen
 datetime = []
 mark = []
 
-student_id = int(input('Input exercise id, please: '))
+student_id = int(input('Input student id, please: '))
 
 for row in cursor:
     if row[0] ==student_id:
