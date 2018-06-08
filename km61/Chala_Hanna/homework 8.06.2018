@@ -1,0 +1,34 @@
+Создать триггер, который при изменеии группы студента удаляет всех студентов.
+
+create trigger del_st
+after update on Student
+for each row
+declare
+begin
+if :old.stud_group = :new.stud_group then
+:old.stud_name = null
+end if
+end del_st;
+
+Триггер, который при добавлении студента назначает ему зачет.
+
+create trigger st_test 
+afret insert on Students
+for each row
+declare
+DEFAULT_TEST := Maths
+test Tests.test_id%type
+stud_id Student.student_id%type
+test_id Tests.test_id%type
+
+begin
+stud_id := :new.stud_id;
+select
+(test_id) into test from Student_test where stud_id = test_id
+
+insert into Student_test (student_id, test_id, test_name)
+values (stud_id, test_id, test)
+end st_test
+
+
+
