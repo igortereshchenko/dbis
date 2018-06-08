@@ -26,7 +26,7 @@ end;
 3. Написати курсор з параметром (назва оператора) вивести ім'я людей які користуються цим оператором.
 ------------------------*/
 declare 
-create cursor operators_cust (operator_name) as select human_name from human join phone on human.human_ip=phone.numan_id 
+create cursor operators_cust (operator_name) as select human_name from human join phone join operator on human.human_ip=phone.human_id 
 where operator_id in (select operator_id from operator where operator.operator_name=operator_name) ;
 begin
 for human_name in operators_cust(operator_name)
