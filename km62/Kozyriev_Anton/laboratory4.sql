@@ -30,6 +30,7 @@ END;
 
 -- 3. Створити курсор: параметр - модель телефону, вихідні дані - усі власники моделі
 
+SET SERVEROUTPUT ON
 DECLARE
     CURSOR owners_by_model(param_phone_model PHONE.PHONE_MODEL%TYPE)
     IS
