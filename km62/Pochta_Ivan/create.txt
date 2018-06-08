@@ -2,8 +2,7 @@ CREATE TABLE STUDENTS(
   student_id varchar(7) not null
 );
 CREATE TABLE TICKETS(
-  ticket_id varchar(15) not null,
-  train_fk varchar(5) not null
+  ticket_id varchar(15) not null
 );
 CREATE TABLE TRAINS(
   train_id varchar(5) not null
