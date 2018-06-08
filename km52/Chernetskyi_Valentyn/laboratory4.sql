@@ -8,8 +8,8 @@
 1. CREATE TRIGGER place_count_updated
 AFTER UPDATE ON Hotel
 BEGIN
-IF old.free_place!=new.free_place Then
-INSERT INTO Tourist (first_name, last_name, hotel_id) VALUES ("Nes", "Tourist", new.hotel_id);
+IF :old.free_place!=:new.free_place Then
+INSERT INTO Tourist (first_name, last_name, hotel_id) VALUES ("Nes", "Tourist", :new.hotel_id);
 END IF
 END
 
