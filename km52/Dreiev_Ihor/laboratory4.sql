@@ -25,7 +25,7 @@ values(1, :new.id);
 end;
 
 -- 3. Курсор(адреса) виводить назви готелів з даною адресою та вказує к-сть людей в ньому
-cursor(addr in hostel.address%TYPE) is
+cursor task3(addr in hostel.address%TYPE) is
 select hostel.name, count(*) 
 from hostel join student on hostel.id = student.hostel_id
 where hotel.address = addr
