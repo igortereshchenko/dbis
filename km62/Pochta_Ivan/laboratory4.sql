@@ -34,3 +34,14 @@ if (count_>0) then
     DBMS_OUTPUT.PUT_LINE('you can not do it until trains going through this stations');
 end if;
 END stations_name_update_action;
+/*курсор, що виводить ключі потягів та студентів на них по назві станції */
+CURSOR get_trains_and_student_by_station_cursor(station STATIONS.STATION_NAME%type)
+IS  
+    SELECT
+        train_id, STUDENT_BUY_TICKET.student_fk
+    FROM TRAIN_HAS_STATION
+    JOIN STATIONS ON STATIONS.STATION_NAME=TRAIN_HAS_STATION.STATION_FK
+    JOIN TRAINS ON TRAIN_HAS_STATION.TRAIN_FK=TRAINS.TRAIN_ID
+    JOIN TRAIN_HAS_TICKET ON TRAIN_HAS_TICKET.TRAIN_FK=TRAINS.TRAIN_ID
+    JOIN STUDENT_BUY_TICKET ON STUDENT_BUY_TICKET.STUDENT_FK=TRAIN_HAS_TICKET.TICKET_FK
+    GROUP BY TRAIN_ID having STATIONS.STATION_NAME=station;
