@@ -1,0 +1,53 @@
+import csv
+
+import cx_Oracle
+
+connection = cx_Oracle.connect("ann", "ann", "xe")
+
+filename = "book_1.csv"
+
+with open(filename, newline='') as file:
+    reader = csv.reader(file)
+
+    id = next(reader)[1]
+    name = next(reader)[1]
+    Author = next(reader)[1]
+    Year = next(reader)[1]
+    NEW_ID = 60
+    insert_query = "insert into books(BOOK_ID, BOOK_NAME, BOOK__AUTHOR, BOOK_YEAR) values (:BOOK_ID, :BOOK_NAME, :BOOK__AUTHOR, :BOOK_YEAR)"
+    cursor_customer = connection.cursor()
+    cursor_customer.execute(insert_query, BOOK_ID=NEW_ID, BOOK_NAME=name, BOOK__AUTHOR=Author, BOOK_YEAR=Year)
+    cursor_customer.close()
+
+    connection.commit()
+
+    next(reader, None)
+    next(reader, None)
+
+    insert_query = '''
+INSERT INTO books (
+    BOOK_ID,
+    BOOK_NAME,
+    BOOK__AUTHOR,
+    BOOK_YEAR)
+VALUES (
+    :BOOK_ID,
+    :BOOK_NAME,
+    :BOOK__AUTHOR,
+    :BOOK_YEAR)'''
+    cursor_order = connection.cursor()
+
+    cursor_order.prepare(insert_query)
+
+    book_id = 3000
+    rows = []
+    for row in reader:
+        rows.append([book_id, row[1], Author, Year])
+        book_id += 1
+    print(rows)
+
+    cursor_order.executemany(None, rows)
+
+    cursor_order.close()
+    connection.commit()
+
