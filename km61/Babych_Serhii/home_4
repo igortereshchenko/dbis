@@ -1,0 +1,22 @@
+/*1 Створити тригер що при зміні імені користувача змінює його емейл на його імя*/
+CREATE TRIGGER change_name
+AFTER UPDATE OF user_name
+ON USERS FOR EACH ROW
+BEGIN
+    SET NEW.user_email = NEW.user_name;
+END;
+
+/*2 Намписати курсор котрий за імям користувача виведе імя акуанту*/
+DECLARE @CURSOR CURSOR
+
+DECLARE @NAME VARCHAR(50)
+SET @CURSOR = CURSOR SCROLL
+FOR
+SELECT USERS.user_name, ACAUNTS.acount_name FROM USERS JOIN ACOUTS ON USERS_user_id = ACOUNTS.user_id
+OPEN @CURSOR
+FETCH NEXT FROM @CURSOR INTO @NAME
+FOR I IN @@FETCH
+LOOP
+    DBMS_OUTPUT.PUTLINE(''||acount_name);
+END LOOP;
+CLOSE @CURSOR
