@@ -53,4 +53,5 @@ begin
             exit;
         end if;
     end loop;
+    close search_name;
 end;
