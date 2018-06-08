@@ -1,0 +1,160 @@
+import cx_Oracle
+import plotly.plotly as py
+import plotly.graph_objs as go
+import re
+import plotly.dashboard_objs as dashboard
+ 
+ 
+def fileId_from_url(url):
+    """Return fileId from a url."""
+    raw_fileId = re.findall("~[A-z.]+/[0-9]+", url)[0][1: ]
+    return raw_fileId.replace('/', ':')
+
+connection = cx_Oracle.connect("system", "newivanpochta17", "xe")
+ 
+cursor = connection.cursor()
+ 
+ 
+ 
+""" create plot 1   Вивести поїзди та кількість їх проданих."""
+ 
+cursor.execute("""
+SELECT 
+    TRAIN_ID,
+    Count( TICKET_FK)
+FROM
+    TRAINS LEFT JOIN TRAIN_HAS_TICKET on TRAIN_HAS_TICKET.TRAIN_FK = TRAINS.TRAIN_ID
+GROUP BY TRAINS.TRAIN_ID """)
+ 
+trains = []
+ticket_count = []
+ 
+ 
+for row in cursor:
+    print("Train_id: ",row[0]," has next amount of sold tickets: ",row[1])
+    trains += [row[0]]
+    ticket_count += [row[1]]
+data = [go.Bar(
+            x=trains,
+            y=ticket_count
+    )]
+ 
+layout = go.Layout(
+    title='Trains and count of sold tickets',
+    xaxis=dict(
+        title='Trains',
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    ),
+    yaxis=dict(
+        title='Count of sold tickets',
+        rangemode='nonnegative',
+        autorange=True,
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    )
+)
+fig = go.Figure(data=data, layout=layout)
+ 
+trains_sold_tickets_count = py.plot(fig)
+
+print(trains_sold_tickets_count) 
+print(""" create plot 2   Вивести поїзд % його проданих квитків відносно решти квитків.""")
+ 
+cursor.execute("""
+SELECT 
+    TRAIN_ID,
+    Count( TICKET_FK)
+FROM
+    TRAINS LEFT JOIN TRAIN_HAS_TICKET on TRAIN_HAS_TICKET.TRAIN_FK = TRAINS.TRAIN_ID
+GROUP BY TRAINS.TRAIN_ID """)
+ 
+trains = []
+ticket_count = []
+ 
+ 
+for row in cursor:
+    print("Train_id: ",row[0]," has next amount of sold tickets: ",row[1])
+    trains += [row[0]]
+    ticket_count += [row[1]]
+data = [go.Bar(
+            x=trains,
+            y=ticket_count
+    )]
+pie = go.Pie(labels=trains, values=ticket_count)
+trains_sold_tickets_count2 = py.plot([pie])
+ 
+print(""" create plot 3   Вивести динаміку продажу квитків по даті""")
+
+cursor1 = connection.cursor()
+cursor1.execute("""
+SELECT 
+    STUDENT_BUY_TICKET.DATE_,
+    Count(STUDENT_BUY_TICKET.TICKET_FK)
+FROM
+    STUDENT_BUY_TICKET
+GROUP BY (STUDENT_BUY_TICKET.DATE_)
+ORDER BY (STUDENT_BUY_TICKET.DATE_) """)
+order_dates = []
+ticket_amount = []
+
+for row in cursor1:
+    print("Date ",row[0]," sum: ",row[1])
+    order_dates += [row[0]]
+    ticket_amount += [row[1]]
+ 
+ 
+date_ticket_amount = go.Scatter(
+    x=order_dates,
+    y=ticket_amount,
+    mode='lines+markers'
+)
+data = [date_ticket_amount]
+date_ticket_amount = py.plot(data) 
+ 
+"""--------CREATE DASHBOARD------------------ """
+    
+ 
+my_dboard = dashboard.Dashboard()
+ 
+trains_sold_tickets_count_id = fileId_from_url(trains_sold_tickets_count)
+trains_sold_tickets_count2_id = fileId_from_url(trains_sold_tickets_count2)
+date_ticket_amount_id = fileId_from_url(date_ticket_amount)
+
+print(trains_sold_tickets_count_id)
+ 
+box_1 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': trains_sold_tickets_count_id,
+    'title': 'Customers and Orders sum'
+}
+ 
+box_2 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': trains_sold_tickets_count2_id,
+    'title': 'Customers and Orders sum'
+}
+ 
+box_3 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': date_ticket_amount_id,
+    'title': 'Orders price by date'
+}
+ 
+ 
+my_dboard.insert(box_1)
+my_dboard.insert(box_2, 'below', 1)
+my_dboard.insert(box_3, 'left', 2)
+ 
+ 
+ 
+py.dashboard_ops.upload(my_dboard, 'My First Dashboard with Python')

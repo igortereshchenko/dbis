@@ -1,0 +1,55 @@
+CREATE TABLE STUDENTS(
+  student_id varchar(7) not null
+);
+CREATE TABLE TICKETS(
+  ticket_id varchar(15) not null
+);
+CREATE TABLE TRAINS(
+  train_id varchar(5) not null
+);
+CREATE TABLE STATIONS(
+  station_id varchar(5) not null,
+  station_name varchar(50) not null
+);
+CREATE TABLE TRAIN_HAS_TICKET(
+    ticket_fk varchar(15) not null,
+    train_fk varchar(5) not null
+);
+CREATE TABLE TRAIN_HAS_STATION(
+  train_fk varchar(5) not null,
+  station_fk varchar(5) not null
+);
+CREATE TABLE STUDENT_BUY_TICKET(
+  student_fk varchar(6) not null,
+  ticket_fk varchar(15) not null 
+);
+
+ALTER TABLE STUDENTS add constraint students_pk primary key (student_id);
+ALTER TABLE TICKETS add constraint tickets_pk primary key (ticket_id);
+ALTER TABLE TRAINS add constraint trains_pk primary key (train_id);
+ALTER TABLE STATIONS add constraint stations_pk primary key (station_id);
+ALTER TABLE TRAIN_HAS_STATION add constraint train_has_station_pk primary key (train_fk, station_fk);
+ALTER TABLE TRAIN_HAS_STATION add constraint train_has_station_fk_train FOREIGN KEY (train_fk) references TRAINS(train_id);
+ALTER TABLE TRAIN_HAS_STATION add constraint train_has_station_fk_station FOREIGN KEY (station_fk) references STATIONS(station_id); 
+ALTER TABLE STUDENT_BUY_TICKET add constraint student_buy_ticket_pk primary key ( ticket_fk );
+ALTER TABLE STUDENT_BUY_TICKET add constraint student_buy_ticket_fk_student FOREIGN KEY ( student_fk ) references STUDENTS(student_id);
+ALTER TABLE STUDENT_BUY_TICKET add constraint student_buy_ticket_fk_ticket FOREIGN KEY ( ticket_fk ) references TICKETS(ticket_id);
+ALTER TABLE TRAIN_HAS_TICKET add constraint train_has_ticket_pk PRIMARY KEY ( ticket_fk ) ;
+ALTER TABLE TRAIN_HAS_TICKET add constraint train_has_ticket_fk_train FOREIGN KEY (train_fk) references TRAINS(train_id);
+ALTER TABLE TRAIN_HAS_TICKET add constraint train_has_ticket_fk_ticket FOREIGN KEY (ticket_fk) references TICKETS(ticket_id);
+alter table tickets
+  add constraint check_ticket_id 
+  check (REGEXP_LIKE(ticket_id, '^[0-9]{15}'));
+alter table trains
+  add constraint check_train_id 
+  check (REGEXP_LIKE(train_id, '^[0-9]{5}'));
+alter table students
+  add constraint check_student_id 
+  check (REGEXP_LIKE(student_id, '^[A-Z]{2}[0-9]{4}'));
+alter table students drop constraint check_student_id;
+alter table stations
+  add constraint check_station_id 
+  check (REGEXP_LIKE(station_id ,'^[0-9]{5}'));
+alter table stations
+  add constraint check_station_name
+  check (REGEXP_LIKE(station_name ,'^[A-Z][a-z]{1,49}'));
