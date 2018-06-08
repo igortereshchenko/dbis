@@ -93,14 +93,14 @@ create table human_sings_song
 );
 alter table human_sings_song
 	add constraint song_sing_date_check check(regexp_like(song_sing_date,'^([1-9]|[12][0-9]|[31]|[30]).([A-Z]{3}).[1-2][0-9]{3}$'));
-INSERT INTO human_sings_song(song_id,human_id,song_sing_date) 
-   VALUES ('4543444321','1033333454',TO_DATE('1998-08-20', 'yyyy-mm-dd'));
-INSERT INTO human_sings_song(song_id,human_id,song_birth)
-   VALUES ('1833444321','2334533454',TO_DATE('2011-05-23', 'yyyy-mm-dd'));
-INSERT INTO human_sings_song(song_id,human_id,song_birth)
-   VALUES ('1321444321','7263333454',TO_DATE('2010-11-20', 'yyyy-mm-dd'));
-INSERT INTO human_sings_song(song_id,human_id,song_birth)
-   VALUES ('0043444321','5412343444',TO_DATE('2007-12-20', 'yyyy-mm-dd'));
+INSERT INTO human_sings_song(song_id, human_id, song_sing_date)
+   VALUES ('1234444321','2343444321', TO_DATE('1998-08-20', 'YYYY-MM-DD'));
+INSERT INTO human_sings_song(song_id,human_id,song_sing_date)
+   VALUES ('2563444321','2312343444',TO_DATE('2011-05-23', 'yyyy-mm-dd'));
+INSERT INTO human_sings_song(song_id,human_id,song_sing_date)
+   VALUES ('1143444321','1232343444',TO_DATE('2010-11-20', 'yyyy-mm-dd'));
+INSERT INTO human_sings_song(song_id,human_id,song_sing_date)
+   VALUES ('1043444321','1432343444',TO_DATE('2007-12-20', 'yyyy-mm-dd'));
 /*==============================================================*/
 /* Index: human_sings_song2_FK                              */
 /*==============================================================*/
@@ -135,14 +135,14 @@ create table Human_wrote_song
  
 alter table Human_wrote_song
 	add constraint song_birth_check check(regexp_like(song_birth,'^([1-9]|[12][0-9]|[31]|[30]).([A-Z]{3}).[1-2][0-9]{3}$'));
-INSERT INTO Human_wrote_song(song_id,human_id,song_birth) 
-   VALUES ('2343444321','0033333454',TO_DATE('1990-08-20', 'yyyy-mm-dd'));
 INSERT INTO Human_wrote_song(song_id,human_id,song_birth)
-   VALUES ('1763444321','2334533454',TO_DATE('2001-05-23', 'yyyy-mm-dd'));
+   VALUES ( '1234444321', '2343444321', TO_DATE('1990-08-20', 'yyyy-mm-dd'));
 INSERT INTO Human_wrote_song(song_id,human_id,song_birth)
-   VALUES ('1343444321','2333333454',TO_DATE('2000-05-20', 'yyyy-mm-dd'));
+   VALUES ( '2563444321', '2312343444' ,TO_DATE('2001-05-23', 'yyyy-mm-dd'));
 INSERT INTO Human_wrote_song(song_id,human_id,song_birth)
-   VALUES ('1043444321','1432343444',TO_DATE('2002-12-20', 'yyyy-mm-dd'));
+   VALUES ( '1143444321' , '1232343444' ,TO_DATE('2000-05-20', 'yyyy-mm-dd'));
+INSERT INTO Human_wrote_song(song_id,human_id,song_birth)
+   VALUES ( '1043444321' , '1432343444' ,TO_DATE('2002-12-20', 'yyyy-mm-dd'));
 /*==============================================================*/
 /* Index: Human_wrote_song2_FK                                */
 /*==============================================================*/
