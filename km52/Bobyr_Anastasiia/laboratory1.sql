@@ -41,102 +41,11 @@ create table Human
    human_id             NUMBER(10)           not null,
    human_name           VARCHAR2(20)         not null,
    human_surname        VARCHAR2(20)         not null,
-   human_job            VARCHAR2(50),
    human_tel_number     CHAR(15)             not null,
    constraint PK_HUMAN primary key (human_id)
 );
 
-/*==============================================================*/
-/* Table: Illness                                               */
-/*==============================================================*/
-create table Illness 
-(
-   illness_name         VARCHAR2(50)         not null,
-   illness_recovery_days NUMBER(10),
-   percentage_of_mortality NUMBER(3),
-   constraint PK_ILLNESS primary key (illness_name)
-);
 
-/*==============================================================*/
-/* Table: "Illness has symptoms"                                */
-/*==============================================================*/
-create table "Illness has symptoms" 
-(
-   illness_name         VARCHAR2(50)         not null,
-   symptom_name         VARCHAR2(100)        not null,
-   "date"               DATE                 not null,
-   constraint "PK_ILLNESS HAS SYMPTOMS" primary key (illness_name, symptom_name)
-);
-
-/*==============================================================*/
-/* Index: "Illness has symptoms2_FK"                            */
-/*==============================================================*/
-create index "Illness has symptoms2_FK" on "Illness has symptoms" (
-   symptom_name ASC
-);
-
-/*==============================================================*/
-/* Index: "Illness has symptoms_FK"                             */
-/*==============================================================*/
-create index "Illness has symptoms_FK" on "Illness has symptoms" (
-   illness_name ASC
-);
-
-/*==============================================================*/
-/* Table: MedicalCard                                           */
-/*==============================================================*/
-create table MedicalCard 
-(
-   card_id              NUMBER(15)           not null,
-   human_id             NUMBER(10),
-   constraint PK_MEDICALCARD primary key (card_id)
-);
-
-/*==============================================================*/
-/* Index: "Human has a medical card_FK"                         */
-/*==============================================================*/
-create index "Human has a medical card_FK" on MedicalCard (
-   human_id ASC
-);
-
-/*==============================================================*/
-/* Table: Records                                               */
-/*==============================================================*/
-create table Records 
-(
-   record_id            NUMBER(20)          not null,
-   card_id              NUMBER(15)           not null,
-   illness_name         VARCHAR2(50)         not null,
-   record_date          DATE                 not null,
-   constraint PK_RECORDS primary key (card_id, record_id)
-);
-
-/*==============================================================*/
-/* Index: "Card has records2_FK"                                */
-/*==============================================================*/
-create index "Card has records2_FK" on Records (
-   card_id ASC
-);
-
-/*==============================================================*/
-/* Index: "Card has records_FK"                                 */
-/*==============================================================*/
-create index "Card has records_FK" on Records (
-   illness_name ASC
-);
-
-/*==============================================================*/
-/* Table: Symptoms                                              */
-/*==============================================================*/
-create table Symptoms 
-(
-   symptom_name         VARCHAR2(100)        not null,
-   constraint PK_SYMPTOMS primary key (symptom_name)
-);
-
-
-
-/*======ADDED MANUALLY=======*/
 ALTER TABLE Human
   ADD CONSTRAINT human_tel_number_unique UNIQUE (human_tel_number);
 ALTER TABLE Human
@@ -149,11 +58,55 @@ ALTER TABLE Human
 ADD CONSTRAINT check_human_surname
   CHECK (REGEXP_LIKE(human_surname,'[A-Z][a-z]{1,50}')); 
 ALTER TABLE Human
-ADD CONSTRAINT check_human_job
-  CHECK (REGEXP_LIKE(human_job,'(\s?\w+)+'));   
-ALTER TABLE Human
 ADD CONSTRAINT check_human_tel_number
-  CHECK (REGEXP_LIKE(human_tel_number,'[+][380][0-9]{11}'));   
+  CHECK (REGEXP_LIKE(human_tel_number,'[+][380][0-9]{11}'));  
+  
+
+
+/*==============================================================*/
+/* Table: Job                                                   */
+/*==============================================================*/
+create table Job 
+(
+   job_name           VARCHAR2(100)         not null,
+   constraint PK_JOB primary key (job_name)
+);
+
+ALTER TABLE Job
+ADD CONSTRAINT check_job_name
+  CHECK (REGEXP_LIKE(job_name,'[A-Z][a-z]{1,50}')); 
+
+
+
+/*==============================================================*/
+/* Table: "Human has job"                                */
+/*==============================================================*/
+create table HumanJob 
+(
+   human_id             NUMBER(10)           not null,
+   job_name           VARCHAR2(100)         not null,
+   "date"               DATE                 not null,
+   constraint "PK_human_job" primary key (human_id, job_name, "date")
+);
+
+
+ALTER TABLE HumanJob
+ADD CONSTRAINT check_hj_job_name
+  CHECK (REGEXP_LIKE(job_name,'[A-Z][a-z]{1,50}')); 
+  ALTER TABLE HumanJob
+ADD CONSTRAINT check_hj_human_id
+  CHECK (human_id > 0); 
+  
+  
+/*==============================================================*/
+/* Table: MedicalCard                                           */
+/*==============================================================*/
+create table MedicalCard 
+(
+   card_id              NUMBER(15)           not null,
+   human_id             NUMBER(10),
+   constraint PK_MEDICALCARD primary key (card_id)
+);
 
 ALTER TABLE MedicalCard
 ADD CONSTRAINT check_human_id_mc
@@ -162,18 +115,39 @@ ALTER TABLE MedicalCard
 ADD CONSTRAINT check_card_id
   CHECK (card_id > 0);
 
-ALTER TABLE Records 
-ADD CONSTRAINT check_record_id
-  CHECK (record_id > 0);
-ALTER TABLE Records 
-ADD CONSTRAINT check_card_id_record
-  CHECK (record_id > 0);
-ALTER TABLE Records 
-ADD CONSTRAINT check_illness_name_record
-  CHECK (REGEXP_LIKE(illness_name,'(\s?\w+)+'));  
-ALTER TABLE Records 
-ADD CONSTRAINT check_record_date
-  CHECK (record_date > date '2018-01-01');
+
+create table DoctorPatient 
+(
+   human_id_doc             NUMBER(10)           not null,
+   human_id_pt             NUMBER(10)           not null,
+   card_id              NUMBER(15)           not null,
+   "date"               DATE                 not null,
+   constraint PK_Doctor_patient primary key (human_id_doc, human_id_pt, "date")
+);
+
+
+ALTER TABLE DoctorPatient
+ADD CONSTRAINT check_human_id_doc
+  CHECK (human_id_doc > 0);  
+  ALTER TABLE DoctorPatient
+ADD CONSTRAINT check_human_id_pt
+  CHECK (human_id_pt > 0);  
+ALTER TABLE DoctorPatient
+ADD CONSTRAINT check_card_id_docpt
+  CHECK (card_id > 0);
+
+
+/*==============================================================*/
+/* Table: Illness                                               */
+/*==============================================================*/
+create table Illness 
+(
+   illness_name         VARCHAR2(50)         not null,
+   illness_recovery_days NUMBER(10),
+   percentage_of_mortality NUMBER(3),
+   constraint PK_ILLNESS primary key (illness_name)
+);
+
 
 ALTER TABLE Illness 
 ADD CONSTRAINT check_illness_name
@@ -185,54 +159,157 @@ ALTER TABLE Illness
 ADD CONSTRAINT check_percentage_of_mortality
   CHECK (length(percentage_of_mortality) <= 100);   
 
-ALTER TABLE "Illness has symptoms"  
-ADD CONSTRAINT check_illness_name_illnesssympt
-  CHECK (REGEXP_LIKE(illness_name,'(\s?\w+)+')); 
-ALTER TABLE "Illness has symptoms"  
-ADD CONSTRAINT check_symptom_name_illnesssympt
-  CHECK (REGEXP_LIKE(symptom_name,'(\s?\w+)+')); 
-ALTER TABLE "Illness has symptoms"  
-ADD CONSTRAINT check_date_illnesssympt
-  CHECK ("date" > date '2018-01-01');
+
+/*==============================================================*/
+/* Table: Symptoms                                              */
+/*==============================================================*/
+create table Symptoms 
+(
+   symptom_name         VARCHAR2(100)        not null,
+   constraint PK_SYMPTOMS primary key (symptom_name)
+);
 
 ALTER TABLE Symptoms 
 ADD CONSTRAINT check_symptom_name
   CHECK (REGEXP_LIKE(symptom_name,'(\s?\w+)+')); 
+  
+
+/*==============================================================*/
+/* Table: Illness_symptoms                               */
+/*==============================================================*/
+create table IllnessSymptoms 
+(
+   ill_sympt_id         NUMBER(10)           not null,
+   illness_name         VARCHAR2(50)         not null,
+   symptom_name         VARCHAR2(100)        not null,
+   "date"               DATE                 not null,
+   constraint "PK_ILLNESs_SYMPTOMS" primary key (ill_sympt_id)
+);
+
+ALTER TABLE IllnessSymptoms
+  ADD CONSTRAINT ill_sympt_unique UNIQUE (illness_name, symptom_name);
+ALTER TABLE IllnessSymptoms
+ADD CONSTRAINT check_ill_name_illnesssympt
+  CHECK (REGEXP_LIKE(illness_name,'(\s?\w+)+')); 
+ALTER TABLE IllnessSymptoms 
+ADD CONSTRAINT check_sympt_name_illnesssympt
+  CHECK (REGEXP_LIKE(symptom_name,'(\s?\w+)+')); 
+ALTER TABLE IllnessSymptoms 
+ADD CONSTRAINT check_date_illnesssympt
+  CHECK ("date" > date '2018-01-01');
+  
+
+
+
+/*==============================================================*/
+/* Table: Records                                               */
+/*==============================================================*/
+create table Recordss 
+(
+   record_id            NUMBER(20)          not null,
+   card_id              NUMBER(15)           not null,
+   ill_sympt_id         NUMBER(10)           not null,
+   record_date          DATE                 not null,
+   constraint PK_RECORDS primary key (card_id, record_id)
+);
+
+
+ALTER TABLE Recordss 
+ADD CONSTRAINT check_record_id
+  CHECK (record_id > 0);
+ALTER TABLE Recordss
+ADD CONSTRAINT check_card_id_record
+  CHECK (record_id > 0);
+ALTER TABLE Recordss 
+ADD CONSTRAINT check_ill_sympt_id_record
+  CHECK (ill_sympt_id > 0);  
+ALTER TABLE Recordss 
+ADD CONSTRAINT check_record_date
+  CHECK (record_date > date '2018-01-01');
+
+
+
 
 
 
 /*======GENERATION OF FOREIGN KEYS (NOT MANUALLY)=======*/
-alter table "Illness has symptoms"
-   add constraint FK_ILLNESS_HAS_SYMPT foreign key (illness_name)
+alter table IllnessSymptoms
+   add constraint FK_ILLNESS_SYMPT foreign key (illness_name)
       references Illness (illness_name);
 
-alter table "Illness has symptoms"
-   add constraint FK_SYMPT_HAS_ILLNESS foreign key (symptom_name)
+alter table IllnessSymptoms
+   add constraint FK_SYMPT_ILLNESS foreign key (symptom_name)
       references Symptoms (symptom_name);
+      
+      
+alter table Recordss
+   add constraint FK_RECORD_HAS_ILLNESS foreign key (ill_sympt_id)
+      references IllnessSymptoms (ill_sympt_id);
+
+alter table Recordss
+   add constraint FK_MED_CARD_HAS_REC foreign key (card_id)
+      references MedicalCard (card_id);
 
 alter table MedicalCard
    add constraint FK_HUMAN_HAS_MED_CARD foreign key (human_id)
       references Human (human_id);
 
-alter table Records
-   add constraint FK_RECORD_HAS_ILLNESS foreign key (illness_name)
-      references Illness (illness_name);
-
-alter table Records
-   add constraint FK_MED_CARD_HAS_REC foreign key (card_id)
-      references MedicalCard (card_id);
+alter table HumanJob
+   add constraint FK_Job_humjob foreign key (job_name)
+      references Job (job_name);
       
+alter table HumanJob
+   add constraint FK_Human_humjob foreign key (human_id)
+      references Human (human_id);
+      
+alter table DoctorPatient
+   add constraint FK_DP_id_doc foreign key (human_id_doc)
+      references Human (human_id);
 
+ALTER TABLE MedicalCard
+  ADD CONSTRAINT human_id_mc_unique UNIQUE (human_id);
+  
+alter table DoctorPatient
+   add constraint FK_DP_id_pt foreign key (human_id_pt)
+      references MedicalCard (human_id);      
+      
+alter table DoctorPatient
+   add constraint FK_DP_id_mc foreign key (card_id)
+      references MedicalCard (card_id);       
 
+ALTER TABLE DoctorPatient
+ADD CONSTRAINT check_if_doctor
+  CHECK (human_id_doc in (select HumanJob.human_id from HumanJob where HumanJob.job_name = "Doctor"));
 
 /*======INSERTS=======*/
 --Create patients
-INSERT INTO Human (human_id, human_name, human_surname, human_job, human_tel_number)
-VALUES ('1', 'Ivan', 'Ivanov', 'Lawyer', '+380999999999');
-INSERT INTO Human (human_id, human_name, human_surname, human_job, human_tel_number)
-VALUES ('2', 'Eugene', 'Plarn', 'farmer', '+380999999998');  
-INSERT INTO Human (human_id, human_name, human_surname, human_job, human_tel_number)
-VALUES ('100', 'Lina', 'Derja', 'Programmer in Oriflame', '+380631234567');
+INSERT INTO Human (human_id, human_name, human_surname, human_tel_number)
+VALUES ('1', 'Ivan', 'Ivanov', '+380999999999');
+INSERT INTO Human (human_id, human_name, human_surname, human_tel_number)
+VALUES ('2', 'Eugene', 'Plarn', '+380999999998');  
+INSERT INTO Human (human_id, human_name, human_surname, human_tel_number)
+VALUES ('100', 'Lina', 'Derja', '+380631234567');
+INSERT INTO Human (human_id, human_name, human_surname, human_tel_number)
+VALUES ('4', 'Mariia', 'Petrova', '+380631234467');
+INSERT INTO Human (human_id, human_name, human_surname, human_tel_number)
+VALUES ('5', 'Sergij', 'Vadoo', '+380631234599');
+
+insert into job values ('Lawyer');
+insert into job values ('Farmer');
+insert into job values ('Programmer in Oriflame');
+insert into job values ('Doctor');
+
+insert into HumanJob(human_id, job_name, "date") 
+values ('1', 'Lawyer', TO_DATE('2018-03-07', 'YYYY-MM-DD'));
+insert into HumanJob(human_id, job_name, "date") 
+values ('2', 'Farmer', TO_DATE('2018-03-15', 'YYYY-MM-DD'));
+insert into HumanJob(human_id, job_name, "date") 
+values ('100', 'Programmer in Oriflame', TO_DATE('2018-02-25', 'YYYY-MM-DD'));
+insert into HumanJob(human_id, job_name, "date") 
+values ('4', 'Doctor', TO_DATE('2018-01-15', 'YYYY-MM-DD'));
+insert into HumanJob(human_id, job_name, "date") 
+values ('5', 'Doctor', TO_DATE('2018-03-05', 'YYYY-MM-DD'));
+
 
 --Create cards of the existing patients
 INSERT INTO MedicalCard (card_id, human_id)
@@ -241,6 +318,13 @@ INSERT INTO MedicalCard (card_id, human_id)
 VALUES ('1002', '1'); 
 INSERT INTO MedicalCard (card_id, human_id)
 VALUES ('1003', '100');  
+
+INSERT INTO DoctorPatient (human_id_pt, human_id_doc, card_id, "date")
+VALUES ('1', '4', '1002', TO_DATE('2018-06-01', 'YYYY-MM-DD'));
+INSERT INTO DoctorPatient (human_id_pt, human_id_doc, card_id, "date")
+VALUES ('2', '5', '1001', TO_DATE('2018-06-02', 'YYYY-MM-DD'));
+INSERT INTO DoctorPatient (human_id_pt, human_id_doc, card_id, "date")
+VALUES ('100', '4', '1003', TO_DATE('2018-06-03', 'YYYY-MM-DD'));
 
 --Create illnesses
 INSERT INTO Illness (illness_name, illness_recovery_days, percentage_of_mortality)
@@ -261,26 +345,28 @@ INSERT INTO Symptoms (symptom_name)
 VALUES ('vomit');
 
 --Assosiate symptoms with illnesses
-INSERT INTO "Illness has symptoms" (illness_name, symptom_name, "date")
-VALUES ('allergy to fruit', 'redness', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
-INSERT INTO "Illness has symptoms" (illness_name, symptom_name, "date")
-VALUES ('allergy to fruit', 'sneezing', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
-INSERT INTO "Illness has symptoms" (illness_name, symptom_name, "date")
-VALUES ('food poisoning', 'weakness', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
-INSERT INTO "Illness has symptoms" (illness_name, symptom_name, "date")
-VALUES ('food poisoning', 'vomit', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
-INSERT INTO "Illness has symptoms" (illness_name, symptom_name, "date")
-VALUES ('cold', 'sneezing', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
-INSERT INTO "Illness has symptoms" (illness_name, symptom_name, "date")
-VALUES ('cold', 'weakness', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
+INSERT INTO IllnessSymptoms (ill_sympt_id, illness_name, symptom_name, "date")
+VALUES ('001', 'allergy to fruit', 'redness', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
+INSERT INTO IllnessSymptoms (ill_sympt_id, illness_name, symptom_name, "date")
+VALUES ('002', 'allergy to fruit', 'sneezing', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
+INSERT INTO IllnessSymptoms (ill_sympt_id, illness_name, symptom_name, "date")
+VALUES ('003', 'food poisoning', 'weakness', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
+INSERT INTO IllnessSymptoms (ill_sympt_id, illness_name, symptom_name, "date")
+VALUES ('004', 'food poisoning', 'vomit', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
+INSERT INTO IllnessSymptoms (ill_sympt_id, illness_name, symptom_name, "date")
+VALUES ('005', 'cold', 'sneezing', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
+INSERT INTO IllnessSymptoms (ill_sympt_id, illness_name, symptom_name, "date")
+VALUES ('006', 'cold', 'weakness', TO_DATE('2018-01-05', 'YYYY-MM-DD'));
 
 --Add records of patients' illnesses
-INSERT INTO Records (record_id, card_id, illness_name, record_date)
-VALUES ('1', '1001', 'allergy to fruit', TO_DATE('2018-01-13', 'YYYY-MM-DD'));
-INSERT INTO Records (record_id, card_id, illness_name, record_date)
-VALUES ('2', '1001', 'food poisoning', TO_DATE('2018-03-18', 'YYYY-MM-DD'));
-INSERT INTO Records (record_id, card_id, illness_name, record_date)
-VALUES ('1', '1002', 'cold', TO_DATE('2018-02-27', 'YYYY-MM-DD'));
+INSERT INTO Recordss (record_id, card_id, ill_sympt_id, record_date)
+VALUES ('1', '1001', '002', TO_DATE('2018-01-13', 'YYYY-MM-DD'));
+INSERT INTO Recordss (record_id, card_id, ill_sympt_id, record_date)
+VALUES ('2', '1001', '004', TO_DATE('2018-03-18', 'YYYY-MM-DD'));
+INSERT INTO Recordss (record_id, card_id, ill_sympt_id, record_date)
+VALUES ('1', '1002', '006', TO_DATE('2018-02-27', ‘YYYY-MM-DD'));
+INSERT INTO Recordss (record_id, card_id, ill_sympt_id, record_date) 
+VALUES ('2', '1002', '005', TO_DATE('2018-06-08', 'YYYY-MM-DD'))
 
 
 
