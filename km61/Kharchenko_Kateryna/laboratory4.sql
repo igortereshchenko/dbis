@@ -16,4 +16,8 @@ Values (newoperator, new.Countries.country_name , '000');
 IF Countries_has_operators = old.Countries.country_name then 
 Countries_has_operators := new.Countries.country_name
 end if;
+IF phoneNumbers.country_name = old.Countries.country_name then 
+phoneNumbers.country_name := new.Countries.country_name
+end if;
+
 end num1;
