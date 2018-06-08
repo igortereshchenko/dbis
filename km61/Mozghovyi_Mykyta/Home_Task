@@ -1,0 +1,28 @@
+1.Создать триггер, который при измнении имени студента удаляет его номер телефона
+
+Create or replace Trigger student_name_changed After UPDATE on Student
+Declare
+Begin
+  if (new.student_name!=old.student_name) then
+    Delete Phone_number where Phone_number.phone_number in
+      (Select Distinct(Phone_number.phone_number)
+        From Phone_number NATURALJOIN student_has_a_phone_number NATURALJOIN Student
+        Where Student.student_name=old.student_name
+       )
+  ENDIF;
+End student_name;
+
+2.Создать курсор с параметром-имя оператора, который выводит имена студентов этого оператора
+
+Declare
+  Cursor get_names(operator) AS
+    Select Distinct(student_name)
+      From MobileOperator NATURALJOIN Phone_number NATURALJOIN student_has_a_phone_number NATURALJOIN Student
+      Where operator_id in (Select operator_id From MobileOperator Where operator_name=operator);
+   student_name Student.student_name%TYPE
+Begin
+  For student_name in get_names(operator)
+    DBMS.put_line(student_name)
+   ENDLOOP;
+End
+      
