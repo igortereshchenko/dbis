@@ -1,0 +1,29 @@
+1.При додаванн запису у таблицю TEACHER, аналогічний запис створюється у таблиці STUDENT(TRIGGER).
+
+Create TRIGGER set_link
+	AFTER INSERT ON TEACHER
+		For EACH ROW
+Begin
+If NEW.Contract_Num is not NULL
+	Then INSERT INTO Student (GBOOK_NUM,SFIRST_NAME,SLAST_NAME)
+		VALUES (NEW.CONTRACT_NUM,NEW.TFIRST_NAME,NEW.TLAST_NAME);
+ENDIF;
+END;
+
+
+2.За прізвищем студента вивести номер завдання та фамілію викладача, що його перевірив(CURSOR).
+DECLARE
+Cursor Data_stud Is
+	Select Slast_Name, Task_Num, Tlast_Name
+		From Student,Tasks,Teacher
+			Where Student.G_Booknum=Tasks.G_BookNum
+			And Tasks.Contract_num=Teacher.Conract_num
+	Info data stud%rowtype;
+Begin
+	OPEN data_stud
+		fetch data_stud into info 
+		while (Data_stud%found) loop
+			DBMS_Output.put_line(Info.Slat_Name ||"" ||Info.Task_Num||""||TLast_Name );
+		End Loop;
+Close Data_Stud;
+END;
