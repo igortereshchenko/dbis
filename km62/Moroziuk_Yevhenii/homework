@@ -1,0 +1,211 @@
+import cx_Oracle
+import plotly
+import plotly.plotly as py
+import plotly.graph_objs as go
+import re
+import plotly.dashboard_objs as dashboard
+
+def fileId_from_url(url):
+    raw_fileId = re.findall("~[A-z.]+/[0-9]+", url )[0]
+    return raw_fileId.replace('/', ':')
+
+plotly.tools.set_config_file(world_readable=True, sharing='public') 
+
+connection = cx_Oracle.connect("system", "password", "xe")
+cursor = connection.cursor()
+
+""" Plot 1  -  Вивести власнків телефонів та скільки вони за нього заплатили
+Візуалізація – стовпчикова діаграма."""
+
+cursor.execute("""
+
+SELECT
+    human_name AS customer,
+    mobile_price AS price
+FROM
+    human
+    JOIN humans_mobile ON
+        human_id = humans_mobile.human_fk
+    JOIN mobile ON
+        humans_mobile.imei_fk = mobile.imei
+    JOIN mobile_ch ON
+        mobile.imei = mobile_ch.imei_sp_fk
+
+""");
+
+customers = []
+price = []
+ 
+for row in cursor:
+    print("Customer name: ",row[0]," and his order sum: ",row[1])
+    customers += [row[0]]
+    price += [row[1]] 
+
+data = [go.Bar( x=customers, y=price )]
+
+layout = go.Layout(
+    barmode = 'group',
+    title='Customers and Orders sum',
+    xaxis=dict(
+        title='Customers',
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    ),
+    
+    yaxis=dict(
+        title='Orders sum',
+        rangemode='nonnegative',
+        autorange=True,
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    )
+)
+
+
+fig = go.Figure(data=data, layout=layout)
+customers_orders_sum_url = py.plot(fig, filename = 'customers - order - sum', auto_open = True)
+
+""" Plot 2  -  вивести відсоток користувачів з телефоном і без
+Візуалізація – секторна діаграма."""
+
+cursor.execute("""
+SELECT
+    COUNT(HUMAN.HUMAN_ID) - COUNT(HUMANS_MOBILE.IMEI_FK),
+    COUNT(HUMANS_MOBILE.IMEI_FK)
+FROM     human
+    lEFT JOIN humans_mobile ON
+        human_id = humans_mobile.human_fk
+    lEFT JOIN mobile ON
+        humans_mobile.imei_fk = mobile.imei
+                
+""");
+
+amount_of_humans = []
+type_ = ["without phone","with phone"]
+
+for row in cursor:
+    amount_of_humans += [row[0]]
+    amount_of_humans += [row[1]]
+
+pie = go.Pie(labels = type_, values = amount_of_humans)
+users_url = py.plot([pie], filename='users')
+
+""" Plot 3  -  вівести рік народження людини та телефоном якого бренду вона користуеться
+Візуалізація – графік залежності."""
+
+cursor.execute("""
+SELECT
+    human.BIRTHDAY,
+    mobile_ch.MOBILE_BRAND
+FROM
+    human
+    JOIN humans_mobile ON
+        human_id = humans_mobile.human_fk
+    JOIN mobile ON
+        humans_mobile.imei_fk = mobile.imei
+    JOIN mobile_ch ON
+        mobile.imei = mobile_ch.imei_sp_fk
+""");
+
+birthday = []
+brand = []
+
+for row in cursor:
+    print("birthday: ", [row[0]], " brand: ", [row[1]])
+    birthday +=[row[0]]
+    brand+=[row[1]]
+
+plot_3 = go.Scatter(
+    x = birthday,
+    y = brand,
+    mode='lines+markers'
+)
+
+data = [plot_3]
+py.plot(data)
+
+brands_url=py.plot(data, filename='brands by birth date')
+
+
+"""--------CREATE DASHBOARD------------------ """
+
+    
+
+ 
+dboard = dashboard.Dashboard() 
+ 
+
+customers_orders_sum_id = fileId_from_url(customers_orders_sum_url)
+
+users_id = fileId_from_url(users_url )
+
+brands_id = fileId_from_url(brands_url)
+
+ 
+
+box_1 = {
+
+    'type': 'box',
+
+    'boxType': 'plot',
+
+    'fileId': customers_orders_sum_id,
+
+    'title': 'Customers and Orders sum'
+
+}
+
+ 
+
+box_2 = {
+
+    'type': 'box',
+
+    'boxType': 'plot',
+
+    'fileId': users_id,
+
+    'title': 'Users with/without phone'
+
+}
+
+ 
+
+box_3 = {
+
+    'type': 'box',
+
+    'boxType': 'plot',
+
+    'fileId': brands_id,
+
+    'title': 'Brands by birth date'
+
+}
+
+ 
+
+ 
+
+my_dboard.insert(box_1)
+
+my_dboard.insert(box_2, 'below', 1)
+
+my_dboard.insert(box_3, 'left', 2)
+
+ 
+
+ 
+
+ 
+
+py.dashboard_ops.upload(dboard, 'My First Dashboard with Python and Oracle')
+
+
+

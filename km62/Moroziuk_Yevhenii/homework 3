@@ -1,0 +1,116 @@
+import cx_Oracle
+import csv
+
+#export
+connection = cx_Oracle.connect("system", "password ", "xe")
+
+cursor_customer = connection.cursor()
+
+ 
+
+cursor_customer.execute("""
+SELECT
+    TRIM(imei) as imei
+FROM
+    mobile""")
+
+ 
+
+for imei in cursor_customer:
+    with open("mobile"+str(imei)+".csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["imei", imei])
+
+
+
+        cursor_order = connection.cursor()
+
+ 
+
+        query = """
+                    SELECT
+                        TRIM(mobile_brand),
+						TRIM(mobile_camera),
+                        TRIM(mobile_price)
+                    FROM
+                        mobile NATURAL JOIN mobile_ch
+                    WHERE TRIM(imei) = :imei"""
+
+ 
+
+        cursor_order.execute(query, imei)
+
+        writer.writerow([])
+
+        writer.writerow(["mobile_brand", "mobile_camera", "mobile_price"])
+
+        for order_row in cursor_order:
+
+            writer.writerow(order_row)
+cursor_customer.close()
+
+#import
+
+connection = cx_Oracle.connect("system", "Lauthtingoutload1 ", "xe")
+
+cursor_customer = connection.cursor()
+
+ 
+filename = "mobile_100056789050001"
+
+ 
+
+with open(filename, "r", newline='', ) as file:
+    reader = csv.reader(file)
+    imei = next(reader)[1]
+
+    insert_query = "insert into mobile(imei) values (imei)"
+    cursor_customer = connection.cursor()
+    cursor_customer.execute(insert_query, imei)
+    cursor_customer.close()
+
+    connection.commit() 
+
+
+    next(reader, None)
+    next(reader, None)
+
+ 
+
+    insert_query = "INSERT INTO mobile_ch (mobile_brand, mobile_camera, mobile_price, imei) VALUES (mobile_brand, mobile_camera, mobile_price, imei)"
+    cursor_order = connection.cursor() 
+
+    cursor_order.prepare (insert_query) 
+
+    rows = []
+    for row in reader:
+        rows.append(row+[imei])
+
+ 
+
+    cursor_order.executemany(None, rows)
+    cursor_order.close()
+    connection.commit()
+    
+# output files 
+
+imei,"('100026789010002',)"
+
+brand,camera,price
+Samsung,12,32000
+Xiaomi,12,22000
+Apple,12,36000
+
+imei,"('100036789010003',)"
+
+brand,camera,price
+Huawei,40,32000
+Lenovo,12,8000
+Nokia,20,14000
+
+"imei,""('100056789050001',)"""
+
+brand,camera,price
+Sony,19,24000
+Meizu,20,10000
+OnePlus,16,16000

@@ -1,0 +1,52 @@
+-- 1. Створити триггер: при зміні human_name видаляються його телефони
+CREATE OR REPLACE TRIGGER change_humans_name AFTER
+    INSERT OR UPDATE ON human
+    FOR EACH ROW
+DECLARE
+    h_imei   mobile.imei%TYPE :=:new.h_imei;
+BEGIN
+    DELETE FROM humans_mobile WHERE
+        imei = h_imei;
+
+END;
+
+-- 2. Створити триггер: при додавані людини, йому додається телефон 
+
+CREATE OR REPLACE TRIGGER add_mobile AFTER
+    INSERT ON human
+DECLARE
+    human_id   human.human_id%TYPE :=:new.human_id;
+    h_imei     mobile.imei%TYPE :=:new.h_imei;
+BEGIN
+    INSERT INTO humans_mobile (
+        human_fk,
+        imei_fk
+    ) VALUES (
+        human_id,
+        imei
+    );
+
+END; 
+
+-- 3. Створити курсор: параметр - ціна телефону, вихідні дані - усі дешевші телефони та їх власники
+
+DECLARE
+    CURSOR mobile_price (
+        phone_price mobile.mobile_ch%TYPE
+    ) IS SELECT
+        human.human_name,
+        mobile_ch.brand
+         FROM
+        human
+        NATURAL JOIN humans_mobile
+        NATURAL JOIN mobile
+        NATURAL JOIN mobile_ch
+        GROUP BY human.HUMAN_NAME
+         WHERE
+             mobile_ch.brand < phone_price;
+BEGIN
+    OPEN mobile_price( phone_price);
+    LOOP
+        dbms_output.put_line(human.human_name||mobile_ch.brand)
+    END LOOP;
+END;
