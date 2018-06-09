@@ -9,6 +9,18 @@ BEGIN
     WHERE
         human_id =:old.human_id;  
 END ;
+----тригер: не разрешает человеку петь песню,которую он написал
+Create or replace trigger not_to_allow_sing_own_song
+   after insert of human_id ON human_wrote_song
+declare
+   v_human_id human.human_id%type
+BEGIN
+  Select human_id into v_human_id From human 
+   Join human_sing_song ON human_wrote_song.human_id = human.human_id
+   JOIN song ON human_wrote_song.song_id = song.song_id
+  delete from human_sing_song
+    where v_human_id=:new.v_human_id;
+end;
 ---- курсор: параметр- жанр пісні; виводиться в консоль інформація про людину,котра її написала.
 SET SERVEROUTPUT ON
 CREATE OR REPLACE PROCEDURE myProc(v_song_genre song.song_genre%TYPE) AS
