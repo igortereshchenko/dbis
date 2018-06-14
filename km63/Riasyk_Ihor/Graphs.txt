@@ -1,0 +1,113 @@
+/*==============================================================*/
+/* COLUMN GRAPH  */
+/*==============================================================*/
+import cx_Oracle
+	import plotly.offline as py
+	import plotly.graph_objs as go
+	 
+	
+	connection = cx_Oracle.connect("project", "project", "xe")
+	 
+	cursor = connection.cursor()
+	 
+	cursor.execute("""
+	select comment_number, comment_text
+	from exercise
+	 """)
+	
+	comment_number = []
+	comment_text = []
+	 
+	 
+	for row in cursor:
+	    print("comment number: ",row[0]," and comment: ",row[1])
+	    comment_number += [row[0]]
+	    comment_text += [row[1]]
+	
+	data = [go.Bar(
+	            x= comment_number,
+	            y= comment_text
+	    )]
+	 
+	layout = go.Layout(
+	    title='comment and comment_nubmer',
+	    xaxis=dict(
+	        title='comment',
+	        titlefont=dict(
+	            family='Courier New, monospace',
+	            size=18,
+	            color='#7f7f7f'
+	        )
+	    ),
+	    yaxis=dict(
+	        title='comment_nubmer',
+	        rangemode='nonnegative',
+	        autorange=True,
+	        titlefont=dict(
+	            family='Courier New, monospace',
+	            size=18,
+	            color='#7f7f7f'
+	        )
+	    )
+	)
+	fig = go.Figure(data=data, layout=layout)
+	 
+	lection_comment =py.plot(fig)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*==============================================================*/
+/* Dynamic graph */
+/*==============================================================*/
+import cx_Oracle
+	import plotly.offline as py
+	import plotly.graph_objs as go
+	connection = cx_Oracle.connect("project", "project", "xe")
+	 
+	cursor = connection.cursor()
+	 
+	cursor.execute("""
+	select lection.lection_id, lection_them.number
+	from lection join lection_them on lection.lection_id = lection_them.lection_id
+	""")
+	
+	datetime = []
+	them = []
+	
+	lection_id = int(input('Input lection_id: '))
+	
+	for row in cursor:
+	    if row[0] ==lection_id:
+	        them += [row[1]]
+	        datetime += [row[2]]
+	        print("Date: ",row[1],"them",row[2])
+	    else:
+	        continue
+	    
+	
+	them_dates = go.Scatter(
+	    x=datetime,
+	    y=them,
+	    mode='lines+markers'
+	)
+	data = [them_dates]
+	py.plot(data)
+
