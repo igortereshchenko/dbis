@@ -1,2 +1,48 @@
 -- LABORATORY WORK 5
 -- BY Dziuba_Yevhen
+CREATE OR REPLACE FUNCTION get_prod_count(
+vendid vendors.vend_id%TYPE)
+    RETURN INT
+    AS
+    PRODCOUNT INT;
+    BEGIN
+    SELECT COUNT (DISTINCT PRODUCTS.PROD_ID)
+    into prodcount
+    from products
+    join vendors
+    on PRODUCTS.VEND_ID = vendors.vend_id
+    where vendors.vend_id = vendid;
+    return prodcount;
+END get_prod_count;
+
+
+
+CREATE OR REPLACE FUNCTION get_cust_id(
+custname in CUSTOMERS.CUST_NAME%TYPE,
+CUSTDID OUT CUSTOMERS.CUST_ID%TYPE)
+IS
+BEGIN
+SELECT CUSTOMERS.CUST_ID
+INTO  CUSTOMERS.CUST_ID
+FROM CUSTOMERS
+WHERE CUSTOMERS.CUST_NAME = CUSTNAME
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('Invalid')
+END get_cust_id;
+
+
+
+CREATE OR REPLACE FUNCTION UPDATE_DROD_ID(
+PRODID IN 
+UPDATEPRICE IN )
+
+
+
+
+
+
+
+
+
+
