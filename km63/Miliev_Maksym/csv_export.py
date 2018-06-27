@@ -39,4 +39,4 @@ for new_id, fact_name in cursor_fb_news:
             print(facts_row)
             writer.writerow(facts_row)
  
-cursor_classroom.close()
+cursor_facts.close()
