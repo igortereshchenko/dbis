@@ -1,0 +1,323 @@
+
+####################################
+Код для создания первого графика
+####################################
+
+import cx_Oracle
+import plotly.offline as py
+import plotly.graph_objs as go
+ 
+ 
+connection = cx_Oracle.connect("SYSTEM", "f4", "DESKTOP-5UL0E3G/xe")
+ 
+cursor = connection.cursor()
+ 
+cursor.execute("""
+SELECT 
+    PROGRAMIST.programist_id,
+    CONCAT(CONCAT(TRIM(PROGRAMIST.programist_first_name),' '), TRIM(PROGRAMIST.programist_last_name)),
+    NVL(SUM(Programist_Language.programist_language_exp),0) as ALL_EXP
+      FROM  
+        PROGRAMIST_LANGUAGE  RIGHT OUTER JOIN PROGRAMIST
+      ON PROGRAMIST.programist_id = PROGRAMIST_LANGUAGE.PROGRAMIST_ID
+      GROUP BY PROGRAMIST.PROGRAMIST_ID, CONCAT(CONCAT(TRIM(PROGRAMIST.programist_first_name),' '), TRIM(PROGRAMIST.programist_last_name))
+      ORDER BY ALL_EXP DESC """)
+ 
+programist = []
+rpogramist_exp = []
+ 
+ 
+for row in cursor:
+    print("Programist name: ",row[1]," and his order sum: ",row[2])
+    programist += [str(row[0])+" "+row[1]]
+    rpogramist_exp += [row[2]]
+ 
+ 
+data = [go.Bar(
+            x=programist,
+            y=rpogramist_exp
+    )]
+ 
+layout = go.Layout(
+    title='Programist all exp ',
+    xaxis=dict(
+        title='Programist',
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    ),
+    yaxis=dict(
+        title='ALL exp',
+        rangemode='nonnegative',
+        autorange=True,
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    )
+)
+fig = go.Figure(data=data, layout=layout)
+ 
+customers_orders_sum = py.plot(fig)
+
+#####################################
+Код для создания второго графика
+#####################################
+
+import cx_Oracle
+import plotly.offline as py
+import plotly.graph_objs as go
+ 
+ 
+connection = cx_Oracle.connect("SYSTEM", "f4", "DESKTOP-5UL0E3G/xe")
+ 
+cursor = connection.cursor()
+ 
+cursor.execute("""
+ SELECT
+        LANGUAGE.LANGUAGE_ID,
+        LANGUAGE.LANGUAGE_NAME,
+        NVL(COUNT(PROGRAMIST_LANGUAGE.LANGUAGE_ID),0) as PeopleKnowLanguage
+    FROM 
+            PROGRAMIST_LANGUAGE JOIN PROGRAMIST
+      ON PROGRAMIST.programist_id = PROGRAMIST_LANGUAGE.PROGRAMIST_ID
+      RIGHT OUTER JOIN LANGUAGE ON
+     LANGUAGE.LANGUAGE_ID =  PROGRAMIST_LANGUAGE.language_id 
+      GROUP BY LANGUAGE.LANGUAGE_NAME, LANGUAGE.LANGUAGE_ID
+      ORDER BY PeopleKnowLanguage DESC
+""");
+ 
+language = []
+language_sum = []
+ 
+ 
+for row in cursor:
+    print("Language name ",row[1]+" id: ("+str(row[0]),") and how many people know : ",str(row[2]))
+    language += [row[1]+" "+str(row[0])]
+    language_sum += [row[2]]
+ 
+ 
+ 
+pie = go.Pie(labels=language, values=language_sum)
+py.plot([pie])
+
+        
+
+#####################################
+Код для создания третьего графика
+#####################################
+
+import cx_Oracle
+import plotly.offline as py
+import plotly.graph_objs as go
+ 
+ 
+connection = cx_Oracle.connect("SYSTEM", "f4", "DESKTOP-5UL0E3G/xe")
+ 
+cursor = connection.cursor()
+ 
+ 
+ 
+cursor.execute("""
+SELECT start_working_date , count(*)
+FROM PROGRAMIST_JOB
+GROUP BY START_WORKING_DATE
+ORDER BY START_WORKING_DATE
+""")
+
+start_work_dates = []
+people_start_work = []
+ 
+ 
+for row in cursor:
+    print("Date ",str(row[0])," people count: ",row[1])
+    start_work_dates += [row[0]]
+    people_start_work += [row[1]]
+ 
+ 
+people_start_job = go.Scatter(
+    x=start_work_dates,
+    y=people_start_work,
+    mode='lines+markers'
+)
+data = [people_start_job]
+people_start_job_url=py.plot(data, filename='Amount of people who  started working this day')
+
+
+#####################################
+Код для создания dashboard
+#####################################
+
+
+import cx_Oracle
+import plotly.plotly as py
+import plotly.graph_objs as go
+import re
+import plotly.dashboard_objs as dashboard
+ 
+ 
+def fileId_from_url(url):
+    """Return fileId from a url."""
+    raw_fileId = re.findall("~[A-z.]+/[0-9]+", url)[0][1: ]
+    return raw_fileId.replace('/', ':')
+ 
+connection = cx_Oracle.connect("SYSTEM", "f4", "DESKTOP-5UL0E3G/xe")
+ 
+cursor = connection.cursor()
+ 
+
+cursor.execute("""
+SELECT 
+    PROGRAMIST.programist_id,
+    CONCAT(CONCAT(TRIM(PROGRAMIST.programist_first_name),' '), TRIM(PROGRAMIST.programist_last_name)),
+    NVL(SUM(Programist_Language.programist_language_exp),0) as ALL_EXP
+      FROM  
+        PROGRAMIST_LANGUAGE  RIGHT OUTER JOIN PROGRAMIST
+      ON PROGRAMIST.programist_id = PROGRAMIST_LANGUAGE.PROGRAMIST_ID
+      GROUP BY PROGRAMIST.PROGRAMIST_ID, CONCAT(CONCAT(TRIM(PROGRAMIST.programist_first_name),' '), TRIM(PROGRAMIST.programist_last_name))
+      ORDER BY ALL_EXP DESC """)
+ 
+programist = []
+pogramist_exp = []
+ 
+ 
+for row in cursor:
+    print("Programist name: ",row[1]," and his order sum: ",row[2])
+    programist += [str(row[0])+" "+row[1]]
+    pogramist_exp += [row[2]]
+ 
+ 
+data = [go.Bar(
+            x=programist,
+            y=pogramist_exp
+    )]
+ 
+layout = go.Layout(
+    title='Programist all exp ',
+    xaxis=dict(
+        title='Programist',
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    ),
+    yaxis=dict(
+        title='ALL exp',
+        rangemode='nonnegative',
+        autorange=True,
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    )
+)
+fig = go.Figure(data=data, layout=layout)
+ 
+pogramist_exp_url = py.plot(fig, auto_open=False)
+
+cursor.execute("""
+ SELECT
+        LANGUAGE.LANGUAGE_ID,
+        LANGUAGE.LANGUAGE_NAME,
+        NVL(COUNT(PROGRAMIST_LANGUAGE.LANGUAGE_ID),0) as PeopleKnowLanguage
+    FROM 
+            PROGRAMIST_LANGUAGE JOIN PROGRAMIST
+      ON PROGRAMIST.programist_id = PROGRAMIST_LANGUAGE.PROGRAMIST_ID
+      RIGHT OUTER JOIN LANGUAGE ON
+     LANGUAGE.LANGUAGE_ID =  PROGRAMIST_LANGUAGE.language_id 
+      GROUP BY LANGUAGE.LANGUAGE_NAME, LANGUAGE.LANGUAGE_ID
+      ORDER BY PeopleKnowLanguage DESC
+""");
+ 
+language = []
+language_sum = []
+ 
+ 
+for row in cursor:
+    print("Language name ",row[1]+" id: ("+str(row[0]),") and how many people know : ",str(row[2]))
+    language += [row[1]+" "+str(row[0])]
+    language_sum += [row[2]]
+ 
+ 
+ 
+pie = go.Pie(labels=language, values=language_sum)
+pupulation_language = py.plot([pie], auto_open=False)
+ 
+
+ 
+cursor.execute("""
+SELECT start_working_date , count(*)
+FROM PROGRAMIST_JOB
+GROUP BY START_WORKING_DATE
+ORDER BY START_WORKING_DATE
+""")
+
+start_work_dates = []
+people_start_work = []
+ 
+ 
+for row in cursor:
+    print("Date ",str(row[0])," people count: ",row[1])
+    start_work_dates += [row[0]]
+    people_start_work += [row[1]]
+ 
+ 
+people_start_job = go.Scatter(
+    x=start_work_dates,
+    y=people_start_work,
+    mode='lines+markers'
+)
+data = [people_start_job]
+people_start_job_url=py.plot(data, filename='Amount of people who  started working this day', auto_open=False)
+
+ 
+ 
+"""--------CREATE DASHBOARD------------------ """
+    
+ 
+my_dboard = dashboard.Dashboard()
+ 
+pogramist_exp_url_id = fileId_from_url(pogramist_exp_url)
+pupulation_language_id = fileId_from_url(pupulation_language)
+people_start_job_id= fileId_from_url(people_start_job_url)
+
+ 
+box_1 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': pogramist_exp_url_id,
+    'title': 'Programist exp'
+}
+ 
+box_2 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': pupulation_language_id,
+    'title': 'popularity of language'
+}
+ 
+box_3 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': people_start_job_id,
+    'title': 'Amount of people who  started working this day'
+}
+ 
+ 
+my_dboard.insert(box_1)
+my_dboard.insert(box_2, 'below', 1)
+my_dboard.insert(box_3, 'left', 2)
+ 
+ 
+ 
+py.dashboard_ops.upload(my_dboard, 'My First Dashboard with Python')
+
+
+########################
+Ссылка для просмотра dashboard https://plot.ly/dashboard/usenko.job:20/view
+########################
