@@ -1,0 +1,92 @@
+Создать триггер, который при изменеии группы студента удаляет всех студентов.
+
+create trigger del_st
+after update on Student
+for each row
+declare
+begin
+if :old.stud_group = :new.stud_group then
+:old.stud_name = null
+end if
+end del_st;
+
+Триггер, который при добавлении студента назначает ему зачет.
+
+create trigger st_test 
+afret insert on Student_test
+for each row
+declare
+DEFAULT_TEST := Maths
+test Tests.test_id%type
+stud_id Student.student_id%type
+test_id Tests.test_id%type
+stud_name Student.stud_name%type
+begin
+
+stud_id := :new.stud_id;
+select
+(test_id) into test from Student_test where stud_id = test_id
+
+insert into Student_test (student_name, student_id, test_id, test_name)
+values (stud_name, stud_id, test_id, test)
+end st_test;
+
+
+create trigger st_test 
+afret insert on Student
+for each row
+declare
+DEFAULT_TEST := Maths
+test Tests.test_id%type
+stud_id Student.student_id%type
+test_id Tests.test_id%type
+
+begin
+
+stud_id := :new.stud_id;
+select
+(test_id) into test from Student join Tests on Student.stud_id = Tests.stud_id where stud_id = test_id
+
+insert into Tests (Test_name, test_id, stud_id)
+values (test, test_id, stud_id)
+end st_test;
+
+
+
+
+
+Создать курсор, который названию дисциплины выводит студента, которые её сдавал.
+
+declare
+create cursor st_test (test_name* Tests.test_name%type)
+is
+select distinct trim(Student_test.stud_name)
+from Student_test
+where Student_test.test_name = test_name* 
+begin
+for student in st_test 
+loop
+DBMS_OUTPUT.PUT_LINE(Student_test.stud_name)
+end loop
+end;
+
+
+declare
+create cursor st_test (test_name* Tests.test_name%type)
+is
+select distinct trim(Student.stud_name)
+from Student join Tests
+on Student.stud_id = Tests.stud_id,
+where Tests.test_name = test_name* 
+begin
+for student in st_test 
+loop
+DBMS_OUTPUT.PUT_LINE(Student.stud_name)
+end loop
+end;
+
+
+
+
+
+

@@ -1,0 +1,56 @@
+3.a. 
+Скільки проданого найдешевшого товару?
+Виконати завдання в SQL. 
+4 бали
+---------------------------------------------------------------------------*/
+
+--Код відповідь:
+
+SELECT
+SUM(QUANTITY) AS CHEAPEST
+FROM ORDERITEMS
+WHERE ORDERITEMS.ITEM_PRICE IN (SELECT
+MIN(ORDERITEMS.ITEM_PRICE)
+FROM
+ORDERITEMS);
+
+
+
+/*---------------------------------------------------------------------------
+3.b. 
+Який PROD_ID товару, з найдовшою назвою?
+Виконати завдання в SQL. 
+4 бали
+---------------------------------------------------------------------------*/
+
+--Код відповідь:
+
+SELECT
+PRODUCTS.PROD_ID
+FROM PRODUCTS
+WHERE LENGTH(TRIM(PRODUCTS.PROD_NAME)) IN (SELECT
+MAX(LENGTH(TRIM(PRODUCTS.PROD_NAME)))
+FROM PRODUCTS);
+
+
+/*---------------------------------------------------------------------------
+3.c.
+Вивести ім’я та країну покупця, як єдине поле client_name, для тих покупців, що мають не порожнє замовлення.
+Виконати завдання в алгебрі Кодда.
+4 бали
+---------------------------------------------------------------------------*/
+SELECT
+TRIM(CUST_NAME) || ' ' || TRIM(CUST_COUNTRY) as "client_name"
+FROM
+CUSTOMERS
+WHERE CUST_ID IN (SELECT CUST_ID
+FROM ORDERS);
+
+PROJECT
+TRIM(CUSTOMERS.CUST_NAME) || ' ' || TRIM(CUSTOMERS.CUST_COUNTRY) AS 'CLIENT_NAME'
+TIMES
+CUSTOMERS
+WHERE CUST_ID =
+(PROJECT
+CUST_ID
+TIMES ORDERS)
