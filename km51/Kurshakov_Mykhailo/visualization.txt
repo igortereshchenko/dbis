@@ -1,0 +1,153 @@
+import cx_Oracle
+import plotly.plotly as py
+import plotly.graph_objs as go
+import re
+import plotly.dashboard_objs as dashboard
+
+
+def fileId_from_url(url):
+    """Return fileId from a url."""
+    raw_fileId = re.findall("~[A-z.]+/[0-9]+", url)[0][1:]
+    return raw_fileId.replace('/', ':')
+
+connection = cx_Oracle.connect("test", "test", "DESKTOP-0Q2I46R/xe")
+
+cursor = connection.cursor()
+"""Plot 1"""
+
+cursor.execute("""
+SELECT
+    MUSICINFO.MUSIC_AUTHOR2,
+    COUNT("info about music".MUSIC_TITLE)
+ FROM
+    "info about music" RIGHT join MUSICINFO on
+    "info about music".MUSIC_AUTHOR2=MUSICINFO.MUSIC_AUTHOR2
+
+
+    GROUP by MUSICINFO.MUSIC_AUTHOR2""")
+
+author = []
+compositionAmount = []
+
+for row in cursor:
+    print("Author name: ", row[0], " and composition amount: ", row[1])
+    author += [row[0]]
+    compositionAmount += [row[1]]
+
+data = [go.Bar(
+    x=author,
+    y=compositionAmount
+)]
+
+layout = go.Layout(
+    title='Authors and Composition amount',
+    xaxis=dict(
+        title='Authors',
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    ),
+    yaxis=dict(
+        title='Composition amount',
+        rangemode='nonnegative',
+        autorange=True,
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    )
+)
+fig = go.Figure(data=data, layout=layout)
+
+authorCompositionAmount= py.plot(fig, filename='authorCompositionAmount')
+
+"""Plot 2"""
+
+cursor.execute("""
+
+SELECT
+    MUSICINFO.MUSIC_AUTHOR2,
+    COUNT("info about music".MUSIC_TITLE)
+ FROM
+    "info about music" RIGHT join MUSICINFO on
+    "info about music".MUSIC_AUTHOR2=MUSICINFO.MUSIC_AUTHOR2
+
+
+    GROUP by MUSICINFO.MUSIC_AUTHOR2
+""");
+
+author = []
+compositionAmount = []
+
+for row in cursor:
+    print("Author name: ", row[0], " and composiyion amount: ", row[1])
+    author += [row[0]]
+    compositionAmount += [row[1]]
+
+pie = go.Pie(labels=author, values=compositionAmount)
+authorComposition=py.plot([pie], filename='authorComposition')
+
+"""Plot 3"""
+
+cursor.execute("""
+SELECT
+    MUSIC_YEAR,
+    MUSIC_AUTHOR2 
+ FROM
+    MUSICINFO
+""")
+musicDate = []
+author = []
+
+for row in cursor:
+    print("Date ", row[0], " author name: ", row[1])
+    musicDate += [row[0]]
+    author += [row[1]]
+
+dataForPlot = go.Scatter(
+    x=musicDate,
+    y=author,
+    mode='lines+markers'
+)
+data = [dataForPlot]
+authorMusicDate=py.plot(data, filename='authorMusicDate')
+
+"""--------CREATE DASHBOARD------------------ """
+
+my_dboard = dashboard.Dashboard()
+
+authorCompositionAmount_id = fileId_from_url(authorCompositionAmount)
+authorComposition_id = fileId_from_url(authorComposition)
+authorMusicDate_id = fileId_from_url(authorMusicDate)
+
+box_1 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': authorCompositionAmount_id,
+    'title': 'Authors and Composition amount'
+}
+
+box_2 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': authorComposition_id,
+    'title': 'Authors and Composition amount'
+}
+
+box_3 = {
+    'type': 'box',
+    'boxType': 'plot',
+    'fileId': authorMusicDate_id,
+    'title': 'Composition by date'
+}
+
+my_dboard.insert(box_1)
+my_dboard.insert(box_2, 'below', 1)
+my_dboard.insert(box_3, 'left', 2)
+
+py.dashboard_ops.upload(my_dboard, 'Dashboard')
+
+
