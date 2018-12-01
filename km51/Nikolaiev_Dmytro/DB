@@ -1,0 +1,61 @@
+
+create table "User" 
+(
+   "user_name"          VARCHAR2(20),
+   "user_age"           SMALLINT,
+   "user_email"         VARCHAR2(20)         not null,
+   "user_login"         VARCHAR2(20)         not null,
+   "user_password"      VARCHAR2(20)         not null,
+   constraint PK_USER primary key ("user_login")
+);
+/*==============================================================*/
+create table "BankInfo" 
+(
+   "card_number"        CHAR(10)             not null,
+   "user_login"         VARCHAR2(20),
+   "expiration_date"    CHAR(10)             not null,
+   "address"            CHAR(10),
+   constraint PK_BANKINFO primary key ("card_number")
+);
+
+/*==============================================================*/
+/* Index: "User has Bank Account_FK"                            */
+/*==============================================================*/
+
+
+alter table "BankInfo"
+   add constraint "FK_BANKINFO_USER HAS _USER" foreign key ("user_login")
+      references "User" ("user_login");
+      
+      create table "User_has_BEt" 
+(
+   "bet_id"             INTEGER              not null,
+   "user_login"         VARCHAR2(20)         not null,
+   constraint PK_USER_HAS_BET primary key ("bet_id", "user_login")
+);
+
+/*==============================================================*/
+/* Index: "User_has_BEt_FK"                                     */
+/*==============================================================*/
+
+
+/*==============================================================*/
+/* Index: "User_has_BEt2_FK"                                    */
+/*==============================================================*/
+create table "Bet" 
+(
+   "bet_money"          INTEGER,
+   "bet_multiplier"     INTEGER,
+   "bet_id"             INTEGER              not null,
+   constraint PK_BET primary key ("bet_id")
+);
+
+
+alter table "User_has_BEt"
+   add constraint FK_USER_HAS_USER_HAS__BET foreign key ("bet_id")
+      references "Bet" ("bet_id");
+
+alter table "User_has_BEt"
+   add constraint FK_USER_HAS_USER_HAS__USER foreign key ("user_login")
+      references "User" ("user_login");
+
